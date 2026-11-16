@@ -44,9 +44,12 @@ export const templates = [
 ];
 
 export const cta = {
+  eyebrow: 'Ready to start?',
   title: 'Turn your forms into finished documents',
-  body: 'Sign in with Google and build your first template in minutes.',
+  body: 'Build a template, collect the answers from your customers, and generate the Word file in a click. Sign in with Google and have your first template running in minutes.',
   button: 'Get started',
+  secondary: 'See how it works',
+  secondaryHref: '#how-it-works',
 };
 
 // Legal pages (privacy / terms) are not included: add public/privacy.html and public/terms.html,
