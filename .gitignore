@@ -161,3 +161,6 @@ backend/api/src/keys/*
 
 # Throwaway build folder of backend/lambda/compile-docx-template.sh
 backend/lambda/.build-docx/
+
+# Scratch / reference files (e.g. customer PDFs): never commit
+tmp/
