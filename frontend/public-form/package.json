@@ -11,7 +11,7 @@
         "test": "node --test --no-warnings 'test/**/*.test.mjs'",
         "upload-stg": "aws s3 sync ./dist s3://stage.site.paprcraft/site-forms --delete --profile paprcraft-dev-loy",
         "upload-prod": "aws s3 sync ./dist s3://prod.site.paprcraft/site-forms --delete --profile paprcraft-dev-loy",
-        "invalidate-stg": "aws cloudfront create-invalidation --distribution-id REPLACE_WITH_DISTRIBUTION_ID --paths '/*' --profile paprcraft-dev-loy",
+        "invalidate-stg": "aws cloudfront create-invalidation --distribution-id E3ATY8B5L524OA --paths '/*' --profile paprcraft-dev-loy",
         "invalidate-prod": "aws cloudfront create-invalidation --distribution-id REPLACE_WITH_DISTRIBUTION_ID --paths '/*' --profile paprcraft-dev-loy",
         "deploy": "yarn build && yarn upload-stg && yarn invalidate-stg",
         "deploy-prod": "yarn build && yarn upload-prod && yarn invalidate-prod"

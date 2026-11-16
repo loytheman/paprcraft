@@ -143,7 +143,7 @@ export default {
       { exists: true, remove: ["tokenHash", "publicExpiresAt", "publicEmail", "gs2pk", "gs2sk"] }
     ),
   remove: async (id, blameable = null) => {
-    if (blameable) await submissionModel.update({ id, updatedBy: blameable.actionBy, auditStreamId: blameable.auditStreamId }, { exists: null });
+    if (blameable) await submissionModel.update({ id, updatedBy: blameable.actionBy, auditStreamId: blameable.auditStreamId }, { exists: true }); // not an upsert: that would reset defaults such as `status` and be audited as a change
     return submissionModel.remove({ id });
   },
   // Appends one export entry (the docx Lambda completes it by cbId).

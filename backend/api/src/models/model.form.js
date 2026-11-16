@@ -85,7 +85,7 @@ export default {
   // partial: false so removing a setting or a field really removes it.
   update: (data, blameable = null) => formModel.update(stamp(data, blameable, "updatedBy"), { exists: true, partial: false }),
   remove: async (id, blameable = null) => {
-    if (blameable) await formModel.update({ id, updatedBy: blameable.actionBy, auditStreamId: blameable.auditStreamId }, { exists: null });
+    if (blameable) await formModel.update({ id, updatedBy: blameable.actionBy, auditStreamId: blameable.auditStreamId }, { exists: true }); // not an upsert: that would reset defaults such as `status` and be audited as a change
     return formModel.remove({ id });
   },
 };

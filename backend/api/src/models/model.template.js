@@ -98,7 +98,7 @@ export default {
   update: (data, blameable = null) => templateModel.update(stamp(data, blameable, "updatedBy"), { exists: true, partial: false }),
   // The audit trail (backend/lambda/auditRow.js) credits a delete to whoever stamped it just before.
   remove: async (id, blameable = null) => {
-    if (blameable) await templateModel.update({ id, updatedBy: blameable.actionBy, auditStreamId: blameable.auditStreamId }, { exists: null });
+    if (blameable) await templateModel.update({ id, updatedBy: blameable.actionBy, auditStreamId: blameable.auditStreamId }, { exists: true }); // not an upsert: that would reset defaults such as `status` and be audited as a change
     return templateModel.remove({ id });
   },
   // Appends one export entry (keeps the audit stamp so the export is credited to the person).

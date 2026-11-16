@@ -37,6 +37,13 @@ labels (a worked example of a CRUD resource: model, service, controller, routes,
 account API keys (`pck_...`), activity feed backed by the audit trail, S3 image uploads (presigned), document templates (block editor -> .docx via a renderer Lambda, staff-managed masters),
 DynamoDB-backed rate limiter (written, not wired into routes), SES email.
 
+Also included: **document templates** (block editor, `.docx` export through the docx Lambda, staff-managed
+masters) and **dynamic forms** (form builder, submissions with draft / submitted / approved / rejected, customer
+links on `forms[-stg].paprcraft.com`, documents generated from a submission through its bound template, every
+answer change audited). Master forms **CDD: Individual** and **CDD: Company** (and two AGM template masters)
+are seeded with `node backend/api/src/scripts/seed-master-templates.js --apply`. Design notes and contracts:
+`_info/forms-feature-plan.md`.
+
 Deliberately left out (othpulse business logic): monitors, checks, probes, status pages, notifier,
 Stripe billing. `service.plan.js` is a billing-free plan/limits skeleton (free / pro).
 

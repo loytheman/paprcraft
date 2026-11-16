@@ -255,6 +255,7 @@ echo "Waiting for distribution $DIST_ID to finish deploying (~5-10 minutes)..."
 aws cloudfront wait distribution-deployed --id "$DIST_ID" --profile "$PROFILE"
 
 echo "Done."
-echo "  Distribution id: $DIST_ID  (set in frontend/${SITE}/package.json invalidate-${ENV})"
+case "$SITE" in forms) PKG_DIR="public-form" ;; *) PKG_DIR="$SITE" ;; esac
+echo "  Distribution id: $DIST_ID  (set in frontend/${PKG_DIR}/package.json invalidate-${ENV})"
 echo "  CloudFront domain: $DIST_DOMAIN"
 echo "  Site: https://${DOMAINS%% *}"
