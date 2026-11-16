@@ -22,15 +22,20 @@
   --palette-white: #ffffff;
 
   /* Lime green: the primary, affirmative colour (actions, success, focus) */
-  --palette-green-50: #f6ffe5;
-  --palette-green-200: #d9ff99;
-  --palette-green-300: #80ff00;
-  --palette-green-400: #40ff00;
-  --palette-green-500: #00ff00;
-  --palette-green-600: #40ff00;
-  --palette-green-700: #2ed600;
-  --palette-green-800: #1a6b00;
-  --palette-green-900: #0f3d00;
+  --palette-green-50: #ecfdf5;
+  --palette-green-200: #a7f3d0;
+  --palette-green-300: #6ee7b7;
+  --palette-green-400: #34d399;
+  --palette-green-500: #10b981;
+  --palette-green-600: #059669;
+  --palette-green-700: #047857;
+  --palette-green-800: #065f46;
+  --palette-green-900: #022c22;
+
+  /* Lime: a hint only (glows, highlights, small marks). Never a button, never text. */
+  --palette-lime-300: #c0ff00;
+  --palette-lime-400: #80ff00;
+  --palette-lime-500: #40ff00;
 
   /* Lemon: secondary accent (notices, tags, versions). Never a primary button. */
   --palette-lemon-50: #ffffe0;
@@ -72,6 +77,6 @@
 
   /* Elevation (tinted slate, never heavy black) */
   --shadow-color: 15 23 42;
-  --glow-color: 64 255 0;
+  --glow-color: 16 185 129;
   --danger-color: 239 68 68;
 }

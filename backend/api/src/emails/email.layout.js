@@ -9,12 +9,12 @@ export const escapeHtml = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(
 
 // Email clients ignore CSS variables, so the brand colours are constants here. Keep them in step with
 // frontend/design-system/tokens.css (slate-900 / slate-600 / slate-500 / mint-600).
-export const BRAND = { ink: "#0f172a", body: "#475569", muted: "#64748b", primary: "#40ff00", button: "#40ff00", neutral: "#475569", warn: "#ca8a04" };
+export const BRAND = { ink: "#0f172a", body: "#475569", muted: "#64748b", primary: "#059669", button: "#059669", neutral: "#475569", warn: "#ca8a04" };
 
 // A paragraph and a button, styled for the card.
 export const para = (htmlText) => `<p style="margin:0 0 12px;font-size:14px;line-height:20px;color:${BRAND.body}">${htmlText}</p>`;
 export const button = (href, label) =>
-  `<p style="margin:20px 0 0"><a href="${escapeHtml(href)}" style="display:inline-block;padding:10px 16px;border-radius:8px;background:${BRAND.button};color:#0f172a;font-size:14px;font-weight:600;text-decoration:none">${escapeHtml(label)}</a></p>`;
+  `<p style="margin:20px 0 0"><a href="${escapeHtml(href)}" style="display:inline-block;padding:10px 16px;border-radius:8px;background:${BRAND.button};color:#ffffff;font-size:14px;font-weight:600;text-decoration:none">${escapeHtml(label)}</a></p>`;
 
 // title: plain text; bodyHtml: already-escaped HTML; accent: the card's top edge;
 // footerNote: plain text, why they got this email.

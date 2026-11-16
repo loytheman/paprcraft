@@ -40,12 +40,14 @@
   --color-primary: var(--palette-green-600);
   --color-primary-hover: var(--palette-green-500);
   --color-primary-active: var(--palette-green-700);
-  --color-on-primary: var(--palette-slate-900); /* text on a primary fill: the lime is too light for white */
-  --color-primary-text: var(--palette-green-800);
+  --color-on-primary: var(--palette-white); /* text on a primary fill */
+  --color-accent-lime: var(--palette-lime-400); /* sparing hint: glows and highlights only */
+  --color-accent-lime-bright: var(--palette-lime-300);
+  --color-primary-text: var(--palette-green-700);
   --color-primary-bright: var(--palette-green-400);
   --color-primary-soft: var(--palette-green-50);
   --color-primary-edge: var(--palette-green-200);
-  --color-primary-ink: var(--palette-green-900);
+  --color-primary-ink: var(--palette-green-800);
 
   /* Secondary (lemon): notices, tags, versions. Never a primary button. */
   --color-secondary: var(--palette-lemon-600);
@@ -63,7 +65,7 @@
   --color-tertiary-ink: var(--palette-sky-800);
 
   /* Status: the only colours that mean up / degraded / down. */
-  --color-ok: var(--palette-green-700);
+  --color-ok: var(--palette-green-600);
   --color-ok-soft: var(--palette-green-400);
   --color-warn: var(--palette-lemon-600);
   --color-warn-soft: var(--palette-lemon-400);

@@ -7,7 +7,7 @@ import { hero } from '../data/content.js';
 
 <template>
   <section id="top" class="relative overflow-hidden">
-    <div class="pointer-events-none absolute -top-40 right-1/4 h-[540px] w-[540px] rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
+    <div class="pointer-events-none absolute -top-40 right-1/4 h-[540px] w-[540px] rounded-full bg-accent-lime/15 blur-3xl" aria-hidden="true" />
     <div class="pointer-events-none absolute top-20 left-10 h-[380px] w-[380px] rounded-full bg-secondary-bright/10 blur-3xl" aria-hidden="true" />
 
     <div class="relative mx-auto grid max-w-7xl items-center gap-8 px-4 pt-10 pb-16 md:px-8 lg:grid-cols-2 lg:gap-12 lg:pt-16 lg:pb-24">
@@ -19,7 +19,7 @@ import { hero } from '../data/content.js';
 
         <h1 class="text-[2.25rem] leading-[1.15] font-bold tracking-[-0.03em] text-ink sm:text-display">
           {{ hero.headlineLead }}
-          <span class="text-primary-text underline decoration-primary decoration-4 underline-offset-4">{{ hero.headlineAccent }}</span>
+          <span class="text-primary-text underline decoration-secondary-bright decoration-4 underline-offset-4">{{ hero.headlineAccent }}</span>
           {{ hero.headlineTail }}
         </h1>
 
