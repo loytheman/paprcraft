@@ -13,11 +13,11 @@ const year = new Date().getFullYear();
       <div>
         <OpLogo />
         <p class="mt-3 max-w-sm text-body text-ink-muted">
-          TODO: one line about paprcraft.
+          Build forms, collect answers from your team or your customers, and generate Word documents from your own templates.
         </p>
       </div>
       <div v-for="col in footerColumns" :key="col.title">
-        <p class="text-label uppercase text-ink-faint">{{ col.title }}</p>
+        <p class="text-label font-semibold uppercase text-ink-faint">{{ col.title }}</p>
         <ul class="mt-4 space-y-2.5">
           <li v-for="l in col.links" :key="l.href">
             <a :href="to(l.href)" class="text-body text-ink-muted transition-colors hover:text-ink">{{ l.label }}</a>
@@ -26,7 +26,7 @@ const year = new Date().getFullYear();
       </div>
     </div>
     <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 border-t border-line-soft px-4 py-5 md:px-8">
-      <p class="font-mono text-small text-ink-faint">© {{ year }} Paprcraft</p>
+      <p class="text-small text-ink-faint">© {{ year }} Paprcraft</p>
     </div>
   </footer>
 </template>
