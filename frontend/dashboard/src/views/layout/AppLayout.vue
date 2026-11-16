@@ -57,13 +57,13 @@ const onSignOut = async () => {
       </div>
       <p class="px-5 pb-1.5 text-label uppercase text-ink-faint">Workspace</p>
       <nav class="flex flex-col gap-0.5 px-3" aria-label="Main">
-        <RouterLink v-for="n in nav" :key="n.name" :to="{ name: n.name }" class="flex items-center gap-3 rounded-control px-3 py-2 text-body font-medium transition-colors" :class="isActive(n) ? 'bg-primary text-primary-ink shadow-glow-sm' : 'text-ink-muted hover:bg-sunken hover:text-ink'">
+        <RouterLink v-for="n in nav" :key="n.name" :to="{ name: n.name }" class="flex items-center gap-3 rounded-control px-3 py-2 text-body font-medium transition-colors" :class="isActive(n) ? 'bg-primary text-ink-inverse shadow-glow-sm' : 'text-ink-muted hover:bg-sunken hover:text-ink'">
           <OpIcon :name="n.icon" :size="18" /> {{ n.label }}
         </RouterLink>
       </nav>
       <p class="px-5 pt-6 pb-1.5 text-label uppercase text-ink-faint">Account</p>
       <nav class="flex flex-col gap-0.5 px-3" aria-label="Account">
-        <RouterLink v-for="n in navMore" :key="n.name" :to="{ name: n.name }" class="flex items-center gap-3 rounded-control px-3 py-2 text-body font-medium transition-colors" :class="route.name === n.name ? 'bg-primary text-primary-ink shadow-glow-sm' : 'text-ink-muted hover:bg-sunken hover:text-ink'">
+        <RouterLink v-for="n in navMore" :key="n.name" :to="{ name: n.name }" class="flex items-center gap-3 rounded-control px-3 py-2 text-body font-medium transition-colors" :class="route.name === n.name ? 'bg-primary text-ink-inverse shadow-glow-sm' : 'text-ink-muted hover:bg-sunken hover:text-ink'">
           <OpIcon :name="n.icon" :size="18" /> {{ n.label }}
         </RouterLink>
       </nav>
@@ -78,7 +78,7 @@ const onSignOut = async () => {
         <RouterLink :to="{ name: 'home' }" class="lg:hidden" aria-label="Home"><OpLogo /></RouterLink>
         <div class="hidden lg:block"></div>
         <nav class="order-last flex w-full gap-1 overflow-x-auto lg:hidden" aria-label="Main (mobile)">
-          <RouterLink v-for="n in nav" :key="n.name" :to="{ name: n.name }" class="shrink-0 rounded-full px-3 py-1 text-small font-medium" :class="isActive(n) ? 'bg-primary text-primary-ink' : 'text-ink-muted'">{{ n.label }}</RouterLink>
+          <RouterLink v-for="n in nav" :key="n.name" :to="{ name: n.name }" class="shrink-0 rounded-full px-3 py-1 text-small font-medium" :class="isActive(n) ? 'bg-primary text-ink-inverse' : 'text-ink-muted'">{{ n.label }}</RouterLink>
         </nav>
         <div class="flex items-center gap-2">
           <div ref="menuRoot" class="relative">

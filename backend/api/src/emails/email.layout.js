@@ -9,7 +9,7 @@ export const escapeHtml = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(
 
 // Email clients ignore CSS variables, so the brand colours are constants here. Keep them in step with
 // frontend/design-system/tokens.css (slate-900 / slate-600 / slate-500 / mint-600).
-export const BRAND = { ink: "#0f172a", body: "#475569", muted: "#64748b", primary: "#059669", button: "#059669", neutral: "#475569", warn: "#ca8a04" };
+export const BRAND = { ink: "#0f172a", body: "#475569", muted: "#64748b", primary: "#0d9488", button: "#0d9488", neutral: "#475569", warn: "#ca8a04" };
 
 // A paragraph and a button, styled for the card.
 export const para = (htmlText) => `<p style="margin:0 0 12px;font-size:14px;line-height:20px;color:${BRAND.body}">${htmlText}</p>`;

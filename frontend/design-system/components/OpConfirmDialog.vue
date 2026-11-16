@@ -1,7 +1,7 @@
 <script setup>
 // Modal confirmation on the native <dialog>, which supplies the focus trap, Esc and focus return.
 // Cancel takes the initial focus so a stray Enter can't confirm a destructive action.
-// tone: destructive (red, for deletes) | primary (mint, for a next step such as upgrading).
+// tone: destructive (red, for deletes) | primary (cyan green, for a next step such as upgrading).
 import { ref, watchPostEffect } from 'vue';
 import OpButton from './OpButton.vue';
 import OpIcon from './OpIcon.vue';

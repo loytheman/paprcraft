@@ -27,14 +27,14 @@ const radio = ref('b');
 // Colours are listed by NAME only. The values are read from the live CSS (tokens.css), so this sheet
 // can't drift from the constants: edit a value there and it shows here.
 const palettes = {
-  slate: [50, 100, 200, 300, 400, 500, 600, 900], mint: [50, 200, 300, 400, 500, 600, 700, 800],
+  slate: [50, 100, 200, 300, 400, 500, 600, 900], teal: [50, 200, 300, 400, 500, 600, 700, 800],
   lemon: [50, 200, 300, 400, 600, 800, 900], sky: [50, 200, 600, 800], red: [50, 200, 500, 600, 700],
 };
 const roleGroups = [
   ['Surfaces', ['canvas', 'sunken', 'surface-1', 'surface-2', 'surface-3', 'surface-hover']],
   ['Lines', ['line-faint', 'line-soft', 'line', 'line-strong']],
   ['Text', ['ink', 'ink-muted', 'ink-faint', 'ink-disabled', 'ink-inverse']],
-  ['Primary (mint)', ['primary', 'primary-hover', 'primary-active', 'primary-text', 'primary-bright', 'primary-soft', 'primary-edge', 'primary-ink']],
+  ['Primary (cyan green)', ['primary', 'primary-hover', 'primary-active', 'primary-text', 'primary-bright', 'primary-soft', 'primary-edge', 'primary-ink']],
   ['Secondary (lemon)', ['secondary', 'secondary-bright', 'secondary-soft', 'secondary-edge', 'secondary-line', 'secondary-ink', 'secondary-text']],
   ['Tertiary (sky)', ['tertiary', 'tertiary-soft', 'tertiary-edge', 'tertiary-ink']],
   ['Status', ['ok', 'ok-soft', 'warn', 'warn-soft', 'down', 'down-soft', 'down-bg', 'down-edge', 'down-ink']],

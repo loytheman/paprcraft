@@ -1,5 +1,5 @@
 <script setup>
-// Placeholder mark: a mint tile with a P and a lemon dot. Replace when the real logo exists.
+// Placeholder mark: a cyan-green tile with a P and a lemon dot. Replace when the real logo exists.
 defineProps({
   size: { type: [Number, String], default: 28 },
   wordmark: { type: Boolean, default: true },

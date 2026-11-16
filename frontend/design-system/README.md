@@ -29,7 +29,7 @@ Load the fonts in `index.html`: Plus Jakarta Sans (400, 500, 600, 700) and JetBr
 
 All raw colour values live in **one file, `tokens.css`**, as `--palette-*` steps (slate, mint, lemon, sky, red), the label colours (`--label-*`) and shape/shadow constants. `theme.css` imports it and maps *roles* (`--color-primary`, `--color-ink`, ...) onto those steps. Components only ever use roles through Tailwind utilities (`bg-primary`, `text-ink`, `border-line`), so:
 
-- **To change a colour**, edit one value in `tokens.css` (for example `--palette-mint-600`).
+- **To change a colour**, edit one value in `tokens.css` (for example `--palette-teal-600`).
 - **To change which step a role uses**, edit that role in `theme.css`.
 - No component, view or app stylesheet contains a hex colour. Exceptions that cannot use CSS variables: the static `favicon.svg` files, the Google logo, and the e-mail templates (`backend/api/src/emails/email.layout.js`, `BRAND`), which carry a copy of the brand values and say so.
 - `landing/design-system.html` (dev only: `cd frontend/landing && yarn dev`) shows every palette step and role with the live value read from the CSS, so it cannot drift.

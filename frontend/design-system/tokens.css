@@ -1,7 +1,7 @@
 /* paprcraft design system: COLOUR AND SHAPE CONSTANTS.
    The single place raw values live. To re-skin the product, edit values here (or point a semantic
    token in theme.css at a different palette step); nothing else in the code base has a hex colour.
-   Source: the "Paprcraft System" design spec (Precision Modernism: slate canvas, Fresh Mint primary,
+   Source: the "Paprcraft System" design spec (Precision Modernism: slate canvas, cyan-green primary,
    Sunny Lemon accents, sky blue tertiary).
 
    Layers:
@@ -21,21 +21,21 @@
   --palette-slate-900: #0f172a;
   --palette-white: #ffffff;
 
-  /* Mint: the primary, affirmative colour (actions, success, focus) */
-  --palette-mint-50: #ecfdf5;
-  --palette-mint-200: #a7f3d0;
-  --palette-mint-300: #6ee7b7;
-  --palette-mint-400: #34d399;
-  --palette-mint-500: #10b981;
-  --palette-mint-600: #059669;
-  --palette-mint-700: #047857;
-  --palette-mint-800: #065f46;
+  /* Cyan green (teal): the primary, affirmative colour (actions, success, focus) */
+  --palette-teal-50: #f0fdfa;
+  --palette-teal-200: #99f6e4;
+  --palette-teal-300: #5eead4;
+  --palette-teal-400: #2dd4bf;
+  --palette-teal-500: #14b8a6;
+  --palette-teal-600: #0d9488;
+  --palette-teal-700: #0f766e;
+  --palette-teal-800: #115e59;
 
   /* Lemon: secondary accent (notices, tags, versions). Never a primary button. */
-  --palette-lemon-50: #fefce8;
-  --palette-lemon-200: #fef08a;
-  --palette-lemon-300: #fde047;
-  --palette-lemon-400: #facc15;
+  --palette-lemon-50: #fffde7;
+  --palette-lemon-200: #fff59d;
+  --palette-lemon-300: #fff176;
+  --palette-lemon-400: #ffe135;
   --palette-lemon-600: #ca8a04;
   --palette-lemon-800: #854d0e;
   --palette-lemon-900: #713f12;
@@ -71,6 +71,6 @@
 
   /* Elevation (tinted slate, never heavy black) */
   --shadow-color: 15 23 42;
-  --glow-color: 16 185 129;
+  --glow-color: 20 184 166;
   --danger-color: 239 68 68;
 }
