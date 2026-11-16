@@ -6,6 +6,8 @@
 
 export const THEMES = [
   { id: 'default', name: 'Paprcraft', colors: ['#047857', '#059669', '#80ff00', '#ffff00', '#f8fafc'] },
+  // The brand mark's own four facets: deep forest, radiant mint, citrus gold, peach.
+  { id: 'prism', name: 'Prism (logo)', colors: ['#064E3B', '#047857', '#34D399', '#F59E0B', '#FFF7ED'] },
   { id: 'citrus-meadow', name: 'Citrus Meadow', colors: ['#2E7D32', '#7CB342', '#C0CA33', '#FDD835', '#FFF8E1'] },
   { id: 'lime-zest-minimal', name: 'Lime Zest Minimal', colors: ['#1B5E20', '#4CAF50', '#AEEA00', '#FFEB3B', '#FAFAFA'] },
   { id: 'matcha-lemonade', name: 'Matcha Lemonade', colors: ['#33691E', '#8BC34A', '#CDDC39', '#FFC107', '#FFFDE7'] },

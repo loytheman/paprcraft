@@ -1,1 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="2" y="2" width="28" height="28" rx="8" fill="#059669"/><path d="M10 22V10h6.2a3.8 3.8 0 0 1 0 7.6H10" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22.5" cy="9.5" r="2.2" fill="#ffff00"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="56 64 400 400" width="512" height="512" fill="none">
+  <defs>
+    <linearGradient id="pc-forest" gradientUnits="userSpaceOnUse" x1="60" y1="90" x2="256" y2="340"><stop offset="0" stop-color="#047857"/><stop offset="1" stop-color="#064e3b"/></linearGradient>
+    <linearGradient id="pc-mint" gradientUnits="userSpaceOnUse" x1="256" y1="90" x2="452" y2="240"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#10b981"/></linearGradient>
+    <linearGradient id="pc-gold" gradientUnits="userSpaceOnUse" x1="256" y1="240" x2="452" y2="420"><stop offset="0" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/></linearGradient>
+    <linearGradient id="pc-peach" gradientUnits="userSpaceOnUse" x1="160" y1="420" x2="256" y2="240"><stop offset="0" stop-color="#fed7aa"/><stop offset="1" stop-color="#fde68a"/></linearGradient>
+  </defs>
+  <polygon points="68,96 256,96 256,340 184,432" fill="url(#pc-forest)"/>
+  <polygon points="256,96 444,244 256,340" fill="url(#pc-mint)"/>
+  <polygon points="444,244 380,432 256,340" fill="url(#pc-gold)"/>
+  <polygon points="184,432 256,340 380,432" fill="url(#pc-peach)"/>
+</svg>
