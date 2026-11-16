@@ -209,15 +209,15 @@ onMounted(() => {
       <!-- Header -->
       <div class="mt-4 flex flex-wrap items-start justify-between gap-4">
         <div class="min-w-0">
-          <p class="eyebrow !text-violet-soft">Staff · Customer</p>
+          <p class="eyebrow !text-tertiary">Staff · Customer</p>
           <h1 class="mt-2 truncate text-h2 text-ink">{{ a.name || a.email }}</h1>
           <p class="mt-1 text-body text-ink-muted"><span v-if="a.name">{{ a.email }} · </span>joined {{ formatDate(a.createdAt) }} · last sign-in {{ a.signedInAt ? formatRelative(a.signedInAt) : 'never' }}</p>
           <p class="mt-1 font-mono text-small text-ink-faint">{{ a.id }}</p>
         </div>
         <div class="flex flex-wrap gap-2">
           <span class="rounded-full border border-line px-2.5 py-0.5 text-small text-ink">{{ PLAN_NAME[a.plan] }}</span>
-          <span v-if="a.complimentary" class="rounded-full border border-violet/40 px-2.5 py-0.5 text-small text-violet-soft">Complimentary</span>
-          <span v-if="a.customLimits" class="rounded-full border border-cyan/40 px-2.5 py-0.5 text-small text-cyan">Custom limits</span>
+          <span v-if="a.complimentary" class="rounded-full border border-tertiary/40 px-2.5 py-0.5 text-small text-tertiary">Complimentary</span>
+          <span v-if="a.customLimits" class="rounded-full border border-primary/40 px-2.5 py-0.5 text-small text-primary-text">Custom limits</span>
           <span v-if="a.status === 'suspended'" class="status-down rounded-full border px-2.5 py-0.5 text-small">Suspended</span>
           <span v-if="a.staff" class="rounded-full border border-line px-2.5 py-0.5 text-small text-ink-muted">Staff</span>
         </div>
@@ -264,7 +264,7 @@ onMounted(() => {
         <div class="mt-4 overflow-x-auto">
           <table class="w-full min-w-[40rem] text-left text-small">
             <thead>
-              <tr class="font-mono text-label uppercase text-ink-faint">
+              <tr class="text-label uppercase text-ink-faint">
                 <th class="pb-2 font-medium">Limit</th>
                 <th class="pb-2 font-medium">In use</th>
                 <th class="pb-2 font-medium">Plan</th>
@@ -287,11 +287,11 @@ onMounted(() => {
                     :max="l.range[1]"
                     :placeholder="String(l.plan)"
                     :aria-label="`Custom ${LIMIT_LABEL[l.field]}`"
-                    class="w-24 rounded-control border border-line bg-surface-1 px-2 py-1 font-mono text-ink placeholder:text-ink-faint focus:border-cyan/60 focus:outline-none"
+                    class="w-24 rounded-control border border-line bg-surface-1 px-2 py-1 font-mono text-ink placeholder:text-ink-faint focus:border-primary/60 focus:outline-none"
                   />
                 </td>
                 <td class="py-2 pr-3">
-                  <input v-model="drafts[l.field].until" type="date" :disabled="!draftText(l.field)" :aria-label="`${LIMIT_LABEL[l.field]} until`" class="rounded-control border border-line bg-surface-1 px-2 py-1 text-ink focus:border-cyan/60 focus:outline-none disabled:opacity-40" />
+                  <input v-model="drafts[l.field].until" type="date" :disabled="!draftText(l.field)" :aria-label="`${LIMIT_LABEL[l.field]} until`" class="rounded-control border border-line bg-surface-1 px-2 py-1 text-ink focus:border-primary/60 focus:outline-none disabled:opacity-40" />
                 </td>
                 <td class="py-2 text-right">
                   <button v-if="draftText(l.field)" type="button" class="text-small text-ink-muted hover:text-ink" @click="clearLimit(l.field)">Plan's</button>
@@ -376,7 +376,7 @@ onMounted(() => {
         <ul v-if="c.memberships.length" class="mt-2 divide-y divide-line-faint">
           <li v-for="m in c.memberships" :key="m.accountId" class="flex flex-wrap items-center justify-between gap-2 py-2.5">
             <div class="min-w-0">
-              <a :href="`/staff/customers/${m.accountId}`" class="truncate text-body text-cyan hover:underline">{{ m.name }}</a>
+              <a :href="`/staff/customers/${m.accountId}`" class="truncate text-body text-primary-text hover:underline">{{ m.name }}</a>
               <p class="truncate text-small text-ink-faint">{{ m.email }} · {{ m.status === 'invited' ? `invited ${formatDate(m.invitedAt)}` : `joined ${formatDate(m.joinedAt)}` }}</p>
             </div>
             <div class="flex items-center gap-2">

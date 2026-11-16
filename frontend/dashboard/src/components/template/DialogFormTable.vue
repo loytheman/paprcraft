@@ -41,7 +41,7 @@ const save = () => {
 };
 
 const widthOptions = [0, ...Array.from({ length: 12 }, (_, i) => i + 1)];
-const selectCls = 'h-9 w-full rounded-control border border-line bg-sunken px-2 text-body text-ink focus:border-cyan focus:outline-none';
+const selectCls = 'h-9 w-full rounded-control border border-line bg-surface-1 px-2 text-body text-ink focus:border-primary focus:outline-none';
 defineExpose({ open });
 </script>
 
@@ -52,7 +52,7 @@ defineExpose({ open });
     <div class="mt-4 space-y-3">
       <section v-for="(row, i) in draft.rows" :key="i" class="rounded-card border border-line bg-surface-2 p-3" :aria-label="`Row ${i + 1}`">
         <div class="flex flex-wrap items-center justify-between gap-2">
-          <p class="font-mono text-label uppercase text-ink-faint">Row {{ i + 1 }}</p>
+          <p class="text-label uppercase text-ink-faint">Row {{ i + 1 }}</p>
           <div class="flex flex-wrap items-center gap-1">
             <OpButton variant="ghost" size="sm" :disabled="i === 0" aria-label="Move row up" @click="moveItem(draft.rows, i, i - 1)"><OpIcon name="arrow-left" :size="14" class="rotate-90" /></OpButton>
             <OpButton variant="ghost" size="sm" :disabled="i === draft.rows.length - 1" aria-label="Move row down" @click="moveItem(draft.rows, i, i + 1)"><OpIcon name="arrow-right" :size="14" class="rotate-90" /></OpButton>
@@ -61,7 +61,7 @@ defineExpose({ open });
         </div>
 
         <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 text-small text-ink-muted">
-          <label class="flex items-center gap-2"><input v-model="row.stack" type="checkbox" class="accent-cyan" /> Stack the cells in one box</label>
+          <label class="flex items-center gap-2"><input v-model="row.stack" type="checkbox" class="accent-primary" /> Stack the cells in one box</label>
           <label class="flex items-center gap-2">Repeat for each row of
             <select v-model="row.repeat" :class="[selectCls, '!w-auto min-w-40']" aria-label="Repeat this row for each row of">
               <option value="">(no, show once)</option>
@@ -80,10 +80,10 @@ defineExpose({ open });
             <TokenInput v-if="!c.head" v-model="c.label" label="Label" hide-picker compact placeholder="e.g. Full name" />
             <div :class="!c.head && 'mt-2'"><TokenInput v-model="c.value" :label="c.head ? 'Column title' : 'Value'" compact :schema="ctx.formSchema" :repeat-group="groupFor(row)" :placeholder="c.head ? 'e.g. Name' : '{{field}}'" /></div>
             <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-small text-ink-muted">
-              <label class="flex items-center gap-2" title="A small grey heading: text only, no label, can be left empty"><input :checked="c.head" type="checkbox" class="accent-cyan" @change="toggleHead(c, $event.target.checked)" /> Column title</label>
-              <label v-if="!c.head && (c.list || tokenIsArray(ctx.formSchema, c.value))" class="flex items-center gap-2"><input v-model="c.list" type="checkbox" class="accent-cyan" /> Numbered list</label>
+              <label class="flex items-center gap-2" title="A small grey heading: text only, no label, can be left empty"><input :checked="c.head" type="checkbox" class="accent-primary" @change="toggleHead(c, $event.target.checked)" /> Column title</label>
+              <label v-if="!c.head && (c.list || tokenIsArray(ctx.formSchema, c.value))" class="flex items-center gap-2"><input v-model="c.list" type="checkbox" class="accent-primary" /> Numbered list</label>
               <label v-if="!row.stack" class="flex items-center gap-2">Width
-                <select v-model.number="c.col" class="h-8 rounded-control border border-line bg-sunken px-1.5 text-small text-ink focus:border-cyan focus:outline-none" aria-label="Cell width">
+                <select v-model.number="c.col" class="h-8 rounded-control border border-line bg-surface-1 px-1.5 text-small text-ink focus:border-primary focus:outline-none" aria-label="Cell width">
                   <option v-for="n in widthOptions" :key="n" :value="n">{{ n ? `${n}/12` : 'Auto' }}</option>
                 </select>
               </label>

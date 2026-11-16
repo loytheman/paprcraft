@@ -53,13 +53,13 @@ const toggleIn = (i, optValue, on) => {
 };
 const isOptionValue = (row) => row.op !== 'in' && ['select', 'multiselect'].includes(sourceOf(row)?.type) && optionsOf(row).length > 0;
 const inputType = (row) => (sourceOf(row)?.type === 'number' || row.op === 'gt' || row.op === 'lt' ? 'number' : sourceOf(row)?.type === 'date' ? 'date' : 'text');
-const fieldCls = 'h-9 rounded-control border border-line bg-sunken px-2 text-small text-ink focus:border-cyan focus:outline-none disabled:opacity-60';
+const fieldCls = 'h-9 rounded-control border border-line bg-surface-1 px-2 text-small text-ink focus:border-primary focus:outline-none disabled:opacity-60';
 </script>
 
 <template>
   <div>
     <p v-if="state.complex" class="rounded-control border border-line bg-surface-2 px-3 py-2 text-small text-ink-muted">
-      This condition uses nested groups, which the builder can't edit. <button type="button" class="text-cyan underline" :disabled="readonly" @click="emit('update:modelValue', undefined)">Clear it</button> to set a new one.
+      This condition uses nested groups, which the builder can't edit. <button type="button" class="text-primary-text underline" :disabled="readonly" @click="emit('update:modelValue', undefined)">Clear it</button> to set a new one.
     </p>
     <template v-else>
       <p v-if="!state.rows.length" class="text-small text-ink-faint">Always shown.</p>
@@ -92,7 +92,7 @@ const fieldCls = 'h-9 rounded-control border border-line bg-sunken px-2 text-sma
             </select>
             <div v-else-if="row.op === 'in' && optionsOf(row).length" class="flex w-full flex-wrap gap-x-4 gap-y-1">
               <label v-for="o in optionsOf(row)" :key="o.value" class="flex items-center gap-1.5 text-small text-ink-muted">
-                <input type="checkbox" class="size-4 accent-cyan" :checked="(row.value ?? []).includes(o.value)" :disabled="readonly" @change="toggleIn(i, o.value, $event.target.checked)" />
+                <input type="checkbox" class="size-4 accent-primary" :checked="(row.value ?? []).includes(o.value)" :disabled="readonly" @change="toggleIn(i, o.value, $event.target.checked)" />
                 {{ o.label }}
               </label>
             </div>

@@ -33,7 +33,7 @@ const insert = async (text) => {
   await nextTick();
   if (el.value) { el.value.focus(); el.value.setSelectionRange(r.caret, r.caret); }
 };
-const cls = 'w-full rounded-control border border-line bg-sunken px-3 text-body text-ink placeholder:text-ink-faint focus:border-cyan focus:outline-none';
+const cls = 'w-full rounded-control border border-line bg-surface-1 px-3 text-body text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none';
 const id = `ti-${Math.random().toString(36).slice(2, 8)}`;
 </script>
 
@@ -41,7 +41,7 @@ const id = `ti-${Math.random().toString(36).slice(2, 8)}`;
   <div class="relative">
     <div class="flex items-end justify-between gap-2">
       <label :for="id" :class="compact ? 'text-small text-ink-faint' : 'text-small font-medium text-ink-muted'">{{ label }}</label>
-      <button v-if="!hidePicker" type="button" class="rounded-control px-1.5 text-small text-cyan hover:bg-white/4" :aria-expanded="open" @mousedown.prevent @click="remember(); open = !open">Insert field</button>
+      <button v-if="!hidePicker" type="button" class="rounded-control px-1.5 text-small text-primary-text hover:bg-ink/4" :aria-expanded="open" @mousedown.prevent @click="remember(); open = !open">Insert field</button>
     </div>
     <textarea v-if="area" :id="id" ref="el" :value="modelValue" rows="3" :placeholder="placeholder" :class="[cls, 'py-1.5']" @input="emit('update:modelValue', $event.target.value)" @blur="remember" @keyup="remember" @click="remember" />
     <input v-else :id="id" ref="el" :value="modelValue" :placeholder="placeholder" :class="[cls, 'h-9']" @input="emit('update:modelValue', $event.target.value)" @blur="remember" @keyup="remember" @click="remember" />

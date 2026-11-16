@@ -1,0 +1,76 @@
+/* paprcraft design system: COLOUR AND SHAPE CONSTANTS.
+   The single place raw values live. To re-skin the product, edit values here (or point a semantic
+   token in theme.css at a different palette step); nothing else in the code base has a hex colour.
+   Source: the "Paprcraft System" design spec (Precision Modernism: slate canvas, Fresh Mint primary,
+   Sunny Lemon accents, sky blue tertiary).
+
+   Layers:
+     1. --palette-*   raw colour steps (this file, constants)
+     2. --color-*     semantic roles that components use through Tailwind utilities (theme.css)
+   Use roles (bg-primary, text-ink, border-line ...) in components, never palette steps. */
+
+:root {
+  /* Slate: canvas, surfaces, borders and text */
+  --palette-slate-50: #f8fafc;
+  --palette-slate-100: #f1f5f9;
+  --palette-slate-200: #e2e8f0;
+  --palette-slate-300: #cbd5e1;
+  --palette-slate-400: #94a3b8;
+  --palette-slate-500: #64748b;
+  --palette-slate-600: #475569;
+  --palette-slate-900: #0f172a;
+  --palette-white: #ffffff;
+
+  /* Mint: the primary, affirmative colour (actions, success, focus) */
+  --palette-mint-50: #ecfdf5;
+  --palette-mint-200: #a7f3d0;
+  --palette-mint-300: #6ee7b7;
+  --palette-mint-400: #34d399;
+  --palette-mint-500: #10b981;
+  --palette-mint-600: #059669;
+  --palette-mint-700: #047857;
+  --palette-mint-800: #065f46;
+
+  /* Lemon: secondary accent (notices, tags, versions). Never a primary button. */
+  --palette-lemon-50: #fefce8;
+  --palette-lemon-200: #fef08a;
+  --palette-lemon-300: #fde047;
+  --palette-lemon-400: #facc15;
+  --palette-lemon-600: #ca8a04;
+  --palette-lemon-800: #854d0e;
+  --palette-lemon-900: #713f12;
+
+  /* Sky: tertiary (links, metadata, information) */
+  --palette-sky-50: #f0f9ff;
+  --palette-sky-200: #bae6fd;
+  --palette-sky-600: #0284c7;
+  --palette-sky-800: #075985;
+
+  /* Red: errors and destructive actions */
+  --palette-red-50: #fef2f2;
+  --palette-red-200: #fecaca;
+  --palette-red-500: #ef4444;
+  --palette-red-600: #dc2626;
+  --palette-red-700: #b91c1c;
+
+  /* Label colours (private tags an account puts on its records). Keep the keys in step with
+     labelColors in backend/api/src/models/model.label.js. None is a status colour. */
+  --label-cyan: #0891b2;
+  --label-blue: #2563eb;
+  --label-indigo: #4f46e5;
+  --label-violet: #7c3aed;
+  --label-fuchsia: #c026d3;
+  --label-pink: #db2777;
+  --label-slate: #64748b;
+  --label-stone: #78716c;
+
+  /* Shape (design spec: base 8px, large 16px, extra large 24px, pill) */
+  --radius-base: 0.5rem;
+  --radius-large: 1rem;
+  --radius-xlarge: 1.5rem;
+
+  /* Elevation (tinted slate, never heavy black) */
+  --shadow-color: 15 23 42;
+  --glow-color: 16 185 129;
+  --danger-color: 239 68 68;
+}

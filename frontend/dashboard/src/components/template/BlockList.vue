@@ -63,7 +63,7 @@ const onDrop = (e, idx) => {
       :style="block.type === 'list-item-paragraph' ? { display: 'list-item', listStyleType: markerStyle } : null"
       :value="block.type === 'list-item-paragraph' ? numberOf(idx) : undefined"
       class="relative my-0.5 rounded-control"
-      :class="ctx.focusId === block.id && 'ring-1 ring-cyan/40'"
+      :class="ctx.focusId === block.id && 'ring-1 ring-primary/40'"
       @click.stop="ctx.setFocus(block.id)"
       @dragover="onDragOver"
       @drop="onDrop($event, idx)"
@@ -92,9 +92,9 @@ const onDrop = (e, idx) => {
 <style>
 .tpl-list { min-height: 2rem; }
 .tpl-stripes {
-  border: 1px dashed rgb(250 204 21 / 0.35);
+  border: 1px dashed color-mix(in srgb, var(--color-secondary) 45%, transparent);
   border-radius: 6px;
-  background: repeating-linear-gradient(-45deg, transparent, transparent 6px, rgb(255 255 255 / 0.025) 6px, rgb(255 255 255 / 0.025) 12px);
+  background: repeating-linear-gradient(-45deg, transparent, transparent 6px, color-mix(in srgb, var(--color-ink) 3%, transparent) 6px, color-mix(in srgb, var(--color-ink) 3%, transparent) 12px);
 }
 .tpl-stripes:hover { border-style: solid; }
 </style>

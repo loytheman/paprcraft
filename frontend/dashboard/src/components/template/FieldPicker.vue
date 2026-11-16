@@ -35,15 +35,15 @@ const NAMES = { yesno: 'yes / no', date: 'date', upper: 'UPPER', lower: 'lower',
     <p v-if="!schema" class="mt-2 text-small text-ink-faint">Choose a data source above to insert the form's fields. The document info values below always work.</p>
     <p v-else-if="entries.length <= 1" class="mt-2 text-small text-ink-faint">This form has no fields you can insert here.</p>
     <div v-for="s in entries" :key="s.section" class="mt-3">
-      <p class="font-mono text-label uppercase text-ink-faint">{{ s.section }}</p>
+      <p class="text-label uppercase text-ink-faint">{{ s.section }}</p>
       <ul class="mt-1 space-y-1">
         <li v-for="item in s.items" :key="item.text" class="flex items-center gap-2">
-          <button type="button" class="min-w-0 flex-1 truncate rounded-control border border-line px-2 py-1 text-left text-small text-ink-muted hover:border-cyan hover:text-ink" :title="`{{${chipText(item.text, pipeOf(item))}}}`" @mousedown.prevent @click="insert(item)">
+          <button type="button" class="min-w-0 flex-1 truncate rounded-control border border-line px-2 py-1 text-left text-small text-ink-muted hover:border-primary hover:text-ink" :title="`{{${chipText(item.text, pipeOf(item))}}}`" @mousedown.prevent @click="insert(item)">
             {{ item.label }} <span class="ml-1 font-mono text-ink-faint">{{ item.text }}</span>
           </button>
           <select
             :value="pipeOf(item)"
-            class="h-7 rounded-control border border-line bg-sunken px-1 text-small text-ink-muted focus:border-cyan focus:outline-none"
+            class="h-7 rounded-control border border-line bg-surface-1 px-1 text-small text-ink-muted focus:border-primary focus:outline-none"
             :aria-label="`Format for ${item.label}`"
             @change="chosen = { ...chosen, [item.text]: $event.target.value }"
           >

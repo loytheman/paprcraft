@@ -15,7 +15,7 @@ const id = useId();
 
 <template>
   <label :for="id" :class="['inline-flex items-center gap-2 text-body text-ink', disabled ? 'opacity-60' : 'cursor-pointer']">
-    <input :id="id" v-model="model" type="radio" :name="name || undefined" :value="value" :disabled="disabled" class="size-4 shrink-0 accent-cyan" />
+    <input :id="id" v-model="model" type="radio" :name="name || undefined" :value="value" :disabled="disabled" class="size-4 shrink-0 accent-primary" />
     <span><slot>{{ label }}</slot></span>
   </label>
 </template>

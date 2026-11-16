@@ -71,7 +71,7 @@ const trim = () => { for (const k of keys.value) props.placeholders[k] = String(
       <li v-for="k in keys" :key="k">
         <div class="flex items-center justify-between gap-2">
           <template v-if="renaming === k">
-            <input v-model="renameDraft" class="min-w-0 flex-1 rounded-control border border-cyan bg-sunken px-2 py-1 font-mono text-small text-ink focus:outline-none" @keydown.enter.prevent="finishRename" @keydown.esc="renaming = null" @blur="finishRename" />
+            <input v-model="renameDraft" class="min-w-0 flex-1 rounded-control border border-primary bg-sunken px-2 py-1 font-mono text-small text-ink focus:outline-none" @keydown.enter.prevent="finishRename" @keydown.esc="renaming = null" @blur="finishRename" />
           </template>
           <template v-else>
             <span class="min-w-0 truncate font-mono text-small text-ink">{{ chip(k) }}</span>
@@ -87,7 +87,7 @@ const trim = () => { for (const k of keys.value) props.placeholders[k] = String(
           :readonly="readonly"
           :aria-label="`Value for ${k}`"
           placeholder="Value"
-          class="mt-1 h-9 w-full rounded-control border border-line bg-sunken px-3 text-body text-ink placeholder:text-ink-faint focus:border-cyan focus:outline-none"
+          class="mt-1 h-9 w-full rounded-control border border-line bg-surface-1 px-3 text-body text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none"
         />
       </li>
     </ul>
@@ -104,7 +104,7 @@ const trim = () => { for (const k of keys.value) props.placeholders[k] = String(
     </div>
 
     <form v-if="!readonly" class="mt-4 flex gap-2" @submit.prevent="add">
-      <input v-model="draftKey" placeholder="NEW_KEY" aria-label="New placeholder key" class="h-9 min-w-0 flex-1 rounded-control border border-line bg-sunken px-3 font-mono text-small text-ink placeholder:text-ink-faint focus:border-cyan focus:outline-none" />
+      <input v-model="draftKey" placeholder="NEW_KEY" aria-label="New placeholder key" class="h-9 min-w-0 flex-1 rounded-control border border-line bg-surface-1 px-3 font-mono text-small text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none" />
       <OpButton type="submit" size="sm" icon="plus" :disabled="!draftKey.trim()">Add</OpButton>
     </form>
     <p v-if="error" role="alert" class="mt-2 text-small text-down">{{ error }}</p>

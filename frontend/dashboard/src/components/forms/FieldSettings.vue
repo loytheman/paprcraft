@@ -63,7 +63,7 @@ const sources = computed(() => {
   return conditionSources(props.schema, { s: props.loc.s, f: props.loc.f }, { subjectInternal: !!field.value.internal });
 });
 const setCond = (target, cond) => { if (cond) target.visibleIf = cond; else delete target.visibleIf; };
-const check = 'size-4 accent-cyan';
+const check = 'size-4 accent-primary';
 </script>
 
 <template>

@@ -20,7 +20,7 @@ const open = () => { if (!ctx.readonly) ctx.openDialog('declaration', props.bloc
       <OpIcon v-if="!ctx.readonly" name="pencil" :size="12" />
     </div>
     <div class="overflow-hidden rounded-control border border-line-strong text-body">
-      <div class="border-b border-line-strong bg-white/8 px-3 py-1.5 font-medium text-ink">{{ d.title || 'Declaration' }}</div>
+      <div class="border-b border-line-strong bg-ink/8 px-3 py-1.5 font-medium text-ink">{{ d.title || 'Declaration' }}</div>
       <div class="space-y-3 px-3 py-2 text-small text-ink-muted">
         <p v-if="d.text">{{ d.text }}</p>
         <p class="text-ink">{{ d.signatureLabel || 'Signature:' }} <span class="inline-block w-48 border-b border-ink-faint align-bottom">&nbsp;</span> <span v-if="d.signer" class="ml-1"><TokenText :text="d.signer" /></span></p>

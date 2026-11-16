@@ -26,8 +26,8 @@ const id = useId();
       :aria-invalid="!!error"
       :aria-describedby="error || hint ? `${id}-help` : undefined"
       :class="[
-        'resize-y rounded-control border bg-sunken px-3 py-2 text-body text-ink placeholder:text-ink-faint focus:border-cyan focus:outline-none',
-        error ? 'border-down' : 'border-line',
+        'resize-y rounded-control border bg-surface-1 px-3 py-2 text-body text-ink placeholder:text-ink-faint focus:border-primary focus:shadow-ring focus:outline-none',
+        error ? 'border-down-soft focus:border-down-soft focus:shadow-down' : 'border-line-strong',
       ]"
     />
     <p v-if="error || hint" :id="`${id}-help`" :class="['text-small', error ? 'text-down' : 'text-ink-faint']">{{ error || hint }}</p>

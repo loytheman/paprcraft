@@ -460,7 +460,7 @@ onBeforeRouteLeave(async () => {
   </p>
 
   <div v-else-if="template" ref="rootEl">
-    <p v-if="isMaster" class="mb-4 rounded-control border border-violet/40 bg-violet/10 px-3 py-2 text-small text-ink-muted">
+    <p v-if="isMaster" class="mb-4 rounded-control border border-tertiary/40 bg-tertiary/10 px-3 py-2 text-small text-ink-muted">
       <strong class="font-medium text-ink">Master template.</strong> Every account can copy it into its own templates. Changes here don't affect copies already made.
     </p>
     <p v-else-if="readonly" class="mb-4 rounded-control border border-line px-3 py-2 text-small text-ink-muted">You can view this template. Only members and owners can edit it.</p>
@@ -468,7 +468,7 @@ onBeforeRouteLeave(async () => {
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div class="flex min-w-0 flex-1 items-center gap-3">
         <RouterLink :to="{ name: isMaster ? 'staff-templates' : 'templates' }" class="text-ink-faint hover:text-ink" aria-label="Back to templates"><OpIcon name="arrow-left" :size="18" /></RouterLink>
-        <input v-model="template.name" :readonly="readonly" aria-label="Template name" class="min-w-0 flex-1 rounded-control border border-transparent bg-transparent px-2 py-1 text-h3 text-ink hover:border-line focus:border-cyan focus:outline-none" />
+        <input v-model="template.name" :readonly="readonly" aria-label="Template name" class="min-w-0 flex-1 rounded-control border border-transparent bg-transparent px-2 py-1 text-h3 text-ink hover:border-line focus:border-primary focus:outline-none" />
       </div>
       <div class="flex items-center gap-2">
         <span v-if="dirty" class="text-small text-warn">Unsaved changes</span>
@@ -483,7 +483,7 @@ onBeforeRouteLeave(async () => {
     <!-- Data source: the form whose fields this template can use -->
     <div class="mt-3 flex flex-wrap items-center gap-2 text-small text-ink-muted">
       <label for="tpl-source" class="font-medium">Data source</label>
-      <select id="tpl-source" :value="template.formId" :disabled="readonly" class="h-9 max-w-64 rounded-control border border-line bg-sunken px-2 text-body text-ink focus:border-cyan focus:outline-none disabled:opacity-60" @change="onSource($event.target.value)">
+      <select id="tpl-source" :value="template.formId" :disabled="readonly" class="h-9 max-w-64 rounded-control border border-line bg-surface-1 px-2 text-body text-ink focus:border-primary focus:outline-none disabled:opacity-60" @change="onSource($event.target.value)">
         <option value="">None: type placeholders by hand</option>
         <option v-if="template.formId && !forms.some((f) => f.id === template.formId)" :value="template.formId">Selected form (not in your list)</option>
         <option v-for="f in forms" :key="f.id" :value="f.id">{{ f.name }}</option>
@@ -497,7 +497,7 @@ onBeforeRouteLeave(async () => {
     <div class="mt-4 flex flex-wrap items-center gap-1">
       <OpButton variant="ghost" size="sm" :disabled="current === 0" aria-label="Previous section" @click="selectSection(current - 1)"><OpIcon name="arrow-left" :size="14" /></OpButton>
       <OpButton variant="ghost" size="sm" :disabled="current >= template.section.length - 1" aria-label="Next section" @click="selectSection(current + 1)"><OpIcon name="arrow-right" :size="14" /></OpButton>
-      <button type="button" class="inline-flex items-center gap-2 rounded-control px-2 py-1 text-body text-ink hover:bg-white/4" @click="showSections = true">
+      <button type="button" class="inline-flex items-center gap-2 rounded-control px-2 py-1 text-body text-ink hover:bg-ink/4" @click="showSections = true">
         <OpIcon name="layout" :size="15" class="text-ink-faint" />
         <span class="capitalize">{{ current + 1 }}. {{ section.name }}</span>
         <span class="text-small text-ink-faint">of {{ template.section.length }}</span>
@@ -508,19 +508,19 @@ onBeforeRouteLeave(async () => {
     <div class="sticky top-[3.6rem] z-30 mt-2">
       <div v-if="!readonly" class="flex flex-wrap items-center gap-0.5 rounded-card border border-line bg-surface-2/95 px-2 py-1 backdrop-blur-md">
         <TplMenu :label="sizeLabel" :items="sizeItems" title="Text size" button-class="capitalize w-28 justify-between" />
-        <button type="button" title="Bold" :class="['size-8 rounded-control text-body font-bold hover:bg-white/4', rangeFormat.bold ? 'bg-white/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('bold')">B</button>
-        <button type="button" title="Italic" :class="['size-8 rounded-control text-body italic hover:bg-white/4', rangeFormat.italic ? 'bg-white/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('italic')">I</button>
-        <button type="button" title="Underline" :class="['size-8 rounded-control text-body underline hover:bg-white/4', rangeFormat.underline ? 'bg-white/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('underline')">U</button>
-        <button type="button" title="Strikethrough" :class="['size-8 rounded-control text-body line-through hover:bg-white/4', rangeFormat.strike ? 'bg-white/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('strike')">S</button>
-        <button type="button" title="Insert a field of the form, or a document value" :class="['h-8 rounded-control px-2 text-small hover:bg-white/4', showFields ? 'bg-warn/15 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFields">Insert field</button>
-        <button type="button" title="Insert a placeholder" :class="['h-8 rounded-control px-2 font-mono text-small hover:bg-white/4', showPicker ? 'bg-warn/15 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="togglePicker"><span v-pre>{{x}}</span></button>
+        <button type="button" title="Bold" :class="['size-8 rounded-control text-body font-bold hover:bg-ink/4', rangeFormat.bold ? 'bg-ink/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('bold')">B</button>
+        <button type="button" title="Italic" :class="['size-8 rounded-control text-body italic hover:bg-ink/4', rangeFormat.italic ? 'bg-ink/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('italic')">I</button>
+        <button type="button" title="Underline" :class="['size-8 rounded-control text-body underline hover:bg-ink/4', rangeFormat.underline ? 'bg-ink/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('underline')">U</button>
+        <button type="button" title="Strikethrough" :class="['size-8 rounded-control text-body line-through hover:bg-ink/4', rangeFormat.strike ? 'bg-ink/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('strike')">S</button>
+        <button type="button" title="Insert a field of the form, or a document value" :class="['h-8 rounded-control px-2 text-small hover:bg-ink/4', showFields ? 'bg-warn/15 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFields">Insert field</button>
+        <button type="button" title="Insert a placeholder" :class="['h-8 rounded-control px-2 font-mono text-small hover:bg-ink/4', showPicker ? 'bg-warn/15 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="togglePicker"><span v-pre>{{x}}</span></button>
         <span class="mx-1 h-5 w-px bg-line" aria-hidden="true" />
-        <button type="button" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo" class="size-8 rounded-control text-ink-muted hover:bg-white/4 disabled:opacity-30" :disabled="!canUndo" @mousedown.prevent @click="undo"><OpIcon name="arrow-left" :size="15" class="mx-auto" /></button>
-        <button type="button" title="Redo (Ctrl/Cmd+Y)" aria-label="Redo" class="size-8 rounded-control text-ink-muted hover:bg-white/4 disabled:opacity-30" :disabled="!canRedo" @mousedown.prevent @click="redo"><OpIcon name="arrow-right" :size="15" class="mx-auto" /></button>
+        <button type="button" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo" class="size-8 rounded-control text-ink-muted hover:bg-ink/4 disabled:opacity-30" :disabled="!canUndo" @mousedown.prevent @click="undo"><OpIcon name="arrow-left" :size="15" class="mx-auto" /></button>
+        <button type="button" title="Redo (Ctrl/Cmd+Y)" aria-label="Redo" class="size-8 rounded-control text-ink-muted hover:bg-ink/4 disabled:opacity-30" :disabled="!canRedo" @mousedown.prevent @click="redo"><OpIcon name="arrow-right" :size="15" class="mx-auto" /></button>
         <span class="mx-2 hidden text-small text-ink-faint sm:inline">{{ counts.replaced }}/{{ counts.total }} placeholders</span>
         <span class="ml-auto" />
         <TplMenu label="Add item" icon="plus" :items="addItems" align="right" />
-        <button type="button" :class="['h-8 rounded-control px-2 text-small hover:bg-white/4', showPlaceholders ? 'text-ink' : 'text-ink-muted']" @click="showPlaceholders = !showPlaceholders">Placeholders</button>
+        <button type="button" :class="['h-8 rounded-control px-2 text-small hover:bg-ink/4', showPlaceholders ? 'text-ink' : 'text-ink-muted']" @click="showPlaceholders = !showPlaceholders">Placeholders</button>
       </div>
       <div v-if="showFields && !readonly" class="mt-2 max-w-xl">
         <FieldPicker :open="showFields" :schema="formSchema" :repeat-group="caretGroup" :error="fieldError" @insert="insertField" @close="showFields = false" />

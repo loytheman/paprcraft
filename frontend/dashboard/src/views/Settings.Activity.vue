@@ -111,7 +111,7 @@ const emptyText = computed(() =>
         :key="f.key"
         type="button"
         :aria-pressed="category === f.key"
-        :class="['rounded-full border px-3 py-1 text-small transition-colors', category === f.key ? 'border-cyan/50 bg-cyan/10 text-ink' : 'border-line text-ink-muted hover:border-line-strong hover:text-ink']"
+        :class="['rounded-full border px-3 py-1 text-small transition-colors', category === f.key ? 'border-primary/50 bg-primary/10 text-ink' : 'border-line text-ink-muted hover:border-line-strong hover:text-ink']"
         @click="category = f.key"
       >{{ f.label }}</button>
     </div>
@@ -122,7 +122,7 @@ const emptyText = computed(() =>
 
     <template v-else>
       <section v-if="!rows.length && !loadError" class="mt-6 flex flex-col items-center rounded-sheet border border-dashed border-line-strong bg-surface-1/50 px-6 py-14 text-center">
-        <span class="flex size-12 items-center justify-center rounded-card border border-line bg-surface-3 text-cyan"><OpIcon name="activity" :size="24" /></span>
+        <span class="flex size-12 items-center justify-center rounded-card border border-line bg-surface-3 text-primary-text"><OpIcon name="activity" :size="24" /></span>
         <p class="mt-4 max-w-md text-body text-ink-muted">{{ emptyText }}</p>
       </section>
 

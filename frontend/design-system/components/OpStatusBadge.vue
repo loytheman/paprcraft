@@ -8,11 +8,11 @@ const props = defineProps({
 });
 
 const tone = computed(() => ({ ok: 'status-ok', warn: 'status-warn', down: 'status-down', info: 'status-info' })[props.status]);
-const dot = computed(() => ({ ok: 'bg-ok', warn: 'bg-warn', down: 'bg-down', info: 'bg-cyan' })[props.status]);
+const dot = computed(() => ({ ok: 'bg-ok', warn: 'bg-warn', down: 'bg-down', info: 'bg-tertiary' })[props.status]);
 </script>
 
 <template>
-  <span :class="['inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 font-mono text-label uppercase', tone]">
+  <span :class="['inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-label uppercase', tone]">
     <span :class="['size-1.5 rounded-full', dot, live && 'animate-live']" />
     <slot />
   </span>

@@ -37,7 +37,7 @@ const pick = (item) => {
       :aria-label="title || label || undefined"
       aria-haspopup="menu"
       :aria-expanded="open"
-      :class="['inline-flex h-8 items-center gap-1.5 rounded-control border border-transparent px-2 text-small text-ink-muted transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-40', open && '!border-line bg-white/4', buttonClass]"
+      :class="['inline-flex h-8 items-center gap-1.5 rounded-control border border-transparent px-2 text-small text-ink-muted transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-40', open && '!border-line bg-ink/4', buttonClass]"
       @mousedown.prevent
       @click="open = !open"
     >
@@ -51,13 +51,13 @@ const pick = (item) => {
       :class="['absolute top-full z-30 mt-1 max-h-80 min-w-44 overflow-auto rounded-card border border-line bg-surface-3 py-1 shadow-rim', align === 'right' ? 'right-0' : 'left-0']"
     >
       <template v-for="(item, i) in items" :key="i">
-        <p v-if="item.heading" class="px-3 pt-2 pb-1 font-mono text-label uppercase text-ink-faint">{{ item.label }}</p>
+        <p v-if="item.heading" class="px-3 pt-2 pb-1 text-label uppercase text-ink-faint">{{ item.label }}</p>
         <button
           v-else
           type="button"
           role="menuitem"
           :disabled="item.disabled"
-          class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-body text-ink-muted hover:bg-white/4 hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
+          class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-body text-ink-muted hover:bg-ink/4 hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
           @mousedown.prevent
           @click="pick(item)"
         >

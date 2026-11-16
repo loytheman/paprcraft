@@ -17,7 +17,7 @@ const year = new Date().getFullYear();
         </p>
       </div>
       <div v-for="col in footerColumns" :key="col.title">
-        <p class="font-mono text-label uppercase text-ink-faint">{{ col.title }}</p>
+        <p class="text-label uppercase text-ink-faint">{{ col.title }}</p>
         <ul class="mt-4 space-y-2.5">
           <li v-for="l in col.links" :key="l.href">
             <a :href="to(l.href)" class="text-body text-ink-muted transition-colors hover:text-ink">{{ l.label }}</a>

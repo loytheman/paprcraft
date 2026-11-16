@@ -148,7 +148,7 @@ const screens = {
   <div class="min-h-screen bg-canvas text-ink">
     <header class="border-b border-line-soft bg-surface-1">
       <div class="mx-auto flex h-14 max-w-3xl items-center gap-3 px-4 md:px-8">
-        <OpIcon name="layout" :size="18" class="text-cyan" />
+        <OpIcon name="layout" :size="18" class="text-primary-text" />
         <span class="truncate text-body font-medium">{{ form?.title || 'Form' }}</span>
       </div>
     </header>

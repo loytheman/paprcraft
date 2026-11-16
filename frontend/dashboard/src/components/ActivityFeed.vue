@@ -33,12 +33,12 @@ const showToggle = (r) => visibleChanges(r).length > 0 && !['signed_in', 'plan_c
 <template>
   <div>
     <section v-for="g in groupByDay(rows)" :key="g.key" class="mt-6 first:mt-0">
-      <h3 class="font-mono text-label uppercase text-ink-faint">{{ g.title }}</h3>
+      <h3 class="text-label uppercase text-ink-faint">{{ g.title }}</h3>
       <ul class="mt-2 overflow-hidden rounded-sheet border border-line bg-surface-2">
         <li v-for="r in g.rows" :key="r.id" class="border-b border-line-faint px-4 py-3 last:border-b-0">
           <div class="flex items-start gap-3">
             <span
-              :class="['mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border font-mono text-[10px]', isSystem(r) ? 'border-line bg-surface-3 text-ink-faint' : 'border-cyan/40 bg-cyan/10 text-cyan']"
+              :class="['mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border font-mono text-[10px]', isSystem(r) ? 'border-line bg-surface-3 text-ink-faint' : 'border-primary/40 bg-primary/10 text-primary-text']"
               :title="isSystem(r) ? 'Done automatically by Paprcraft' : actorName(r)"
               aria-hidden="true"
             >
@@ -52,11 +52,11 @@ const showToggle = (r) => visibleChanges(r).length > 0 && !['signed_in', 'plan_c
               <p class="mt-0.5 text-small text-ink-faint">
                 <span v-if="isSystem(r)">Done automatically by Paprcraft</span>
                 <template v-else>
-                  <span v-if="isStaffActor(r)" class="mr-1.5 rounded-full border border-violet/40 px-1.5 font-mono text-[10px] uppercase text-violet">Staff</span>
+                  <span v-if="isStaffActor(r)" class="mr-1.5 rounded-full border border-tertiary/40 px-1.5 font-mono text-[10px] uppercase text-tertiary">Staff</span>
                   <span>{{ whereText(r.actor) || (isStaffActor(r) ? 'Changed by the Paprcraft team' : '') }}</span>
                 </template>
               </p>
-              <button v-if="showToggle(r)" type="button" class="mt-1.5 inline-flex items-center gap-1 text-small text-cyan hover:underline" :aria-expanded="!!open[r.id]" @click="open[r.id] = !open[r.id]">
+              <button v-if="showToggle(r)" type="button" class="mt-1.5 inline-flex items-center gap-1 text-small text-primary-text hover:underline" :aria-expanded="!!open[r.id]" @click="open[r.id] = !open[r.id]">
                 {{ toggleText(r) }}
                 <OpIcon name="chevron-down" :size="12" :class="open[r.id] && 'rotate-180'" />
               </button>

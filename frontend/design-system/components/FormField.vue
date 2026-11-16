@@ -175,7 +175,7 @@ const shownError = computed(() => props.error || fileError.value);
       <p v-if="hint" class="text-small text-ink-faint">{{ hint }}</p>
       <div v-for="(row, i) in rows" :key="i" class="flex flex-col gap-3 rounded-card border border-line bg-surface-1 p-4">
         <div class="flex items-center justify-between">
-          <span class="font-mono text-label uppercase text-ink-faint">{{ f.label }} {{ i + 1 }}</span>
+          <span class="text-label uppercase text-ink-faint">{{ f.label }} {{ i + 1 }}</span>
           <button type="button" class="inline-flex items-center gap-1 text-small text-ink-faint hover:text-down" :aria-label="`Remove ${f.label} ${i + 1}`" @click="removeRow(i)"><OpIcon name="trash" :size="14" />Remove</button>
         </div>
         <div class="grid gap-3 sm:grid-cols-2">

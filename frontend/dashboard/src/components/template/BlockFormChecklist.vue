@@ -22,13 +22,13 @@ const open = () => { if (!ctx.readonly) ctx.openDialog('checklist', props.block)
       <span v-if="problems.length" class="ml-1 text-warn" :title="problems.join('\n')">needs attention ({{ problems.length }})</span>
     </div>
     <div class="overflow-hidden rounded-control border border-line-strong text-body">
-      <div class="border-b border-line-strong bg-white/8 px-3 py-1.5 font-medium text-ink">{{ block.item?.title || 'Untitled' }}</div>
+      <div class="border-b border-line-strong bg-ink/8 px-3 py-1.5 font-medium text-ink">{{ block.item?.title || 'Untitled' }}</div>
       <div v-if="block.item?.subtitle" class="border-b border-line px-3 py-1 text-small text-ink-muted">{{ block.item.subtitle }}</div>
       <div v-for="(r, i) in rows" :key="i" class="flex items-center gap-3 border-b border-line px-3 py-2 last:border-b-0">
         <p class="min-w-0 flex-1 text-small text-ink-muted"><span class="mr-1 text-ink-faint">{{ i + 1 }}.</span>{{ r.text || '(question)' }}</p>
         <p class="shrink-0 text-right font-mono text-small text-ink-faint">
           <span class="mr-3">☐ YES</span><span>☐ NO</span>
-          <span v-if="singleToken(r.value)" class="ml-3 rounded-full border border-cyan/40 bg-cyan/10 px-1.5 text-[0.7rem] text-cyan">{{ singleToken(r.value) }}</span>
+          <span v-if="singleToken(r.value)" class="ml-3 rounded-full border border-primary/40 bg-primary/10 px-1.5 text-[0.7rem] text-primary-text">{{ singleToken(r.value) }}</span>
           <span v-else class="ml-3 text-warn">no answer set</span>
         </p>
       </div>

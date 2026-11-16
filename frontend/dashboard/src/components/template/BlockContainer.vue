@@ -22,13 +22,13 @@ const condFields = computed(() => {
   const rows = rowGroup ? formGroups(ctx.formSchema).find((g) => g.key === rowGroup)?.fields.map((f) => ({ ...f, row: true })) ?? [] : [];
   return [...rows, ...all];
 });
-const cls = 'h-8 rounded-control border border-line bg-sunken px-2 text-small text-ink focus:border-cyan focus:outline-none disabled:opacity-60';
+const cls = 'h-8 rounded-control border border-line bg-surface-1 px-2 text-small text-ink focus:border-primary focus:outline-none disabled:opacity-60';
 </script>
 
 <template>
-  <div class="w-full rounded-card border border-dashed border-violet/50 bg-violet/5">
-    <div class="flex flex-wrap items-start gap-2 border-b border-dashed border-violet/30 px-2 py-1.5">
-      <span class="mt-1 inline-flex items-center gap-1.5 font-mono text-label uppercase text-violet-soft">
+  <div class="w-full rounded-card border border-dashed border-tertiary/50 bg-tertiary/5">
+    <div class="flex flex-wrap items-start gap-2 border-b border-dashed border-tertiary/30 px-2 py-1.5">
+      <span class="mt-1 inline-flex items-center gap-1.5 text-label uppercase text-tertiary">
         <OpIcon :name="isRepeat ? 'refresh' : 'layout'" :size="13" /> {{ isRepeat ? 'Repeat for each row of' : 'Only if' }}
       </span>
       <template v-if="isRepeat">

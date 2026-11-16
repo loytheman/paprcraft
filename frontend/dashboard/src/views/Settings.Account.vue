@@ -72,7 +72,7 @@ const confirmClose = async () => {
       </dl>
       <p class="mt-4 text-small text-ink-faint">
         Your sign-ins and every change in your account are listed in
-        <RouterLink :to="{ name: 'activity' }" class="text-cyan hover:underline">Activity</RouterLink>.
+        <RouterLink :to="{ name: 'activity' }" class="text-primary-text hover:underline">Activity</RouterLink>.
       </p>
     </section>
 
@@ -110,7 +110,7 @@ const confirmClose = async () => {
           <li v-else>Your data is deleted.</li>
           <li v-if="preview.plan">Your {{ preview.plan }} plan is cancelled now<template v-if="preview.periodEnd"> (it was paid until {{ formatDate(preview.periodEnd) }})</template>. Unused time isn't refunded.</li>
           <li>Your Paprcraft account is deleted and you're signed out. Your Google account isn't affected.</li>
-          <li>We keep a record of account activity for security, as our <a :href="`${env.landingUrl}/privacy.html`" target="_blank" rel="noopener" class="text-cyan hover:underline">Privacy Policy</a> describes.</li>
+          <li>We keep a record of account activity for security, as our <a :href="`${env.landingUrl}/privacy.html`" target="_blank" rel="noopener" class="text-primary-text hover:underline">Privacy Policy</a> describes.</li>
         </ul>
         <label class="mt-4 block text-small text-ink-muted" for="close-confirm">
           Type <strong class="font-mono text-ink">{{ preview.email }}</strong> to confirm

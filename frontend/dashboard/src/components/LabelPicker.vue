@@ -68,7 +68,7 @@ const create = async () => {
           <OpIcon v-if="selected.has(l.id)" name="check" :size="12" />
         </OpLabel>
       </button>
-      <button v-if="!creating" type="button" class="text-small text-cyan hover:underline" @click="startCreating">+ New label</button>
+      <button v-if="!creating" type="button" class="text-small text-primary-text hover:underline" @click="startCreating">+ New label</button>
     </div>
 
     <div v-if="creating" class="mt-3 flex flex-wrap items-center gap-3 rounded-card border border-line-soft bg-surface-1 p-3">
@@ -78,13 +78,13 @@ const create = async () => {
         maxlength="30"
         placeholder="e.g. production"
         aria-label="New label name"
-        class="h-9 w-44 rounded-control border border-line bg-sunken px-3 text-body text-ink placeholder:text-ink-faint focus:border-cyan focus:outline-none"
+        class="h-9 w-44 rounded-control border border-line bg-surface-1 px-3 text-body text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none"
         @keydown.enter.prevent="draft.name.trim() && create()"
       />
       <LabelColorPicker v-model="draft.color" label="New label colour" />
       <OpLabel v-if="draft.name.trim()" :name="draft.name.trim()" :color="draft.color" />
       <div class="flex gap-2">
-        <button type="button" class="h-8 rounded-control bg-cyan px-3 text-small font-medium text-ink-inverse disabled:opacity-40" :disabled="saving || !draft.name.trim()" @click="create">{{ saving ? 'Adding…' : 'Add' }}</button>
+        <button type="button" class="h-8 rounded-control bg-primary px-3 text-small font-medium text-ink-inverse disabled:opacity-40" :disabled="saving || !draft.name.trim()" @click="create">{{ saving ? 'Adding…' : 'Add' }}</button>
         <button type="button" class="h-8 px-2 text-small text-ink-muted hover:text-ink" @click="creating = false; error = ''">Cancel</button>
       </div>
     </div>
@@ -93,7 +93,7 @@ const create = async () => {
       <template v-if="error">{{ error }}</template>
       <template v-else>
         For your own filtering. Up to {{ MAX }} per record.
-        <RouterLink :to="{ name: 'labels' }" class="text-cyan hover:underline">Manage labels</RouterLink>
+        <RouterLink :to="{ name: 'labels' }" class="text-primary-text hover:underline">Manage labels</RouterLink>
       </template>
     </p>
   </fieldset>

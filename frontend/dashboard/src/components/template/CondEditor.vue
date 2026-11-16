@@ -27,7 +27,7 @@ const removeRow = (i) => commit(state.value.mode, state.value.rows.filter((_, n)
 const onKey = (i, key) => setRow(i, { key, value: undefined, ...(isYesNo(key) ? { op: 'eq', value: true } : {}) });
 const onOp = (i, op) => setRow(i, { op, value: op === 'in' ? [] : NO_VALUE_OPS.includes(op) ? undefined : state.value.rows[i].value });
 const yesNoValue = (v) => (v === true || v === 'true' ? 'true' : 'false');
-const cls = 'h-8 rounded-control border border-line bg-sunken px-2 text-small text-ink focus:border-cyan focus:outline-none disabled:opacity-60';
+const cls = 'h-8 rounded-control border border-line bg-surface-1 px-2 text-small text-ink focus:border-primary focus:outline-none disabled:opacity-60';
 </script>
 
 <template>

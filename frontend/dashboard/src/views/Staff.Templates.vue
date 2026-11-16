@@ -69,7 +69,7 @@ const remove = async (t) => {
       <ul v-else>
         <li v-for="t in masters" :key="t.id" class="flex flex-wrap items-center justify-between gap-3 border-b border-line-faint px-5 py-3 last:border-b-0">
           <div class="min-w-0">
-            <RouterLink :to="{ name: 'staff-template', params: { id: t.id } }" class="text-body font-medium text-ink hover:text-cyan">{{ t.name }}</RouterLink>
+            <RouterLink :to="{ name: 'staff-template', params: { id: t.id } }" class="text-body font-medium text-ink hover:text-primary-active">{{ t.name }}</RouterLink>
             <p class="text-small text-ink-faint">Edited {{ formatDateTime(t.updatedAt) }}</p>
           </div>
           <div class="flex gap-2">

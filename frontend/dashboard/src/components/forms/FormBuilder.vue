@@ -271,7 +271,7 @@ onBeforeRouteLeave(async () => {
   </p>
 
   <div v-else-if="form">
-    <p v-if="isMaster" class="mb-4 rounded-control border border-violet/40 bg-violet/10 px-3 py-2 text-small text-ink-muted">
+    <p v-if="isMaster" class="mb-4 rounded-control border border-tertiary/40 bg-tertiary/10 px-3 py-2 text-small text-ink-muted">
       <strong class="font-medium text-ink">Master form.</strong> Once published, every account can copy it into its own forms, together with its document template. Changes here don't affect copies already made.
     </p>
     <p v-else-if="readonly" class="mb-4 rounded-control border border-line bg-surface-2 px-3 py-2 text-small text-ink-muted">You can look at this form, but only members of the team can change it.</p>
@@ -286,10 +286,10 @@ onBeforeRouteLeave(async () => {
             :readonly="readonly"
             aria-label="Form name"
             placeholder="Form name"
-            class="min-w-0 max-w-xl flex-1 rounded-control border border-transparent bg-transparent px-2 py-1 text-h3 text-ink hover:border-line focus:border-cyan focus:outline-none"
+            class="min-w-0 max-w-xl flex-1 rounded-control border border-transparent bg-transparent px-2 py-1 text-h3 text-ink hover:border-line focus:border-primary focus:outline-none"
           />
           <OpStatusBadge :status="published ? 'ok' : 'info'">{{ published ? `Published v${form.version}` : 'Draft' }}</OpStatusBadge>
-          <span v-if="dirty" class="font-mono text-label uppercase text-warn">Unsaved changes</span>
+          <span v-if="dirty" class="text-label uppercase text-warn">Unsaved changes</span>
         </div>
       </div>
       <div class="flex flex-wrap items-center gap-2">
@@ -317,9 +317,9 @@ onBeforeRouteLeave(async () => {
 
     <!-- Tabs -->
     <div class="mt-5 flex gap-1 border-b border-line-soft" role="tablist">
-      <button type="button" role="tab" :aria-selected="tab === 'build'" :class="['-mb-px border-b-2 px-4 py-2 text-body', tab === 'build' ? 'border-cyan text-ink' : 'border-transparent text-ink-muted hover:text-ink']" @click="tab = 'build'">Build</button>
-      <button type="button" role="tab" :aria-selected="tab === 'preview'" :class="['-mb-px border-b-2 px-4 py-2 text-body', tab === 'preview' ? 'border-cyan text-ink' : 'border-transparent text-ink-muted hover:text-ink']" @click="tab = 'preview'">Preview</button>
-      <span class="ml-auto self-center pr-1 font-mono text-label text-ink-faint">{{ schema.sections.length }} sections · {{ fieldTotal }} fields</span>
+      <button type="button" role="tab" :aria-selected="tab === 'build'" :class="['-mb-px border-b-2 px-4 py-2 text-body', tab === 'build' ? 'border-primary text-ink' : 'border-transparent text-ink-muted hover:text-ink']" @click="tab = 'build'">Build</button>
+      <button type="button" role="tab" :aria-selected="tab === 'preview'" :class="['-mb-px border-b-2 px-4 py-2 text-body', tab === 'preview' ? 'border-primary text-ink' : 'border-transparent text-ink-muted hover:text-ink']" @click="tab = 'preview'">Preview</button>
+      <span class="ml-auto self-center pr-1 text-label text-ink-faint">{{ schema.sections.length }} sections · {{ fieldTotal }} fields</span>
     </div>
 
     <!-- Build -->

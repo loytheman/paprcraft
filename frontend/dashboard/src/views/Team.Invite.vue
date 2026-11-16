@@ -59,7 +59,7 @@ const accept = async () => {
 
 <template>
   <div class="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-12">
-    <div class="pointer-events-none absolute -top-40 left-1/2 h-96 w-[640px] max-w-full -translate-x-1/2 rounded-full bg-cyan/10 blur-[120px]" aria-hidden="true" />
+    <div class="pointer-events-none absolute -top-40 left-1/2 h-96 w-[640px] max-w-full -translate-x-1/2 rounded-full bg-primary/10 blur-[120px]" aria-hidden="true" />
     <main class="relative w-full max-w-sm">
       <a :href="env.landingUrl" class="mb-8 flex justify-center" aria-label="Paprcraft home"><OpLogo /></a>
 

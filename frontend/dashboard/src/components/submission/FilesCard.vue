@@ -21,7 +21,7 @@ const files = computed(() => props.submission.attachments ?? []);
           <p class="truncate text-body text-ink">{{ f.name }}</p>
           <p class="text-small text-ink-faint">{{ labels[f.fieldKey] || f.fieldKey }}<template v-if="fileSize(f.size)"> · {{ fileSize(f.size) }}</template></p>
         </div>
-        <a v-if="f.url" :href="f.url" target="_blank" rel="noopener" class="inline-flex h-8 items-center gap-1.5 rounded-control border border-line-strong px-3 text-small text-ink hover:bg-white/4"><OpIcon name="download" :size="14" /> Open</a>
+        <a v-if="f.url" :href="f.url" target="_blank" rel="noopener" class="inline-flex h-8 items-center gap-1.5 rounded-control border border-line-strong px-3 text-small text-ink hover:bg-ink/4"><OpIcon name="download" :size="14" /> Open</a>
       </li>
     </ul>
   </section>

@@ -59,7 +59,7 @@ defineExpose({ scrollToFirstError });
       </div>
       <div class="grid gap-4 sm:grid-cols-2">
         <div v-for="f in s.fields" :key="f.id" :class="['min-w-0', ['longtext', 'multiselect', 'checklist', 'file', 'signature', 'group'].includes(f.type) && 'sm:col-span-2']">
-          <span v-if="f.internal && audience !== 'public'" class="mb-1 inline-block rounded-full border border-line px-2 py-px font-mono text-label uppercase text-ink-faint">Internal</span>
+          <span v-if="f.internal && audience !== 'public'" class="mb-1 inline-block rounded-full border border-line px-2 py-px text-label uppercase text-ink-faint">Internal</span>
           <FormField
             :field="f"
             :model-value="values[f.key]"

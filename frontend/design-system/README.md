@@ -1,8 +1,6 @@
 # paprcraft design system
 
-Shared tokens and Vue components for the paprcraft frontends, built on Tailwind CSS v4. Visual
-direction: "Obsidian Telemetry" (dark canvas `#090d16`, accent `#00f0ff`), inherited from the
-reference project (othpulse). Re-skin it in `theme.css` when paprcraft gets its own look.
+Shared tokens and Vue components for the paprcraft frontends, built on Tailwind CSS v4. Colours and shapes are constants in `tokens.css` (see below).
 
 Preview every token and component in dev: `cd frontend/landing && yarn dev`, then open
 `https://localhost:6200/design-system.html`.
@@ -25,40 +23,55 @@ resolve: {
 server: { fs: { allow: ['..'] } },
 ```
 
-Load the fonts in `index.html`: Geist (400, 500, 600) and JetBrains Mono (400, 500, 600) from Google Fonts.
+Load the fonts in `index.html`: Plus Jakarta Sans (400, 500, 600, 700) and JetBrains Mono (400, 500, 600) from Google Fonts.
+
+## Colours are constants: `tokens.css`
+
+All raw colour values live in **one file, `tokens.css`**, as `--palette-*` steps (slate, mint, lemon, sky, red), the label colours (`--label-*`) and shape/shadow constants. `theme.css` imports it and maps *roles* (`--color-primary`, `--color-ink`, ...) onto those steps. Components only ever use roles through Tailwind utilities (`bg-primary`, `text-ink`, `border-line`), so:
+
+- **To change a colour**, edit one value in `tokens.css` (for example `--palette-mint-600`).
+- **To change which step a role uses**, edit that role in `theme.css`.
+- No component, view or app stylesheet contains a hex colour. Exceptions that cannot use CSS variables: the static `favicon.svg` files, the Google logo, and the e-mail templates (`backend/api/src/emails/email.layout.js`, `BRAND`), which carry a copy of the brand values and say so.
+- `landing/design-system.html` (dev only: `cd frontend/landing && yarn dev`) shows every palette step and role with the live value read from the CSS, so it cannot drift.
+
+Look: "Paprcraft System" (Precision Modernism): light slate canvas, Fresh Mint primary, Sunny Lemon accents, sky tertiary, hairline borders, tinted shadows.
 
 ## Tokens (`theme.css`)
 
-`theme.css` resets Tailwind's default palette, so only these colours exist.
+`theme.css` resets Tailwind's default palette (and keeps every role available with `@theme static`), so only these colours exist.
 
 | Group | Utilities | Use |
 | --- | --- | --- |
-| Surfaces | `bg-canvas`, `bg-sunken`, `bg-surface-1/2/3`, `bg-surface-hover` | Page → section → card → overlay. `sunken` for inputs and code wells. |
-| Lines | `border-line-faint/soft/line/strong` | Always white at low alpha, never solid grey. |
-| Text | `text-ink`, `text-ink-muted`, `text-ink-faint`, `text-ink-inverse` | Body, secondary, captions; inverse sits on cyan. |
-| Accents | `cyan`, `cyan-dim`, `cyan-soft`, `violet`, `violet-soft` | Cyan = live signal and primary action. Violet = secondary, tags. |
-| Status | `ok`, `warn`, `down` (+ `-soft`) | The only colours that mean up / degraded / down. |
-| Status tints | `status-ok`, `status-warn`, `status-down`, `status-info` | Text + 8-12% fill + border in one class. Add `border`. |
-| Type | `text-display`, `text-h1/h2/h3`, `text-body-lg`, `text-body`, `text-small`, `text-label` | Sizes carry their own line height, tracking and weight. |
-| Fonts | `font-sans` (Geist), `font-mono` (JetBrains Mono) | Mono for numbers, status codes, URLs, region codes and labels. Mono is always tabular. |
-| Radii | `rounded-control` (4), `rounded-card` (8), `rounded-sheet` (12) | Controls / cards / sheets and large panels. |
-| Depth | `shadow-rim`, `shadow-glow`, `shadow-glow-sm`, `shadow-down` | Rim glows instead of drop shadows. |
-| Motion | `animate-live`, `animate-trace` | Live-dot ping, moving pulse trace. Off under reduced motion. |
-| Other | `eyebrow` | Mono uppercase cyan label above section headings. |
+| Surfaces | `bg-canvas`, `bg-sunken`, `bg-surface-1/2/3`, `bg-surface-hover` | Page (slate-50) → white panels and cards → tinted wells. Inputs and dialogs are `surface-1` (white). |
+| Lines | `border-line-faint/soft/line/strong` | Slate hairlines: `line` for cards, `line-strong` for inputs and popovers. |
+| Text | `text-ink`, `text-ink-muted`, `text-ink-faint`, `text-ink-disabled`, `text-ink-inverse` | Body, secondary, captions, placeholders/disabled; inverse sits on mint. `ink-faint` is slate-500 (readable); the spec's slate-400 is `ink-disabled`. |
+| Primary (mint) | `primary`, `primary-hover`, `primary-active`, `primary-text`, `primary-bright`, `primary-soft`, `primary-edge`, `primary-ink` | Actions, success, focus. Use `primary-text` for small text and links (darker for contrast). |
+| Secondary (lemon) | `secondary`, `secondary-bright`, `secondary-soft`, `secondary-edge`, `secondary-line`, `secondary-ink`, `secondary-text` | Notices, tags, versions. Never a primary button. |
+| Tertiary (sky) | `tertiary`, `tertiary-soft`, `tertiary-edge`, `tertiary-ink` | Links, metadata, information. |
+| Status | `ok`, `warn`, `down` (+ `-soft`, `down-bg/edge/ink`) | The only colours that mean up / degraded / down. |
+| Chips | `status-ok`, `status-warn`, `status-down`, `status-info`, `status-neutral` | Text + tint + border in one class. Add `border rounded-full`. |
+| Code | `bg-code`, `text-code-ink` | Dark slate wells for snippets, with mint and lemon highlights. |
+| Type | `text-display`, `text-h1/h2/h3`, `text-body-lg`, `text-body`, `text-small`, `text-label` | Sizes carry their own line height, tracking and weight (display 40/700, h1 32/600, h2 22, h3 18, body 14, label 11/600). |
+| Fonts | `font-sans` (Plus Jakarta Sans), `font-mono` (JetBrains Mono) | Mono for code, ids and timestamps only. Mono is always tabular. |
+| Radii | `rounded-control` (8), `rounded-card` (16), `rounded-sheet` (24), `rounded-full` | Controls / cards / sheets. Pills only for chips, tags and badges. |
+| Depth | `shadow-rim`, `shadow-pop`, `shadow-modal`, `shadow-lift`, `shadow-glow`, `shadow-glow-sm`, `shadow-ring`, `shadow-down` | Level 1 cards use a hairline; pop = menus, modal = dialogs, glow = the main mint action. |
+| Motion | `animate-live`, `animate-trace` | Live-dot ping. Off under reduced motion. |
+| Other | `eyebrow` | Small uppercase mint label above section headings. |
 
 ## Rules
 
-- Dark only. Body sets `color-scheme: dark`.
-- Fully rounded shapes only for status badges and live dots.
-- Status colours only for status. Decoration uses cyan or violet.
+- Light only. Body sets `color-scheme: light`.
+- Fully rounded shapes only for chips, tags and live dots.
+- Status colours only for status. Lemon is a disciplined accent (tags, notices), never a primary button.
 - One `shadow-glow` element per view (the main call to action).
+- Text controls get one shared focus ring (mint border plus a soft halo), set globally in `theme.css`.
 - Icons are inline SVG via `OpIcon`; add new ones to its `icons` map (24 grid, 1.75 stroke).
 
 ## Components (`components/`)
 
 | Component | Props |
 | --- | --- |
-| `OpButton` | `variant` primary/secondary/ghost/destructive, `size` sm/md/lg, `href` (renders `<a>`), `icon`, `iconRight`, `block` |
+| `OpButton` | `variant` primary/secondary/ghost/accent/destructive, `size` sm/md/lg, `href` (renders `<a>`), `icon`, `iconRight`, `block` |
 | `OpIcon` | `name`, `size`, `label` (omit for decorative) |
 | `OpStatusBadge` | `status` ok/warn/down/info, `live` |
 | `OpLogo` | `size`, `wordmark` (placeholder mark until the real logo exists) |

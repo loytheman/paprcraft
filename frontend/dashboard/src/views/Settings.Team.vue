@@ -106,7 +106,7 @@ const leave = async () => {
 
     <template v-else>
       <!-- Teams need Pro -->
-      <section v-if="!team.available && isOwner" class="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-sheet border border-cyan/30 bg-cyan/5 p-5">
+      <section v-if="!team.available && isOwner" class="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-sheet border border-primary/30 bg-primary/5 p-5">
         <div class="max-w-lg">
           <h2 class="text-h3 text-ink">Team members are on Pro</h2>
           <p class="mt-1 text-small text-ink-muted">Invite up to 4 people, so 5 including you, as Members or Viewers. (Billing isn't set up yet: staff can switch an account to Pro.)<template v-if="team.members.length"> Your current team keeps its place, but can't use the account until you're on Pro again.</template></p>
@@ -131,7 +131,7 @@ const leave = async () => {
               type="button"
               role="radio"
               :aria-checked="form.role === r.value"
-              :class="['rounded-control border px-3 py-2 text-left transition-colors', form.role === r.value ? 'border-cyan bg-cyan/10' : 'border-line hover:border-line-strong']"
+              :class="['rounded-control border px-3 py-2 text-left transition-colors', form.role === r.value ? 'border-primary bg-primary/10' : 'border-line hover:border-line-strong']"
               @click="form.role = r.value"
             >
               <span class="block text-body text-ink">{{ r.label }}</span>
@@ -166,7 +166,7 @@ const leave = async () => {
                 :value="m.role"
                 :disabled="!!busy"
                 :aria-label="`Role for ${m.email}`"
-                class="rounded-control border border-line bg-surface-1 px-2.5 py-1.5 text-small text-ink focus:border-cyan/60 focus:outline-none"
+                class="rounded-control border border-line bg-surface-1 px-2.5 py-1.5 text-small text-ink focus:border-primary/60 focus:outline-none"
                 @change="changeRole(m, $event.target.value)"
               >
                 <option v-for="r in ROLES" :key="r.value" :value="r.value" class="bg-surface-2">{{ r.label }}</option>

@@ -52,7 +52,7 @@ const templateOptions = () => {
       <div class="space-y-4 rounded-card border border-line bg-surface-2 p-4">
         <p class="eyebrow">Customer link</p>
         <label class="flex items-start gap-2 text-body text-ink">
-          <input type="checkbox" class="mt-0.5 size-4 accent-cyan" :checked="!!settings().publicEnabled" @change="settings().publicEnabled = $event.target.checked" />
+          <input type="checkbox" class="mt-0.5 size-4 accent-primary" :checked="!!settings().publicEnabled" @change="settings().publicEnabled = $event.target.checked" />
           <span>Let customers fill this form through a link<span class="block text-small text-ink-faint">Turns on "Share link" on submissions. Fields marked "Officer use only" are never shown.</span></span>
         </label>
         <OpInput :model-value="settings().publicTitle ?? ''" label="Heading on the link page" hint="Defaults to the submission's title." @update:model-value="setText('publicTitle', $event)" />
@@ -61,7 +61,7 @@ const templateOptions = () => {
       </div>
 
       <label class="flex items-start gap-2 text-body text-ink">
-        <input type="checkbox" class="mt-0.5 size-4 accent-cyan" :checked="!!settings().requireApprovedToExport" @change="settings().requireApprovedToExport = $event.target.checked" />
+        <input type="checkbox" class="mt-0.5 size-4 accent-primary" :checked="!!settings().requireApprovedToExport" @change="settings().requireApprovedToExport = $event.target.checked" />
         <span>Only approved submissions can be exported<span class="block text-small text-ink-faint">Generating the document waits until a submission is approved.</span></span>
       </label>
 

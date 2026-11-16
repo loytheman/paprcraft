@@ -1,7 +1,7 @@
 // "Your Paprcraft account is closed": sent once an account has been closed, by its owner from
 // Settings > Account or by Paprcraft staff (service.accountClosure.js). Says what was deleted, that
 // a paid plan ended without a refund, and what is kept.
-import { brandedEmail, escapeHtml, para } from "./email.layout.js";
+import { brandedEmail, escapeHtml, para, BRAND } from "./email.layout.js";
 
 // counts = { labels, ... }: what was deleted, one entry per record type (add yours below); hadPlan: a paid plan was cancelled.
 export const accountClosedEmail = ({ firstName, counts, hadPlan, byStaff }) => {
@@ -24,7 +24,7 @@ export const accountClosedEmail = ({ firstName, counts, hadPlan, byStaff }) => {
   const text = [hello, "", opening, "", ...lines.flatMap((l) => [l, ""]), "Thanks for using Paprcraft."].join("\n");
   const html = brandedEmail({
     title: "Your account is closed",
-    accent: "#475569",
+    accent: BRAND.neutral,
     bodyHtml: [hello, opening, ...lines, "Thanks for using Paprcraft."].map((l) => para(escapeHtml(l))).join("\n"),
     footerNote: "Sent by Paprcraft about your account.",
   });

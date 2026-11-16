@@ -1,7 +1,7 @@
 <script setup>
 // Modal confirmation on the native <dialog>, which supplies the focus trap, Esc and focus return.
 // Cancel takes the initial focus so a stray Enter can't confirm a destructive action.
-// tone: destructive (red, for deletes) | primary (cyan, for a next step such as upgrading).
+// tone: destructive (red, for deletes) | primary (mint, for a next step such as upgrading).
 import { ref, watchPostEffect } from 'vue';
 import OpButton from './OpButton.vue';
 import OpIcon from './OpIcon.vue';
@@ -36,12 +36,12 @@ watchPostEffect(() => {
     ref="dialog"
     aria-labelledby="op-confirm-title"
     aria-describedby="op-confirm-message"
-    class="m-auto w-[calc(100%-2rem)] max-w-md rounded-sheet border border-cyan/25 bg-surface-3 p-0 text-ink shadow-rim transition-opacity duration-150 backdrop:bg-black/60 starting:open:opacity-0 motion-reduce:transition-none"
+    class="m-auto w-[calc(100%-2rem)] max-w-md rounded-sheet border border-line-strong bg-surface-1 p-0 text-ink shadow-modal transition-opacity duration-150 backdrop:bg-ink/40 starting:open:opacity-0 motion-reduce:transition-none"
     @cancel.prevent="emit('cancel')"
     @click.self="emit('cancel')"
   >
     <div class="flex gap-4 p-5">
-      <span :class="['flex size-10 shrink-0 items-center justify-center rounded-control border', tone === 'primary' ? 'border-cyan/40 bg-cyan/10 text-cyan' : 'status-down']">
+      <span :class="['flex size-10 shrink-0 items-center justify-center rounded-control border', tone === 'primary' ? 'border-primary-edge bg-primary-soft text-primary-text' : 'status-down']">
         <OpIcon :name="icon" :size="18" />
       </span>
       <div class="min-w-0">

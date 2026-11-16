@@ -97,7 +97,7 @@ const create = async () => {
       <ul v-else>
         <li v-for="s in shown" :key="s.id" class="flex flex-wrap items-center justify-between gap-3 border-b border-line-faint px-5 py-3 last:border-b-0">
           <div class="min-w-0">
-            <RouterLink :to="{ name: 'submission', params: { id: s.id } }" class="text-body font-medium text-ink hover:text-cyan">{{ submissionTitle(s) }}</RouterLink>
+            <RouterLink :to="{ name: 'submission', params: { id: s.id } }" class="text-body font-medium text-ink hover:text-primary-active">{{ submissionTitle(s) }}</RouterLink>
             <p class="text-small text-ink-faint">
               {{ s.formName }}
               <template v-if="s.submittedAt"> · submitted {{ formatDateTime(s.submittedAt) }}<template v-if="actorName(s.submittedBy)"> by {{ actorName(s.submittedBy) }}</template></template>

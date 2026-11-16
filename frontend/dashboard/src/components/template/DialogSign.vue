@@ -60,7 +60,7 @@ defineExpose({ open });
     <fieldset class="space-y-1.5">
       <legend class="mb-1 text-small font-medium text-ink-muted">Layout</legend>
       <label v-for="t in TYPES" :key="t.value" class="flex cursor-pointer items-center gap-2 text-body text-ink-muted">
-        <input v-model="type" type="radio" :value="t.value" class="accent-cyan" @change="onType" /> {{ t.label }}
+        <input v-model="type" type="radio" :value="t.value" class="accent-primary" @change="onType" /> {{ t.label }}
       </label>
     </fieldset>
 

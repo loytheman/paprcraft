@@ -89,7 +89,7 @@ const STATUS = { processing: 'Processing…', completed: 'Ready', failed: 'Faile
           <span class="ml-2 text-small text-ink-faint">{{ formatDateTime(h.createdAt) }}<template v-if="h.createdBy"> · {{ h.createdBy.name || h.createdBy.email }}</template></span>
           <p v-if="h.error" class="text-small text-down">{{ h.error }}</p>
         </div>
-        <a v-if="h.url" :href="h.url" download class="inline-flex h-8 items-center gap-1.5 rounded-control border border-line-strong px-3 text-small text-ink hover:bg-white/4"><OpIcon name="download" :size="14" /> Download</a>
+        <a v-if="h.url" :href="h.url" download class="inline-flex h-8 items-center gap-1.5 rounded-control border border-line-strong px-3 text-small text-ink hover:bg-ink/4"><OpIcon name="download" :size="14" /> Download</a>
         <span v-else-if="h.processStatus === 'processing'" class="text-small text-ink-faint">Checking again in a few seconds…</span>
       </li>
     </ul>

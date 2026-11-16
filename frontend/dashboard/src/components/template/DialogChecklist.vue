@@ -44,7 +44,7 @@ const save = () => {
   target.value.item = { ...target.value.item, ...cleanChecklist(draft) };
   visible.value = false;
 };
-const selectCls = 'h-9 w-full rounded-control border border-line bg-sunken px-2 text-body text-ink focus:border-cyan focus:outline-none';
+const selectCls = 'h-9 w-full rounded-control border border-line bg-surface-1 px-2 text-body text-ink focus:border-primary focus:outline-none';
 defineExpose({ open });
 </script>
 
@@ -69,14 +69,14 @@ defineExpose({ open });
     <ol class="mt-4 space-y-2">
       <li v-for="(r, i) in draft.rows" :key="i" class="rounded-card border border-line bg-surface-2 p-2.5">
         <div class="flex items-center justify-between gap-2">
-          <p class="font-mono text-label uppercase text-ink-faint">Question {{ i + 1 }}</p>
+          <p class="text-label uppercase text-ink-faint">Question {{ i + 1 }}</p>
           <div class="flex items-center gap-1">
             <OpButton variant="ghost" size="sm" :disabled="i === 0" aria-label="Move up" @click="moveItem(draft.rows, i, i - 1)"><OpIcon name="arrow-left" :size="14" class="rotate-90" /></OpButton>
             <OpButton variant="ghost" size="sm" :disabled="i === draft.rows.length - 1" aria-label="Move down" @click="moveItem(draft.rows, i, i + 1)"><OpIcon name="arrow-right" :size="14" class="rotate-90" /></OpButton>
             <OpButton variant="ghost" size="sm" aria-label="Delete question" @click="draft.rows.splice(i, 1)"><OpIcon name="trash" :size="14" /></OpButton>
           </div>
         </div>
-        <textarea v-model="r.text" rows="2" :aria-label="`Question ${i + 1} text`" placeholder="The question as printed" class="mt-1 w-full rounded-control border border-line bg-sunken px-3 py-1.5 text-body text-ink placeholder:text-ink-faint focus:border-cyan focus:outline-none" />
+        <textarea v-model="r.text" rows="2" :aria-label="`Question ${i + 1} text`" placeholder="The question as printed" class="mt-1 w-full rounded-control border border-line bg-surface-1 px-3 py-1.5 text-body text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none" />
         <label class="mt-1.5 block text-small text-ink-muted">Shows the answer of
           <select :value="choice(r)" :class="[selectCls, 'mt-0.5']" :aria-label="`Answer for question ${i + 1}`" @change="choose(r, $event.target.value)">
             <option value="">Choose a checklist answer…</option>

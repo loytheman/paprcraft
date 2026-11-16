@@ -109,7 +109,7 @@ const STATUS = { processing: 'Processing…', completed: 'Ready', failed: 'Faile
           <p v-if="h.createdBy" class="mt-0.5 text-small text-ink-faint">{{ h.createdBy.name || h.createdBy.email }}</p>
           <p v-if="h.error" class="mt-1 text-small text-down">{{ h.error }}</p>
           <div class="mt-2 flex items-center gap-2">
-            <a v-if="h.url" :href="h.url" download class="inline-flex h-8 items-center gap-1.5 rounded-control border border-line-strong px-3 text-small text-ink hover:bg-white/4"><OpIcon name="download" :size="14" /> Download</a>
+            <a v-if="h.url" :href="h.url" download class="inline-flex h-8 items-center gap-1.5 rounded-control border border-line-strong px-3 text-small text-ink hover:bg-ink/4"><OpIcon name="download" :size="14" /> Download</a>
             <span v-else-if="h.processStatus === 'processing'" class="text-small text-ink-faint">Checking again in a few seconds…</span>
             <OpButton v-if="!readonly" size="sm" variant="ghost" aria-label="Delete export" class="ml-auto" @click="remove(h)"><OpIcon name="trash" :size="14" /></OpButton>
           </div>

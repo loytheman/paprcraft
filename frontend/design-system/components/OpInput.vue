@@ -17,7 +17,7 @@ const id = useId();
 
 <template>
   <div class="flex flex-col gap-1.5">
-    <label :for="id" class="text-small font-medium text-ink-muted">{{ label }}<span v-if="required" class="text-cyan"> *</span></label>
+    <label :for="id" class="text-small font-medium text-ink-muted">{{ label }}<span v-if="required" class="text-primary-text"> *</span></label>
     <input
       :id="id"
       v-model="model"
@@ -27,8 +27,8 @@ const id = useId();
       :aria-invalid="!!error"
       :aria-describedby="error || hint ? `${id}-help` : undefined"
       :class="[
-        'h-10 rounded-control border bg-sunken px-3 text-body text-ink placeholder:text-ink-faint focus:border-cyan focus:outline-none',
-        error ? 'border-down' : 'border-line',
+        'h-10 rounded-control border bg-surface-1 px-3 text-body text-ink placeholder:text-ink-faint focus:border-primary focus:shadow-ring focus:outline-none',
+        error ? 'border-down-soft focus:border-down-soft focus:shadow-down' : 'border-line-strong',
         mono && 'font-mono',
       ]"
     />

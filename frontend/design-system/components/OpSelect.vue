@@ -21,8 +21,8 @@ const id = useId();
         v-model="model"
         :aria-invalid="!!error"
         :class="[
-          'h-10 w-full appearance-none rounded-control border bg-sunken pr-9 pl-3 text-body text-ink focus:border-cyan focus:outline-none',
-          error ? 'border-down' : 'border-line',
+          'h-10 w-full appearance-none rounded-control border bg-surface-1 pr-9 pl-3 text-body text-ink focus:border-primary focus:shadow-ring focus:outline-none',
+          error ? 'border-down-soft focus:border-down-soft focus:shadow-down' : 'border-line-strong',
         ]"
       >
         <option v-for="o in options" :key="o.value" :value="o.value" class="bg-surface-2">{{ o.label }}</option>

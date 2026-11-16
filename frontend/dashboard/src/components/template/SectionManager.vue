@@ -30,7 +30,7 @@ const onDrop = (to) => {
         v-for="(s, i) in sections"
         :key="i"
         class="flex flex-wrap items-center gap-2 rounded-card border bg-surface-2 px-3 py-2"
-        :class="i === current ? 'border-cyan/60' : 'border-line'"
+        :class="i === current ? 'border-primary/60' : 'border-line'"
         @dragover.prevent
         @drop.prevent="onDrop(i)"
       >
@@ -39,10 +39,10 @@ const onDrop = (to) => {
         <input
           v-model="s.name"
           :readonly="readonly"
-          class="min-w-0 flex-1 rounded-control border border-transparent bg-transparent px-2 py-1 text-body text-ink hover:border-line focus:border-cyan focus:outline-none"
+          class="min-w-0 flex-1 rounded-control border border-transparent bg-transparent px-2 py-1 text-body text-ink hover:border-line focus:border-primary focus:outline-none"
           :aria-label="`Name of section ${i + 1}`"
         />
-        <span class="font-mono text-label text-ink-faint">{{ counts(s).replaced }}/{{ counts(s).total }} placeholders</span>
+        <span class="text-label text-ink-faint">{{ counts(s).replaced }}/{{ counts(s).total }} placeholders</span>
         <OpButton size="sm" :variant="i === current ? 'primary' : 'secondary'" @click="emit('select', i)">{{ i === current ? 'Open' : 'Go to' }}</OpButton>
         <template v-if="!readonly">
           <OpButton size="sm" variant="ghost" :disabled="i === 0" aria-label="Move up" @click="emit('move', i, i - 1)"><OpIcon name="arrow-left" :size="14" class="rotate-90" /></OpButton>

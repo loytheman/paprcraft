@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <div aria-hidden="true" class="animate-pulse rounded-control bg-white/6 motion-reduce:animate-none" />
+  <div aria-hidden="true" class="animate-pulse rounded-control bg-ink/6 motion-reduce:animate-none" />
 </template>

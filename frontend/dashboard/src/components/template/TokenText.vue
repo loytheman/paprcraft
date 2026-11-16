@@ -22,7 +22,7 @@ const parts = computed(() => {
   <span v-if="!parts.length" class="text-ink-faint italic">{{ empty }}</span>
   <template v-else>
     <template v-for="(p, i) in parts" :key="i">
-      <span v-if="p.token" class="mx-0.5 inline-block rounded-full border border-cyan/40 bg-cyan/10 px-1.5 font-mono text-[0.7rem] leading-5 text-cyan">{{ p.token }}</span>
+      <span v-if="p.token" class="mx-0.5 inline-block rounded-full border border-primary/40 bg-primary/10 px-1.5 font-mono text-[0.7rem] leading-5 text-primary-text">{{ p.token }}</span>
       <template v-else>{{ p.t }}</template>
     </template>
   </template>

@@ -78,7 +78,7 @@ const revoke = async () => {
   <section class="rounded-sheet border border-line bg-surface-2 p-5" aria-label="Customer link">
     <div class="flex flex-wrap items-center justify-between gap-2">
       <h2 class="text-h3 text-ink">Customer link</h2>
-      <span class="font-mono text-label uppercase" :class="{ 'text-ok': state.kind === 'active', 'text-ink-faint': state.kind === 'none', 'text-warn': state.kind === 'expired', 'text-cyan': state.kind === 'used' }">{{ state.kind === 'none' ? 'Off' : state.kind }}</span>
+      <span class="text-label uppercase" :class="{ 'text-ok': state.kind === 'active', 'text-ink-faint': state.kind === 'none', 'text-warn': state.kind === 'expired', 'text-primary-text': state.kind === 'used' }">{{ state.kind === 'none' ? 'Off' : state.kind }}</span>
     </div>
     <p class="mt-1 text-body text-ink-muted">Send the customer a private link so they can fill in and sign this form themselves. They never see the fields marked for officer use.</p>
     <p class="mt-3 text-small text-ink-faint">{{ state.text }}</p>

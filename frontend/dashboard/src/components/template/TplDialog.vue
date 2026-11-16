@@ -24,7 +24,7 @@ watchPostEffect(() => {
   <dialog
     ref="dialog"
     :aria-label="title"
-    :class="['m-auto max-h-[90dvh] w-[calc(100%-2rem)] overflow-visible rounded-sheet border border-cyan/25 bg-surface-3 p-0 text-ink shadow-rim backdrop:bg-black/60', wide ? 'max-w-3xl' : 'max-w-lg']"
+    :class="['m-auto max-h-[90dvh] w-[calc(100%-2rem)] overflow-visible rounded-sheet border border-line-strong bg-surface-1 p-0 text-ink shadow-modal backdrop:bg-ink/40', wide ? 'max-w-3xl' : 'max-w-lg']"
     @cancel.prevent="emit('close')"
     @click.self="emit('close')"
   >

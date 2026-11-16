@@ -20,7 +20,7 @@ const setLabel = (o, label) => {
 const add = () => props.options.push(newOption(props.options));
 const remove = (i) => { if (props.options.length > 1) props.options.splice(i, 1); };
 const dupes = (o) => props.options.filter((x) => x.value === o.value).length > 1;
-const cls = 'h-9 min-w-0 rounded-control border bg-sunken px-2 text-small text-ink focus:border-cyan focus:outline-none disabled:opacity-60';
+const cls = 'h-9 min-w-0 rounded-control border bg-surface-1 px-2 text-small text-ink focus:border-primary focus:outline-none disabled:opacity-60';
 </script>
 
 <template>

@@ -67,7 +67,7 @@ const billingTone = (c) => {
 
 <template>
   <div>
-    <p class="eyebrow !text-violet-soft">Staff</p>
+    <p class="eyebrow !text-tertiary">Staff</p>
     <h1 class="mt-2 text-h2 text-ink">Customers</h1>
     <p class="mt-2 max-w-2xl text-body text-ink-muted">
       Every Paprcraft account. Open one to make it complimentary, change its limits, suspend it, or read its activity.
@@ -80,7 +80,7 @@ const billingTone = (c) => {
       <label class="relative block w-full max-w-sm">
         <span class="sr-only">Search customers</span>
         <OpIcon name="radar" :size="16" class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-faint" />
-        <input v-model="q" type="search" placeholder="Search by email, name or account id" class="w-full rounded-control border border-line bg-surface-1 py-2 pr-3 pl-9 text-body text-ink placeholder:text-ink-faint focus:border-cyan/60 focus:outline-none" />
+        <input v-model="q" type="search" placeholder="Search by email, name or account id" class="w-full rounded-control border border-line bg-surface-1 py-2 pr-3 pl-9 text-body text-ink placeholder:text-ink-faint focus:border-primary/60 focus:outline-none" />
       </label>
     </div>
 
@@ -90,7 +90,7 @@ const billingTone = (c) => {
         :key="f.key"
         type="button"
         :aria-pressed="filter === f.key"
-        :class="['rounded-full border px-3 py-1 text-small transition-colors', filter === f.key ? 'border-violet/50 bg-violet/10 text-ink' : 'border-line text-ink-muted hover:border-line-strong hover:text-ink']"
+        :class="['rounded-full border px-3 py-1 text-small transition-colors', filter === f.key ? 'border-tertiary/50 bg-tertiary/10 text-ink' : 'border-line text-ink-muted hover:border-line-strong hover:text-ink']"
         @click="filter = f.key"
       >
         {{ f.label }}<span v-if="f.key && result?.counts" class="ml-1.5 font-mono text-[11px] text-ink-faint">{{ result.counts[f.key] }}</span>
@@ -105,7 +105,7 @@ const billingTone = (c) => {
       <div v-else class="mt-6 overflow-x-auto rounded-sheet border border-line bg-surface-2">
         <table class="w-full min-w-[44rem] text-left">
           <thead>
-            <tr class="border-b border-line font-mono text-label uppercase text-ink-faint">
+            <tr class="border-b border-line text-label uppercase text-ink-faint">
               <th class="px-4 py-3 font-medium">Customer</th>
               <th class="px-4 py-3 font-medium">Plan</th>
               <th class="px-4 py-3 font-medium">Labels</th>
@@ -114,18 +114,18 @@ const billingTone = (c) => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="c in rows" :key="c.id" class="border-b border-line-faint last:border-b-0 hover:bg-white/2">
+            <tr v-for="c in rows" :key="c.id" class="border-b border-line-faint last:border-b-0 hover:bg-ink/2">
               <td class="px-4 py-3">
                 <RouterLink :to="{ name: 'staff-customer', params: { id: c.id } }" class="block min-w-0">
-                  <span class="block truncate text-body font-medium text-ink hover:text-cyan">{{ c.name || c.email }}</span>
+                  <span class="block truncate text-body font-medium text-ink hover:text-primary-active">{{ c.name || c.email }}</span>
                   <span v-if="c.name" class="block truncate text-small text-ink-faint">{{ c.email }}</span>
                 </RouterLink>
               </td>
               <td class="px-4 py-3">
                 <div class="flex flex-wrap items-center gap-1.5">
                   <span class="text-body text-ink">{{ PLAN_NAME[c.plan] ?? c.plan }}</span>
-                  <span v-if="c.complimentary" class="rounded-full border border-violet/40 px-1.5 font-mono text-[10px] uppercase text-violet-soft">Comp</span>
-                  <span v-if="c.customLimits" class="rounded-full border border-cyan/40 px-1.5 font-mono text-[10px] uppercase text-cyan">Custom</span>
+                  <span v-if="c.complimentary" class="rounded-full border border-tertiary/40 px-1.5 font-mono text-[10px] uppercase text-tertiary">Comp</span>
+                  <span v-if="c.customLimits" class="rounded-full border border-primary/40 px-1.5 font-mono text-[10px] uppercase text-primary-text">Custom</span>
                   <span v-if="c.staff" class="rounded-full border border-line px-1.5 font-mono text-[10px] uppercase text-ink-muted">Staff</span>
                   <span v-if="billingTone(c)" :class="['rounded-full border px-1.5 font-mono text-[10px] uppercase', billingTone(c).cls]">{{ billingTone(c).text }}</span>
                 </div>

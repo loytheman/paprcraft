@@ -55,7 +55,7 @@ const toText = () => {
       :readonly="readonly"
       placeholder="Value"
       aria-label="Value"
-      class="mt-2 h-9 w-full rounded-control border border-line bg-sunken px-3 text-body text-ink placeholder:text-ink-faint focus:border-cyan focus:outline-none"
+      class="mt-2 h-9 w-full rounded-control border border-line bg-surface-1 px-3 text-body text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none"
       @keydown.enter.prevent="close"
     />
     <div class="mt-2 flex justify-between gap-2">

@@ -28,11 +28,11 @@ const NAMES = {
       <OpIcon v-if="editable" name="pencil" :size="12" />
     </div>
 
-    <div v-if="block.type === 'page-break'" class="border-t border-dashed border-line-strong pt-1 text-center font-mono text-label uppercase text-ink-faint">next page</div>
+    <div v-if="block.type === 'page-break'" class="border-t border-dashed border-line-strong pt-1 text-center text-label uppercase text-ink-faint">next page</div>
 
     <div v-else-if="block.type === 'page-break-02'" class="text-small text-ink-muted">
       <p class="text-right">.../{{ d.footerPageNo || '2' }}</p>
-      <p class="border-y border-dashed border-line-strong py-1 text-center font-mono text-label uppercase text-ink-faint">next page</p>
+      <p class="border-y border-dashed border-line-strong py-1 text-center text-label uppercase text-ink-faint">next page</p>
       <p class="text-center">-{{ d.headerPageNo || '2' }}-</p>
     </div>
 

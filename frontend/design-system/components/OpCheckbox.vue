@@ -21,7 +21,7 @@ const id = useId();
         type="checkbox"
         :disabled="disabled"
         :aria-invalid="!!error"
-        class="mt-[3px] size-4 shrink-0 accent-cyan"
+        class="mt-[3px] size-4 shrink-0 accent-primary"
       />
       <span><slot>{{ label }}</slot></span>
     </label>

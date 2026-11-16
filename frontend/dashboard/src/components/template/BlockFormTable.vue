@@ -23,9 +23,9 @@ const open = () => { if (!ctx.readonly) ctx.openDialog('formTable', props.block)
       <span v-if="problems.length" class="ml-1 text-warn" :title="problems.join('\n')">needs attention ({{ problems.length }})</span>
     </div>
     <div class="overflow-hidden rounded-control border border-line-strong text-body">
-      <div class="border-b border-line-strong bg-white/8 px-3 py-1.5 font-medium text-ink">{{ block.item?.title || 'Untitled' }}</div>
+      <div class="border-b border-line-strong bg-ink/8 px-3 py-1.5 font-medium text-ink">{{ block.item?.title || 'Untitled' }}</div>
       <div v-for="(row, i) in rows" :key="i" class="border-b border-line last:border-b-0">
-        <div v-if="row.repeat" class="border-b border-dashed border-violet/40 bg-violet/5 px-3 py-0.5 font-mono text-label uppercase text-violet-soft">repeats for each row of {{ row.repeat }}</div>
+        <div v-if="row.repeat" class="border-b border-dashed border-tertiary/40 bg-tertiary/5 px-3 py-0.5 text-label uppercase text-tertiary">repeats for each row of {{ row.repeat }}</div>
         <div v-if="row.stack" class="px-3 py-1.5">
           <div v-for="(c, j) in row.cells" :key="j" class="mb-1 last:mb-0">
             <p v-if="c.head" class="text-small text-ink-faint"><TokenText :text="c.value" /></p>

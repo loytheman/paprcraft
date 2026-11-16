@@ -1,6 +1,6 @@
 // Team emails (service.team.js): an invite, being removed, and access paused or restored when the
 // account leaves or rejoins Pro. Names are user text, so they're escaped (brandedEmail's helpers).
-import { brandedEmail, escapeHtml, para, button } from "./email.layout.js";
+import { brandedEmail, escapeHtml, para, button, BRAND } from "./email.layout.js";
 
 const ROLE_TEXT = {
   member: "Member: you can manage monitors, reminders, alerts, status pages and labels",
@@ -29,7 +29,7 @@ export const teamRemovedEmail = ({ accountName }) => {
   return {
     subject: `You've been removed from ${accountName} on Paprcraft`,
     text: [line, "", "Your own Paprcraft account, if you have one, isn't affected."].join("\n"),
-    html: brandedEmail({ title: "Removed from an account", accent: "#475569", bodyHtml: para(escapeHtml(line)) + para("Your own Paprcraft account, if you have one, isn't affected."), footerNote: "Sent by Paprcraft about your access." }),
+    html: brandedEmail({ title: "Removed from an account", accent: BRAND.neutral, bodyHtml: para(escapeHtml(line)) + para("Your own Paprcraft account, if you have one, isn't affected."), footerNote: "Sent by Paprcraft about your access." }),
   };
 };
 
@@ -43,7 +43,7 @@ export const teamAccessEmail = ({ accountName, paused, dashboardUrl }) => {
     text: [line, ...(paused ? [] : ["", `Open Paprcraft: ${dashboardUrl}`])].join("\n"),
     html: brandedEmail({
       title: paused ? "Access paused" : "Access restored",
-      accent: paused ? "#d97706" : "#059669",
+      accent: paused ? BRAND.warn : BRAND.primary,
       bodyHtml: para(escapeHtml(line)) + (paused ? "" : button(dashboardUrl, "Open Paprcraft")),
       footerNote: "Sent by Paprcraft about your access.",
     }),

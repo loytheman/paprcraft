@@ -29,15 +29,15 @@ const iconBtn = 'text-ink-faint hover:text-ink disabled:opacity-30';
       <li
         v-for="(f, i) in section().fields"
         :key="f.id"
-        :class="['rounded-card border bg-surface-2 p-4', isSel(i, undefined) ? 'border-cyan/60' : 'border-line hover:border-line-strong']"
+        :class="['rounded-card border bg-surface-2 p-4', isSel(i, undefined) ? 'border-primary/60' : 'border-line hover:border-line-strong']"
       >
         <div class="flex flex-wrap items-start justify-between gap-2">
           <button type="button" class="min-w-0 flex-1 text-left" @click="emit('select', { s, f: i })">
-            <span class="block truncate text-body font-medium text-ink">{{ f.label }}<span v-if="f.required" class="text-cyan"> *</span></span>
+            <span class="block truncate text-body font-medium text-ink">{{ f.label }}<span v-if="f.required" class="text-primary-text"> *</span></span>
             <span class="mt-0.5 flex flex-wrap items-center gap-1.5 text-small text-ink-faint">
-              <span class="font-mono text-label uppercase">{{ typeLabel(f.type) }}</span>
+              <span class="text-label uppercase">{{ typeLabel(f.type) }}</span>
               <span class="font-mono">{{ f.key }}</span>
-              <span v-if="f.internal" class="rounded-full border border-violet/40 px-1.5 text-label text-violet-soft">Officer only</span>
+              <span v-if="f.internal" class="rounded-full border border-tertiary/40 px-1.5 text-label text-tertiary">Officer only</span>
               <span v-if="f.sensitive" class="rounded-full border border-warn/40 px-1.5 text-label text-warn">Sensitive</span>
               <span v-if="f.visibleIf" class="rounded-full border border-line px-1.5 text-label text-ink-muted" :title="describeCondition(f.visibleIf, schema)">Conditional</span>
             </span>
@@ -67,16 +67,16 @@ const iconBtn = 'text-ink-faint hover:text-ink disabled:opacity-30';
 
         <!-- A group's own fields -->
         <div v-if="f.type === 'group' && f.group" class="mt-3 rounded-control border border-line-soft bg-surface-1 p-2">
-          <p class="px-1 pb-1 font-mono text-label uppercase text-ink-faint">Each row has</p>
+          <p class="px-1 pb-1 text-label uppercase text-ink-faint">Each row has</p>
           <ul class="space-y-1">
             <li
               v-for="(g, j) in f.group.fields"
               :key="g.id"
-              :class="['flex items-center justify-between gap-2 rounded-control border px-2 py-1', isSel(i, j) ? 'border-cyan/60 bg-surface-3' : 'border-transparent hover:bg-white/4']"
+              :class="['flex items-center justify-between gap-2 rounded-control border px-2 py-1', isSel(i, j) ? 'border-primary/60 bg-surface-3' : 'border-transparent hover:bg-ink/4']"
             >
               <button type="button" class="min-w-0 flex-1 truncate text-left text-small text-ink" @click="emit('select', { s, f: i, g: j })">
-                {{ g.label }}<span v-if="g.required" class="text-cyan"> *</span>
-                <span class="ml-1.5 font-mono text-label text-ink-faint">{{ typeLabel(g.type) }}</span>
+                {{ g.label }}<span v-if="g.required" class="text-primary-text"> *</span>
+                <span class="ml-1.5 text-label text-ink-faint">{{ typeLabel(g.type) }}</span>
                 <span v-if="g.visibleIf" class="ml-1 text-label text-ink-faint">(if)</span>
               </button>
               <template v-if="!readonly">

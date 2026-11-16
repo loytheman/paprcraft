@@ -27,7 +27,7 @@ const isField = (i, j) => props.sel.s === i && props.sel.f === j && props.sel.g 
     <p class="eyebrow">Outline</p>
     <ul class="mt-3 space-y-3">
       <li v-for="(sec, i) in schema.sections" :key="sec.id" @dragover.prevent @drop.prevent="onDrop(i)">
-        <div :class="['flex items-center gap-1 rounded-control border px-1.5 py-1', isSection(i) ? 'border-cyan/60 bg-surface-3' : 'border-transparent hover:bg-white/4']">
+        <div :class="['flex items-center gap-1 rounded-control border px-1.5 py-1', isSection(i) ? 'border-primary/60 bg-surface-3' : 'border-transparent hover:bg-ink/4']">
           <span v-if="!readonly" class="cursor-grab text-ink-faint hover:text-ink" draggable="true" title="Drag to reorder" @dragstart="dragFrom = i"><OpIcon name="menu" :size="14" /></span>
           <button type="button" class="min-w-0 flex-1 truncate text-left text-body font-medium text-ink" @click="emit('select', { s: i })">
             {{ i + 1 }}. {{ sec.title || 'Untitled section' }}<span v-if="sec.visibleIf" class="ml-1 text-small font-normal text-ink-faint" title="Shown only when a condition holds">(if)</span>
@@ -43,11 +43,11 @@ const isField = (i, j) => props.sel.s === i && props.sel.f === j && props.sel.g 
           <li v-for="(f, j) in sec.fields" :key="f.id">
             <button
               type="button"
-              :class="['flex w-full items-center justify-between gap-2 rounded-control px-2 py-1 text-left text-small', isField(i, j) || (sel.s === i && sel.f === j) ? 'bg-surface-3 text-ink' : 'text-ink-muted hover:bg-white/4 hover:text-ink']"
+              :class="['flex w-full items-center justify-between gap-2 rounded-control px-2 py-1 text-left text-small', isField(i, j) || (sel.s === i && sel.f === j) ? 'bg-surface-3 text-ink' : 'text-ink-muted hover:bg-ink/4 hover:text-ink']"
               @click="emit('select', { s: i, f: j })"
             >
               <span class="min-w-0 truncate">{{ f.label }}</span>
-              <span class="shrink-0 font-mono text-label text-ink-faint">{{ typeLabel(f.type) }}</span>
+              <span class="shrink-0 text-label text-ink-faint">{{ typeLabel(f.type) }}</span>
             </button>
           </li>
           <li v-if="!sec.fields.length" class="px-2 py-1 text-small text-ink-faint">No fields yet</li>

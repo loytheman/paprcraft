@@ -60,7 +60,7 @@ defineExpose({ open });
     <fieldset class="space-y-1.5">
       <legend class="mb-1 text-small font-medium text-ink-muted">Type</legend>
       <label v-for="t in types" :key="t.value" class="flex cursor-pointer items-center gap-2 text-body text-ink-muted">
-        <input v-model="type" type="radio" :value="t.value" class="accent-cyan" /> {{ t.label }}
+        <input v-model="type" type="radio" :value="t.value" class="accent-primary" /> {{ t.label }}
       </label>
     </fieldset>
 
@@ -79,7 +79,7 @@ defineExpose({ open });
 
     <div class="mt-5">
       <label class="text-small font-medium text-ink-muted" for="tbl-repeat">Repeat the first row for each row of</label>
-      <select id="tbl-repeat" v-model="repeatGroup" class="mt-1 h-10 w-full rounded-control border border-line bg-sunken px-3 text-body text-ink focus:border-cyan focus:outline-none">
+      <select id="tbl-repeat" v-model="repeatGroup" class="mt-1 h-10 w-full rounded-control border border-line bg-surface-1 px-3 text-body text-ink focus:border-primary focus:outline-none">
         <option value="">Don't repeat</option>
         <option v-if="repeatGroup && !groups.some((g) => g.key === repeatGroup)" :value="repeatGroup">{{ repeatGroup }} (not in the form)</option>
         <option v-for="g in groups" :key="g.key" :value="g.key">{{ g.label || g.key }}</option>
@@ -88,9 +88,9 @@ defineExpose({ open });
     </div>
 
     <div v-if="type !== 'table-02'" class="mt-5">
-      <label class="flex cursor-pointer items-center gap-2 text-body text-ink-muted"><input v-model="useOptions" type="checkbox" class="accent-cyan" /> Layout options (JSON)</label>
+      <label class="flex cursor-pointer items-center gap-2 text-body text-ink-muted"><input v-model="useOptions" type="checkbox" class="accent-primary" /> Layout options (JSON)</label>
       <template v-if="useOptions">
-        <textarea v-model="options" rows="6" spellcheck="false" class="mt-2 w-full rounded-control border border-line bg-sunken p-2 font-mono text-small text-ink focus:border-cyan focus:outline-none" placeholder='{ "colspan1": 6, "colspan2": 2, "hideSeparator": true, "border": true }' />
+        <textarea v-model="options" rows="6" spellcheck="false" class="mt-2 w-full rounded-control border border-line bg-surface-1 p-2 font-mono text-small text-ink focus:border-primary focus:outline-none" placeholder='{ "colspan1": 6, "colspan2": 2, "hideSeparator": true, "border": true }' />
         <p v-if="optionsError" class="text-small text-down">{{ optionsError }}</p>
       </template>
     </div>

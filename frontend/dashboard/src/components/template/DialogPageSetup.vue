@@ -39,7 +39,7 @@ defineExpose({ open });
     <fieldset class="space-y-1.5">
       <legend class="mb-1 text-small font-medium text-ink-muted">Look</legend>
       <label v-for="s in PAGE_STYLES" :key="s.value" class="flex cursor-pointer items-center gap-2 text-body text-ink-muted">
-        <input v-model="draft.style" type="radio" :value="s.value" class="accent-cyan" /> {{ s.label }}
+        <input v-model="draft.style" type="radio" :value="s.value" class="accent-primary" /> {{ s.label }}
       </label>
     </fieldset>
 
@@ -55,12 +55,12 @@ defineExpose({ open });
     <div class="mt-4">
       <p class="mb-1 text-small font-medium text-ink-muted">Preview</p>
       <div class="rounded-control border border-line bg-surface-1 p-3 text-small">
-        <div class="flex justify-between rounded-sm px-2 py-1" :class="draft.style === 'form' ? 'bg-white/10' : 'border-b border-line-soft'">
+        <div class="flex justify-between rounded-sm px-2 py-1" :class="draft.style === 'form' ? 'bg-ink/10' : 'border-b border-line-soft'">
           <span class="text-ink-muted"><TokenText :text="draft.headerLeft" empty="(no header)" /></span>
           <span class="text-ink-muted"><TokenText :text="draft.headerRight" /></span>
         </div>
         <p class="py-6 text-center text-ink-faint">… page content …</p>
-        <div class="flex justify-between rounded-sm px-2 py-1" :class="draft.style === 'form' ? 'bg-white/10' : 'border-t border-line-soft'">
+        <div class="flex justify-between rounded-sm px-2 py-1" :class="draft.style === 'form' ? 'bg-ink/10' : 'border-t border-line-soft'">
           <span class="text-ink-muted"><TokenText :text="draft.footerLeft" empty="(no footer)" /></span>
           <span class="text-ink-muted">Page 1/1</span>
         </div>

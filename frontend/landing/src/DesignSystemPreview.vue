@@ -3,11 +3,12 @@
 import OpButton from '@ds/components/OpButton.vue';
 import OpIcon from '@ds/components/OpIcon.vue';
 import OpLogo from '@ds/components/OpLogo.vue';
+import OpLabel from '@ds/components/OpLabel.vue';
 import OpStatusBadge from '@ds/components/OpStatusBadge.vue';
 import OpCheckbox from '@ds/components/OpCheckbox.vue';
 import OpRadio from '@ds/components/OpRadio.vue';
 import FormRenderer from '@ds/components/FormRenderer.vue';
-import { ref } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 
 // FormRenderer demo
 const formSchema = {
@@ -23,37 +24,44 @@ const formValues = ref({});
 const checked = ref(true);
 const radio = ref('b');
 
-const surfaces = [
-  ['canvas', 'bg-canvas', '#090d16'],
-  ['sunken', 'bg-sunken', '#070a12'],
-  ['surface-1', 'bg-surface-1', '#0d1322'],
-  ['surface-2', 'bg-surface-2', '#131b2e'],
-  ['surface-3', 'bg-surface-3', '#18223a'],
-  ['surface-hover', 'bg-surface-hover', '#1b2540'],
+// Colours are listed by NAME only. The values are read from the live CSS (tokens.css), so this sheet
+// can't drift from the constants: edit a value there and it shows here.
+const palettes = {
+  slate: [50, 100, 200, 300, 400, 500, 600, 900], mint: [50, 200, 300, 400, 500, 600, 700, 800],
+  lemon: [50, 200, 300, 400, 600, 800, 900], sky: [50, 200, 600, 800], red: [50, 200, 500, 600, 700],
+};
+const roleGroups = [
+  ['Surfaces', ['canvas', 'sunken', 'surface-1', 'surface-2', 'surface-3', 'surface-hover']],
+  ['Lines', ['line-faint', 'line-soft', 'line', 'line-strong']],
+  ['Text', ['ink', 'ink-muted', 'ink-faint', 'ink-disabled', 'ink-inverse']],
+  ['Primary (mint)', ['primary', 'primary-hover', 'primary-active', 'primary-text', 'primary-bright', 'primary-soft', 'primary-edge', 'primary-ink']],
+  ['Secondary (lemon)', ['secondary', 'secondary-bright', 'secondary-soft', 'secondary-edge', 'secondary-line', 'secondary-ink', 'secondary-text']],
+  ['Tertiary (sky)', ['tertiary', 'tertiary-soft', 'tertiary-edge', 'tertiary-ink']],
+  ['Status', ['ok', 'ok-soft', 'warn', 'warn-soft', 'down', 'down-soft', 'down-bg', 'down-edge', 'down-ink']],
+  ['Code', ['code', 'code-ink']],
 ];
-const accents = [
-  ['cyan', 'bg-cyan', '#00f0ff'],
-  ['cyan-dim', 'bg-cyan-dim', '#00c4d1'],
-  ['cyan-soft', 'bg-cyan-soft', '#7df4ff'],
-  ['violet', 'bg-violet', '#8b5cf6'],
-  ['violet-soft', 'bg-violet-soft', '#c4b5fd'],
-];
-const statuses = [
-  ['ok', 'bg-ok', '#10b981'],
-  ['warn', 'bg-warn', '#f59e0b'],
-  ['down', 'bg-down', '#ef4444'],
-];
-const inks = [
-  ['ink', 'text-ink', '#e6eaf3'],
-  ['ink-muted', 'text-ink-muted', '#9aa8bd'],
-  ['ink-faint', 'text-ink-faint', '#64748b'],
-];
-const lines = [
-  ['line-faint', 'border-line-faint', '4%'],
-  ['line-soft', 'border-line-soft', '6%'],
-  ['line', 'border-line', '10%'],
-  ['line-strong', 'border-line-strong', '16%'],
-];
+const labelNames = ['cyan', 'blue', 'indigo', 'violet', 'fuchsia', 'pink', 'slate', 'stone'];
+const hexes = reactive({});
+const toHex = (rgb) => {
+  const m = rgb.match(/[\d.]+/g)?.map(Number) ?? [];
+  if (m.length < 3) return rgb;
+  const k = rgb.startsWith('color(') ? 255 : 1; // color(srgb 0.9 0.9 0.9 / 0.8) has 0-1 channels
+  const h = m.slice(0, 3).map((n) => Math.round(n * k).toString(16).padStart(2, '0')).join('');
+  return `#${h}${m[3] !== undefined && m[3] < 1 ? ` · ${Math.round(m[3] * 100)}%` : ''}`;
+};
+const resolve = (cssVar) => {
+  const el = document.createElement('i');
+  el.style.color = `var(${cssVar})`;
+  document.body.appendChild(el);
+  const rgb = getComputedStyle(el).color;
+  el.remove();
+  return toHex(rgb);
+};
+onMounted(() => {
+  for (const [group, steps] of Object.entries(palettes)) for (const n of steps) hexes[`palette-${group}-${n}`] = resolve(`--palette-${group}-${n}`);
+  for (const [, names] of roleGroups) for (const n of names) hexes[n] = resolve(`--color-${n}`);
+  for (const n of labelNames) hexes[`label-${n}`] = resolve(`--label-${n}`);
+});
 const type = [
   ['text-display', 'text-display', 'Know when it\'s down'],
   ['text-h1', 'text-h1', 'Section heading'],
@@ -63,7 +71,7 @@ const type = [
   ['text-body', 'text-body', 'Default UI and paragraph text.'],
   ['text-small', 'text-small', 'Captions and helper text.'],
   ['font-mono text-body', 'font-mono text-body', '200 OK · 118 ms · p95 84 ms'],
-  ['font-mono text-label uppercase', 'font-mono text-label uppercase', 'Operational · SIN · FRA'],
+  ['text-label uppercase', 'text-label uppercase', 'Operational · SIN · FRA'],
 ];
 const icons = ['activity', 'arrow-right', 'bell', 'braces', 'check', 'clock', 'globe', 'layout', 'lock', 'menu', 'pause', 'radar', 'shield', 'x', 'zap'];
 </script>
@@ -73,66 +81,49 @@ const icons = ['activity', 'arrow-right', 'bell', 'braces', 'check', 'clock', 'g
     <OpLogo />
     <h1 class="mt-6 text-h1 text-ink">Design system</h1>
     <p class="mt-2 max-w-2xl text-body-lg text-ink-muted">
-      Tokens live in <code class="font-mono text-cyan">frontend/design-system/theme.css</code>; components in
-      <code class="font-mono text-cyan">frontend/design-system/components</code>.
+      Tokens live in <code class="font-mono text-primary-text">frontend/design-system/tokens.css</code> (constants) and <code class="font-mono text-primary-text">theme.css</code> (roles); components in
+      <code class="font-mono text-primary-text">frontend/design-system/components</code>.
     </p>
 
     <section class="mt-14">
-      <p class="eyebrow">Colour · surfaces</p>
-      <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <div v-for="[n, c, hex] in surfaces" :key="n" class="overflow-hidden rounded-card border border-line">
-          <div :class="['h-16', c]" />
-          <div class="bg-surface-1 px-3 py-2"><p class="text-small text-ink">{{ n }}</p><p class="font-mono text-label text-ink-faint">{{ hex }}</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="mt-10 grid gap-10 md:grid-cols-2">
-      <div>
-        <p class="eyebrow">Colour · accents</p>
-        <div class="mt-4 grid grid-cols-3 gap-3">
-          <div v-for="[n, c, hex] in accents" :key="n" class="overflow-hidden rounded-card border border-line">
-            <div :class="['h-12', c]" />
-            <div class="bg-surface-1 px-3 py-2"><p class="text-small text-ink">{{ n }}</p><p class="font-mono text-label text-ink-faint">{{ hex }}</p></div>
-          </div>
-        </div>
-      </div>
-      <div>
-        <p class="eyebrow">Colour · status</p>
-        <div class="mt-4 grid grid-cols-3 gap-3">
-          <div v-for="[n, c, hex] in statuses" :key="n" class="overflow-hidden rounded-card border border-line">
-            <div :class="['h-12', c]" />
-            <div class="bg-surface-1 px-3 py-2"><p class="text-small text-ink">{{ n }}</p><p class="font-mono text-label text-ink-faint">{{ hex }}</p></div>
-          </div>
-        </div>
-        <div class="mt-3 flex flex-wrap gap-2">
-          <span class="rounded-control border px-2 py-1 font-mono text-label status-ok">status-ok</span>
-          <span class="rounded-control border px-2 py-1 font-mono text-label status-warn">status-warn</span>
-          <span class="rounded-control border px-2 py-1 font-mono text-label status-down">status-down</span>
-          <span class="rounded-control border px-2 py-1 font-mono text-label status-info">status-info</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="mt-10 grid gap-10 md:grid-cols-2">
-      <div>
-        <p class="eyebrow">Colour · text</p>
-        <div class="mt-4 space-y-2 rounded-card border border-line bg-surface-1 p-4">
-          <p v-for="[n, c, hex] in inks" :key="n" :class="['flex justify-between text-body', c]"><span>{{ n }}</span><span class="font-mono">{{ hex }}</span></p>
-        </div>
-      </div>
-      <div>
-        <p class="eyebrow">Lines (white at alpha)</p>
-        <div class="mt-4 grid grid-cols-4 gap-3">
-          <div v-for="[n, c, a] in lines" :key="n" :class="['rounded-card border-2 bg-surface-1 p-3', c]">
-            <p class="text-small text-ink">{{ n }}</p><p class="font-mono text-label text-ink-faint">{{ a }}</p>
+      <p class="eyebrow">Palette · constants in tokens.css</p>
+      <p class="mt-2 text-body text-ink-muted">Raw colour steps. Components never use these directly; they use the roles below. Re-skin by editing <code class="font-mono text-primary-text">tokens.css</code>.</p>
+      <div v-for="(steps, group) in palettes" :key="group" class="mt-4">
+        <p class="mb-2 text-small font-semibold capitalize text-ink">{{ group }}</p>
+        <div class="flex flex-wrap gap-2">
+          <div v-for="n in steps" :key="n" class="w-24 overflow-hidden rounded-control border border-line">
+            <div class="h-10" :style="{ backgroundColor: `var(--palette-${group}-${n})` }" />
+            <div class="bg-surface-1 px-2 py-1.5"><p class="text-label text-ink">{{ group }}-{{ n }}</p><p class="text-label text-ink-faint">{{ hexes[`palette-${group}-${n}`] }}</p></div>
           </div>
         </div>
       </div>
     </section>
 
     <section class="mt-14">
-      <p class="eyebrow">Type · Geist and JetBrains Mono</p>
+      <p class="eyebrow">Colour roles · theme.css</p>
+      <div v-for="[group, names] in roleGroups" :key="group" class="mt-5">
+        <p class="mb-2 text-small font-semibold text-ink">{{ group }}</p>
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+          <div v-for="n in names" :key="n" class="overflow-hidden rounded-control border border-line">
+            <div class="h-12" :style="{ backgroundColor: `var(--color-${n})` }" />
+            <div class="bg-surface-1 px-3 py-2"><p class="text-small text-ink">{{ n }}</p><p class="text-label text-ink-faint">{{ hexes[n] }}</p></div>
+          </div>
+        </div>
+      </div>
+      <p class="mb-2 mt-5 text-small font-semibold text-ink">Chips (status-*)</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="rounded-full border px-3 py-1 text-label uppercase status-ok">status-ok</span>
+        <span class="rounded-full border px-3 py-1 text-label uppercase status-warn">status-warn</span>
+        <span class="rounded-full border px-3 py-1 text-label uppercase status-down">status-down</span>
+        <span class="rounded-full border px-3 py-1 text-label uppercase status-info">status-info</span>
+        <span class="rounded-full border px-3 py-1 text-label uppercase status-neutral">status-neutral</span>
+      </div>
+      <p class="mb-2 mt-5 text-small font-semibold text-ink">Label colours</p>
+      <div class="flex flex-wrap gap-2"><OpLabel v-for="n in labelNames" :key="n" :name="n" :color="n" /></div>
+    </section>
+
+    <section class="mt-14">
+      <p class="eyebrow">Type · Plus Jakarta Sans and JetBrains Mono</p>
       <div class="mt-4 divide-y divide-line-soft rounded-card border border-line bg-surface-1">
         <div v-for="[n, c, sample] in type" :key="n" class="grid gap-2 px-4 py-4 md:grid-cols-[16rem_1fr] md:items-baseline">
           <code class="font-mono text-small text-ink-faint">{{ n }}</code>
@@ -145,17 +136,19 @@ const icons = ['activity', 'arrow-right', 'bell', 'braces', 'check', 'clock', 'g
       <div>
         <p class="eyebrow">Shape · radii</p>
         <div class="mt-4 flex gap-4">
-          <div class="flex size-24 items-end rounded-control border border-line bg-surface-2 p-2 font-mono text-label text-ink-faint">control 4</div>
-          <div class="flex size-24 items-end rounded-card border border-line bg-surface-2 p-2 font-mono text-label text-ink-faint">card 8</div>
-          <div class="flex size-24 items-end rounded-sheet border border-line bg-surface-2 p-2 font-mono text-label text-ink-faint">sheet 12</div>
+          <div class="flex size-24 items-end rounded-control border border-line bg-surface-2 p-2 text-label text-ink-faint">control 8</div>
+          <div class="flex size-24 items-end rounded-card border border-line bg-surface-2 p-2 text-label text-ink-faint">card 16</div>
+          <div class="flex size-24 items-end rounded-sheet border border-line bg-surface-2 p-2 text-label text-ink-faint">sheet 24</div>
+          <div class="flex h-24 w-24 items-end rounded-full border border-line bg-surface-2 p-3 text-label text-ink-faint">pill</div>
         </div>
       </div>
       <div>
-        <p class="eyebrow">Depth · rim glows</p>
-        <div class="mt-4 flex gap-4">
-          <div class="flex size-24 items-end rounded-card border border-line bg-surface-2 p-2 font-mono text-label text-ink-faint">tier 2</div>
-          <div class="flex size-24 items-end rounded-sheet border border-cyan/30 bg-surface-3 p-2 font-mono text-label text-ink-faint shadow-rim">shadow-rim</div>
-          <div class="flex size-24 items-end rounded-card bg-cyan p-2 font-mono text-label text-ink-inverse shadow-glow">shadow-glow</div>
+        <p class="eyebrow">Depth · shadows</p>
+        <div class="mt-4 flex flex-wrap gap-4">
+          <div class="flex size-24 items-end rounded-card border border-line bg-surface-1 p-2 text-label text-ink-faint shadow-rim">rim</div>
+          <div class="flex size-24 items-end rounded-card border border-line-strong bg-surface-1 p-2 text-label text-ink-faint shadow-pop">pop</div>
+          <div class="flex size-24 items-end rounded-card border border-line-strong bg-surface-1 p-2 text-label text-ink-faint shadow-modal">modal</div>
+          <div class="flex size-24 items-end rounded-card bg-primary p-2 text-label text-ink-inverse shadow-glow">glow</div>
         </div>
       </div>
     </section>
@@ -166,6 +159,7 @@ const icons = ['activity', 'arrow-right', 'bell', 'braces', 'check', 'clock', 'g
         <OpButton icon="zap">Primary</OpButton>
         <OpButton variant="secondary" icon-right="arrow-right">Secondary</OpButton>
         <OpButton variant="ghost">Ghost</OpButton>
+        <OpButton variant="accent">Accent</OpButton>
         <OpButton variant="destructive">Delete</OpButton>
         <OpButton size="sm">Small</OpButton>
         <OpButton size="lg">Large</OpButton>

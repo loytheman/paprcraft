@@ -1,93 +1,139 @@
-/* paprcraft design system - tokens for Tailwind v4.
+/* paprcraft design system - semantic tokens for Tailwind v4.
    Import AFTER `@import "tailwindcss";` and add `@source` for this folder (see README.md).
-   Obsidian Telemetry look (inherited from the reference project). Dark only. */
+   `static` keeps every role available as a CSS variable even when no class uses it yet.
+   Every value below points at a constant in tokens.css (imported first): change colours THERE.
+   Look: "Paprcraft System" (Precision Modernism): light slate canvas, Fresh Mint primary, Sunny Lemon
+   accents, sky tertiary, Plus Jakarta Sans. Light only. */
+@import "./tokens.css";
 
-@theme {
+@theme static {
   /* Only our palette: utilities like bg-red-500 don't exist, so off-system colours can't creep in. */
   --color-*: initial;
   --color-transparent: transparent;
   --color-current: currentColor;
-  --color-white: #fff;
+  --color-white: var(--palette-white);
   --color-black: #000;
 
-  /* Surfaces, darkest first. canvas = page, surface-1 = sections/panels, surface-2 = cards,
-     surface-3 = overlays. sunken = inputs and code wells. */
-  --color-canvas: #090d16;
-  --color-sunken: #070a12;
-  --color-surface-1: #0d1322;
-  --color-surface-2: #131b2e;
-  --color-surface-3: #18223a;
-  --color-surface-hover: #1b2540;
+  /* Surfaces. canvas = page, surface-1 = sections/panels, surface-2 = cards, surface-3 = tinted wells
+     (icon tiles, table heads), sunken = quiet fills. Inputs and dialogs sit on surface-1 (white). */
+  --color-canvas: var(--palette-slate-50);
+  --color-sunken: var(--palette-slate-100);
+  --color-surface-1: var(--palette-white);
+  --color-surface-2: var(--palette-white);
+  --color-surface-3: var(--palette-slate-100);
+  --color-surface-hover: var(--palette-slate-50);
 
-  /* Hairlines. Borders never use a solid grey, always white at low alpha. */
-  --color-line-faint: rgb(255 255 255 / 0.04);
-  --color-line-soft: rgb(255 255 255 / 0.06);
-  --color-line: rgb(255 255 255 / 0.1);
-  --color-line-strong: rgb(255 255 255 / 0.16);
+  /* Hairlines and borders. */
+  --color-line-faint: var(--palette-slate-100);
+  --color-line-soft: color-mix(in srgb, var(--palette-slate-200) 80%, transparent);
+  --color-line: var(--palette-slate-200);
+  --color-line-strong: var(--palette-slate-300);
 
-  /* Text */
-  --color-ink: #e6eaf3;
-  --color-ink-muted: #9aa8bd;
-  --color-ink-faint: #64748b;
-  --color-ink-inverse: #090d16;
+  /* Text. ink-faint is slate-500 (readable captions); ink-disabled is slate-400 (placeholders, disabled). */
+  --color-ink: var(--palette-slate-900);
+  --color-ink-muted: var(--palette-slate-600);
+  --color-ink-faint: var(--palette-slate-500);
+  --color-ink-disabled: var(--palette-slate-400);
+  --color-ink-inverse: var(--palette-white);
 
-  /* Accents. cyan = live signal and primary action; violet = secondary/synthetic. */
-  --color-cyan: #00f0ff;
-  --color-cyan-dim: #00c4d1;
-  --color-cyan-soft: #7df4ff;
-  --color-violet: #8b5cf6;
-  --color-violet-soft: #c4b5fd;
+  /* Primary (mint): actions, success, focus. primary-text is the darker step for small text and links. */
+  --color-primary: var(--palette-mint-600);
+  --color-primary-hover: var(--palette-mint-500);
+  --color-primary-active: var(--palette-mint-700);
+  --color-primary-text: var(--palette-mint-700);
+  --color-primary-bright: var(--palette-mint-400);
+  --color-primary-soft: var(--palette-mint-50);
+  --color-primary-edge: var(--palette-mint-200);
+  --color-primary-ink: var(--palette-mint-800);
+
+  /* Secondary (lemon): notices, tags, versions. Never a primary button. */
+  --color-secondary: var(--palette-lemon-600);
+  --color-secondary-bright: var(--palette-lemon-400);
+  --color-secondary-soft: var(--palette-lemon-50);
+  --color-secondary-edge: var(--palette-lemon-200);
+  --color-secondary-line: var(--palette-lemon-300);
+  --color-secondary-ink: var(--palette-lemon-900);
+  --color-secondary-text: var(--palette-lemon-800);
+
+  /* Tertiary (sky): links, metadata, information. */
+  --color-tertiary: var(--palette-sky-600);
+  --color-tertiary-soft: var(--palette-sky-50);
+  --color-tertiary-edge: var(--palette-sky-200);
+  --color-tertiary-ink: var(--palette-sky-800);
 
   /* Status: the only colours that mean up / degraded / down. */
-  --color-ok: #10b981;
-  --color-ok-soft: #6ee7b7;
-  --color-warn: #f59e0b;
-  --color-warn-soft: #fcd34d;
-  --color-down: #ef4444;
-  --color-down-soft: #fca5a5;
+  --color-ok: var(--palette-mint-600);
+  --color-ok-soft: var(--palette-mint-400);
+  --color-warn: var(--palette-lemon-600);
+  --color-warn-soft: var(--palette-lemon-400);
+  --color-down: var(--palette-red-600);
+  --color-down-soft: var(--palette-red-500);
+  --color-down-bg: var(--palette-red-50);
+  --color-down-edge: var(--palette-red-200);
+  --color-down-ink: var(--palette-red-700);
 
-  /* Type */
-  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Code and terminal wells: dark slate with mint and lemon highlights. */
+  --color-code: var(--palette-slate-900);
+  --color-code-ink: var(--palette-slate-50);
+
+  /* Label colours */
+  --color-label-cyan: var(--label-cyan);
+  --color-label-blue: var(--label-blue);
+  --color-label-indigo: var(--label-indigo);
+  --color-label-violet: var(--label-violet);
+  --color-label-fuchsia: var(--label-fuchsia);
+  --color-label-pink: var(--label-pink);
+  --color-label-slate: var(--label-slate);
+  --color-label-stone: var(--label-stone);
+
+  /* Type: Plus Jakarta Sans for everything, JetBrains Mono for code, ids and timestamps. */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --text-display: 3.5rem;
-  --text-display--line-height: 1.05;
-  --text-display--letter-spacing: -0.035em;
-  --text-display--font-weight: 600;
-  --text-h1: 2.5rem;
-  --text-h1--line-height: 3rem;
-  --text-h1--letter-spacing: -0.03em;
+  --text-display: 2.5rem;
+  --text-display--line-height: 3rem;
+  --text-display--letter-spacing: -0.03em;
+  --text-display--font-weight: 700;
+  --text-h1: 2rem;
+  --text-h1--line-height: 2.5rem;
+  --text-h1--letter-spacing: -0.025em;
   --text-h1--font-weight: 600;
-  --text-h2: 1.75rem;
-  --text-h2--line-height: 2.25rem;
+  --text-h2: 1.375rem;
+  --text-h2--line-height: 1.75rem;
   --text-h2--letter-spacing: -0.02em;
   --text-h2--font-weight: 600;
-  --text-h3: 1.25rem;
-  --text-h3--line-height: 1.75rem;
-  --text-h3--letter-spacing: -0.01em;
-  --text-h3--font-weight: 500;
+  --text-h3: 1.125rem;
+  --text-h3--line-height: 1.5rem;
+  --text-h3--letter-spacing: -0.015em;
+  --text-h3--font-weight: 600;
   --text-body-lg: 1rem;
-  --text-body-lg--line-height: 1.5rem;
+  --text-body-lg--line-height: 1.625rem;
+  --text-body-lg--letter-spacing: -0.005em;
   --text-body: 0.875rem;
-  --text-body--line-height: 1.25rem;
+  --text-body--line-height: 1.375rem;
   --text-small: 0.75rem;
-  --text-small--line-height: 1rem;
-  /* Mono labels: section eyebrows, status chips, region codes. Use with `uppercase`. */
+  --text-small--line-height: 1.125rem;
+  --text-small--letter-spacing: 0.005em;
+  /* Labels: section eyebrows, chips. Use with `uppercase`. */
   --text-label: 0.6875rem;
   --text-label--line-height: 1rem;
-  --text-label--letter-spacing: 0.08em;
-  --text-label--font-weight: 500;
+  --text-label--letter-spacing: 0.04em;
+  --text-label--font-weight: 600;
 
-  /* Shape: controls 4px, cards 8px, sheets 12px. Full rounding only for live dots and badges. */
-  --radius-control: 0.25rem;
-  --radius-card: 0.5rem;
-  --radius-sheet: 0.75rem;
+  /* Shape: controls 8px, cards 16px, sheets 24px. Full rounding only for chips, badges and dots. */
+  --radius-control: var(--radius-base);
+  --radius-card: var(--radius-large);
+  --radius-sheet: var(--radius-xlarge);
 
-  /* Depth comes from rim glows, not drop shadows. */
-  --shadow-glow: 0 0 20px rgb(0 240 255 / 0.35);
-  --shadow-glow-sm: 0 0 10px rgb(0 240 255 / 0.4);
-  --shadow-rim: 0 0 24px -4px rgb(0 240 255 / 0.14);
-  --shadow-down: 0 0 14px rgb(239 68 68 / 0.55);
+  /* Depth: hairline borders first; shadows are tinted slate and light. */
+  --shadow-rim: 0 1px 2px 0 rgb(var(--shadow-color) / 0.04);
+  --shadow-pop: 0 4px 12px -2px rgb(var(--shadow-color) / 0.05), 0 2px 4px -1px rgb(var(--shadow-color) / 0.03);
+  --shadow-modal: 0 20px 25px -5px rgb(var(--shadow-color) / 0.08), 0 8px 10px -6px rgb(var(--shadow-color) / 0.04);
+  --shadow-lift: 0 6px 16px -4px rgb(var(--shadow-color) / 0.04);
+  --shadow-glow: 0 0 0 1px var(--color-primary), 0 4px 14px 0 rgb(var(--glow-color) / 0.25);
+  --shadow-glow-sm: 0 4px 12px 0 rgb(var(--glow-color) / 0.25);
+  --shadow-down: 0 0 0 3px rgb(var(--danger-color) / 0.15);
+  --shadow-ring: 0 0 0 3px rgb(var(--glow-color) / 0.15);
 
   --animate-live: live 1.8s ease-out infinite;
   --animate-trace: trace 4s linear infinite;
@@ -104,7 +150,7 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
   }
   body {
     background: var(--color-canvas);
@@ -113,13 +159,17 @@
     -webkit-font-smoothing: antialiased;
   }
   ::selection {
-    background: rgb(0 240 255 / 0.25);
+    background: color-mix(in srgb, var(--color-primary) 22%, transparent);
   }
   :focus-visible {
-    outline: 1px solid var(--color-cyan);
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
-  /* Telemetry numbers never shift width while they update. */
+  /* One focus ring for every text control: mint border (set by the control) plus a soft mint halo. */
+  :is(input:not([type='checkbox'], [type='radio'], [type='range'], [type='file']), select, textarea):focus {
+    box-shadow: var(--shadow-ring);
+  }
+  /* Ids, codes and timestamps never shift width while they update. */
   .font-mono {
     font-variant-numeric: tabular-nums;
   }
@@ -132,35 +182,40 @@
   }
 }
 
-/* Status tints used by badges, step chips and table rows: `status-ok`, `status-warn`, `status-down`. */
+/* Chips and tints used by badges, step chips and table rows: `status-ok` (mint), `status-warn` (lemon),
+   `status-down` (red), `status-info` (sky), `status-neutral` (slate). Pair with a border and rounded-full. */
 @utility status-ok {
-  color: var(--color-ok);
-  background-color: rgb(16 185 129 / 0.08);
-  border-color: rgb(16 185 129 / 0.25);
+  color: var(--color-primary-ink);
+  background-color: var(--color-primary-soft);
+  border-color: var(--color-primary-edge);
 }
 @utility status-warn {
-  color: var(--color-warn);
-  background-color: rgb(245 158 11 / 0.08);
-  border-color: rgb(245 158 11 / 0.25);
+  color: var(--color-secondary-ink);
+  background-color: var(--color-secondary-soft);
+  border-color: var(--color-secondary-edge);
 }
 @utility status-down {
-  color: var(--color-down);
-  background-color: rgb(239 68 68 / 0.12);
-  border-color: rgb(239 68 68 / 0.4);
+  color: var(--color-down-ink);
+  background-color: var(--color-down-bg);
+  border-color: var(--color-down-edge);
 }
 @utility status-info {
-  color: var(--color-cyan);
-  background-color: rgb(0 240 255 / 0.06);
-  border-color: rgb(0 240 255 / 0.25);
+  color: var(--color-tertiary-ink);
+  background-color: var(--color-tertiary-soft);
+  border-color: var(--color-tertiary-edge);
+}
+@utility status-neutral {
+  color: var(--color-ink-muted);
+  background-color: var(--color-sunken);
+  border-color: var(--color-line);
 }
 
-/* Section eyebrow: small mono uppercase label above a heading. */
+/* Section eyebrow: small uppercase label above a heading. */
 @utility eyebrow {
-  font-family: var(--font-mono);
   font-size: var(--text-label);
   line-height: var(--text-label--line-height);
   letter-spacing: var(--text-label--letter-spacing);
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
-  color: var(--color-cyan);
+  color: var(--color-primary-text);
 }

@@ -22,7 +22,7 @@ const NAMES = { 'table-01': 'Table: label and value', 'table-02': 'Table: number
       <OpIcon name="layout" :size="14" /> {{ NAMES[block.type] ?? block.type }}
       <OpIcon v-if="!ctx.readonly" name="pencil" :size="12" />
     </button>
-    <span v-if="block.item?.repeatGroup" class="mb-1 ml-2 inline-flex items-center gap-1 rounded-control border border-violet/40 px-1.5 py-0.5 text-small text-violet-soft" title="The first row is written once per row of this group">
+    <span v-if="block.item?.repeatGroup" class="mb-1 ml-2 inline-flex items-center gap-1 rounded-control border border-tertiary/40 px-1.5 py-0.5 text-small text-tertiary" title="The first row is written once per row of this group">
       <OpIcon name="refresh" :size="11" /> first row repeats for each <span class="font-mono">{{ block.item.repeatGroup }}</span>
     </span>
     <table class="w-full table-fixed border-separate" :style="{ borderSpacing: bordered ? '0' : '0 1px' }">
