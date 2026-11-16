@@ -26,6 +26,19 @@ onMounted(() => { document.addEventListener('click', onDocClick); document.addEv
 onBeforeUnmount(() => { document.removeEventListener('click', onDocClick); document.removeEventListener('keydown', onKey); });
 watch(() => route.fullPath, closeMenu);
 
+const nav = [
+  { name: 'home', label: 'Dashboard', icon: 'layout', exact: true },
+  { name: 'templates', label: 'Templates', icon: 'copy' },
+  { name: 'forms', label: 'Forms', icon: 'braces' },
+  { name: 'submissions', label: 'Submissions', icon: 'receipt' },
+];
+const navMore = [
+  { name: 'activity', label: 'Activity', icon: 'activity' },
+  { name: 'team', label: 'Team', icon: 'users' },
+  { name: 'labels', label: 'Labels', icon: 'tag' },
+];
+const isActive = (n) => (n.exact ? route.name === n.name : String(route.name ?? '').startsWith(n.name.replace(/s$/, '')) || route.name === n.name);
+
 const onSignOut = async () => {
   signingOut.value = true;
   await signOut();
@@ -34,20 +47,39 @@ const onSignOut = async () => {
 </script>
 
 <template>
-  <div class="min-h-dvh">
-    <header class="sticky top-0 z-40 border-b border-line-soft bg-surface-1/90 backdrop-blur-md">
-      <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 md:px-8">
-        <div class="contents md:flex md:items-center md:gap-6">
-          <RouterLink :to="{ name: 'home' }" aria-label="Home"><OpLogo /></RouterLink>
-          <nav class="order-last flex w-full items-center gap-4 text-body md:order-none md:w-auto" aria-label="Main">
-            <RouterLink :to="{ name: 'home' }" class="text-ink-muted hover:text-ink" exact-active-class="!text-ink">Home</RouterLink>
-            <RouterLink :to="{ name: 'templates' }" class="text-ink-muted hover:text-ink" active-class="!text-ink">Templates</RouterLink>
-            <RouterLink :to="{ name: 'forms' }" class="text-ink-muted hover:text-ink" active-class="!text-ink">Forms</RouterLink>
-            <RouterLink :to="{ name: 'submissions' }" class="text-ink-muted hover:text-ink" active-class="!text-ink">Submissions</RouterLink>
-            <!-- Add your main nav links here. -->
-          </nav>
-        </div>
+  <div class="min-h-dvh lg:pl-64">
+    <!-- Sidebar (desktop) -->
+    <aside class="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-line-soft bg-surface-1 lg:flex">
+      <RouterLink :to="{ name: 'home' }" class="px-5 pt-5 pb-4" aria-label="Home"><OpLogo /></RouterLink>
+      <div v-if="activeMembership" class="mx-3 mb-3 rounded-control border border-tertiary-edge bg-tertiary-soft px-3 py-2 text-small">
+        <p class="truncate font-medium text-tertiary-ink">{{ activeMembership.name }}</p>
+        <p class="text-ink-muted">{{ ROLE_LABEL[role] }}<template v-if="role === 'viewer'"> (view only)</template></p>
+      </div>
+      <p class="px-5 pb-1.5 text-label uppercase text-ink-faint">Workspace</p>
+      <nav class="flex flex-col gap-0.5 px-3" aria-label="Main">
+        <RouterLink v-for="n in nav" :key="n.name" :to="{ name: n.name }" class="flex items-center gap-3 rounded-control px-3 py-2 text-body font-medium transition-colors" :class="isActive(n) ? 'bg-primary text-primary-ink shadow-glow-sm' : 'text-ink-muted hover:bg-sunken hover:text-ink'">
+          <OpIcon :name="n.icon" :size="18" /> {{ n.label }}
+        </RouterLink>
+      </nav>
+      <p class="px-5 pt-6 pb-1.5 text-label uppercase text-ink-faint">Account</p>
+      <nav class="flex flex-col gap-0.5 px-3" aria-label="Account">
+        <RouterLink v-for="n in navMore" :key="n.name" :to="{ name: n.name }" class="flex items-center gap-3 rounded-control px-3 py-2 text-body font-medium transition-colors" :class="route.name === n.name ? 'bg-primary text-primary-ink shadow-glow-sm' : 'text-ink-muted hover:bg-sunken hover:text-ink'">
+          <OpIcon :name="n.icon" :size="18" /> {{ n.label }}
+        </RouterLink>
+      </nav>
+      <div class="mt-auto border-t border-line-soft p-4 text-small text-ink-faint">
+        <RouterLink v-if="staff" :to="{ name: 'staff-customers' }" class="mb-2 flex items-center gap-2 text-tertiary hover:text-ink"><OpIcon name="shield" :size="14" /> Staff area</RouterLink>
+        <span class="inline-flex items-center gap-2"><span class="size-2 rounded-full bg-ok"></span> All systems normal</span>
+      </div>
+    </aside>
 
+    <header class="sticky top-0 z-40 border-b border-line-soft bg-surface-1/90 backdrop-blur-md">
+      <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 md:px-8">
+        <RouterLink :to="{ name: 'home' }" class="lg:hidden" aria-label="Home"><OpLogo /></RouterLink>
+        <div class="hidden lg:block"></div>
+        <nav class="order-last flex w-full gap-1 overflow-x-auto lg:hidden" aria-label="Main (mobile)">
+          <RouterLink v-for="n in nav" :key="n.name" :to="{ name: n.name }" class="shrink-0 rounded-full px-3 py-1 text-small font-medium" :class="isActive(n) ? 'bg-primary text-primary-ink' : 'text-ink-muted'">{{ n.label }}</RouterLink>
+        </nav>
         <div class="flex items-center gap-2">
           <div ref="menuRoot" class="relative">
             <button
@@ -140,7 +172,7 @@ const onSignOut = async () => {
       </div>
     </div>
 
-    <main class="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
+    <main class="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-10">
       <!-- Keyed by route and item, so moving between two routes that share a page starts it fresh;
            query-only changes (filters, tabs) keep it. -->
       <RouterView v-slot="{ Component, route: r }">
