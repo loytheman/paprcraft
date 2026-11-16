@@ -5,7 +5,7 @@ import OpConfirmDialog from '@ds/components/OpConfirmDialog.vue';
 import OpLogo from '@ds/components/OpLogo.vue';
 import { answerConfirm, confirmState } from '@/helpers/Confirm';
 import { session } from '@/session';
-
+import ThemePicker from '@ds/components/ThemePicker.vue';
 // Leaving the page (the browser's back button) cancels a question about what was on it.
 const route = useRoute();
 watch(() => route.fullPath, () => answerConfirm(false));
@@ -17,6 +17,7 @@ watch(() => route.fullPath, () => answerConfirm(false));
     <OpLogo class="animate-pulse motion-reduce:animate-none" />
   </div>
   <RouterView v-else />
+  <ThemePicker />
   <OpConfirmDialog
     :open="confirmState.open"
     :title="confirmState.title"
