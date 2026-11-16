@@ -68,7 +68,7 @@ web_modules/
 # dotenv environment variable files
 .env
 .env.*
-!.env.example
+!.env.example*
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -147,3 +147,17 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Build artifacts from backend/infra (08 layer, 10 function zip) and lambda packaging
+backend/_layer/
+*.zip
+
+# macOS
+.DS_Store
+
+# Local dev TLS keys (see backend/api/src/keys/_info.txt)
+backend/api/src/keys/*
+!backend/api/src/keys/_info.txt
+
+# Throwaway build folder of backend/lambda/compile-docx-template.sh
+backend/lambda/.build-docx/

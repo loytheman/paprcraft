@@ -1,0 +1,7 @@
+Local dev HTTPS certificate (backend/api/src/app-local.js reads server.key + server.cert). Not
+committed (see .gitignore); generate once per machine:
+
+openssl req -x509 -newkey rsa:2048 -keyout server.key -out server.cert -sha256 -days 3650 -nodes \
+  -subj "/C=SG/O=paprcraft/CN=localhost" -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+
+Then visit https://localhost:3006 once and accept the self-signed cert.

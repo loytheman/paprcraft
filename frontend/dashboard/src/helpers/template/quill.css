@@ -1,0 +1,30 @@
+/* Text sizes and placeholder chips inside the template editor's Quill instances. */
+.q-size-xs { font-size: 0.75rem; }
+.q-size-sm { font-size: 0.875rem; }
+.q-size-md { font-size: 0.925rem; }
+.q-size-base { font-size: 1rem; }
+.q-size-lg { font-size: 1.125rem; }
+.q-size-xl { font-size: 1.25rem; }
+
+.tpl-quill .ql-container { border: 0; font: inherit; }
+.tpl-quill .ql-editor { padding: 5px 0; white-space: normal; color: var(--color-ink); min-height: 1.5em; }
+.tpl-quill .ql-editor p { margin: 0; }
+.tpl-quill .ql-editor.ql-blank::before { left: 0; font-style: normal; font-size: 0.8rem; color: var(--color-ink-faint); }
+.tpl-quill .ql-editor strong { font-weight: 700; }
+
+.q-placeholder {
+  background-color: rgb(250 204 21 / 0.25);
+  border: 1px dashed rgb(250 204 21 / 0.7);
+  border-radius: 3px;
+  padding: 1px 3px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+.q-placeholder:hover { border-style: solid; }
+.q-placeholder.has-value {
+  background-color: rgb(0 240 255 / 0.15);
+  border-color: rgb(0 240 255 / 0.5);
+  font-family: inherit;
+  font-size: inherit;
+}

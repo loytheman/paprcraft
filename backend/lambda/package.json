@@ -1,0 +1,29 @@
+{
+  "name": "paprcraft-lambda",
+  "private": true,
+  "comment": "Each Lambda is zipped from a few files here. The AWS SDK comes with the Node runtime, so it's a devDependency (tests) only. First-time creation of each function is done by backend/infra (20-audit-trail.sh, 29-docx-template.sh); these scripts redeploy code. Add new Lambdas as compile-/update-/deploy- script triples.",
+  "scripts": {
+    "sso-login": "aws sso login --profile paprcraft-dev-loy",
+    "test": "node --test --experimental-test-module-mocks --no-warnings 'test/**/*.test.js'",
+    "compile-audit-trail": "zip -q audit-trail.zip auditTrail.js auditRow.js",
+    "update-audit-trail-stg": "aws lambda update-function-code --profile paprcraft-dev-loy --region ap-southeast-1 --function-name paprcraft-stg-audit-trail --zip-file fileb://audit-trail.zip",
+    "update-audit-trail-prod": "aws lambda update-function-code --profile paprcraft-dev-loy --region ap-southeast-1 --function-name paprcraft-prod-audit-trail --zip-file fileb://audit-trail.zip",
+    "deploy-audit-trail-stg": "yarn compile-audit-trail && yarn update-audit-trail-stg && rm -f audit-trail.zip",
+    "deploy-audit-trail-prod": "yarn compile-audit-trail && yarn update-audit-trail-prod && rm -f audit-trail.zip",
+    "compile-docx-template": "./compile-docx-template.sh",
+    "update-docx-template-stg": "aws lambda update-function-code --profile paprcraft-dev-loy --region ap-southeast-1 --function-name paprcraft-stg-docx-template --zip-file fileb://docx-template.zip",
+    "update-docx-template-prod": "aws lambda update-function-code --profile paprcraft-dev-loy --region ap-southeast-1 --function-name paprcraft-prod-docx-template --zip-file fileb://docx-template.zip",
+    "deploy-docx-template-stg": "yarn compile-docx-template && yarn update-docx-template-stg && rm -f docx-template.zip",
+    "deploy-docx-template-prod": "yarn compile-docx-template && yarn update-docx-template-prod && rm -f docx-template.zip"
+  },
+  "dependencies": {
+    "docx": "8.5.0"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.966.0",
+    "@aws-sdk/client-s3": "^3.966.0",
+    "@aws-sdk/lib-dynamodb": "^3.966.0",
+    "@aws-sdk/util-dynamodb": "^3.966.0",
+    "jszip": "^3.10.1"
+  }
+}

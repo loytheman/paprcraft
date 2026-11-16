@@ -1,0 +1,79 @@
+{
+  // Local dev: Cmd+Shift+P -> "Tasks: Run Task" -> "Dev: all" starts the API, dashboard and
+  // landing site, each in its own terminal (side by side in one split group). Stop them with
+  // "Tasks: Terminate Task" (or the trash icon on each terminal). Each can also be run on its own.
+  // "Shell: all" opens a plain terminal in each of the three folders (nothing started) for running
+  // your own commands there — same split layout, separate from the dev servers.
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Dev: all",
+      "dependsOn": ["Dev: api", "Dev: dashboard", "Dev: landing"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "Dev: api",
+      "type": "shell",
+      "command": "yarn dev",
+      "options": { "cwd": "${workspaceFolder}/backend/api" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "group": "dev", "panel": "dedicated", "reveal": "always", "showReuseMessage": false, "clear": true }
+    },
+    {
+      "label": "Dev: dashboard",
+      "type": "shell",
+      "command": "yarn dev",
+      "options": { "cwd": "${workspaceFolder}/frontend/dashboard" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "group": "dev", "panel": "dedicated", "reveal": "always", "showReuseMessage": false, "clear": true }
+    },
+    {
+      "label": "Dev: landing",
+      "type": "shell",
+      "command": "yarn dev",
+      "options": { "cwd": "${workspaceFolder}/frontend/landing" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "group": "dev", "panel": "dedicated", "reveal": "always", "showReuseMessage": false, "clear": true }
+    },
+    {
+      "label": "Shell: all",
+      "dependsOn": ["Shell: api", "Shell: dashboard", "Shell: landing"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "Shell: api",
+      "type": "process",
+      "command": "${env:SHELL}",
+      "args": ["-l"],
+      "options": { "cwd": "${workspaceFolder}/backend/api" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "group": "shell", "panel": "dedicated", "reveal": "always", "focus": true, "showReuseMessage": false, "clear": true }
+    },
+    {
+      "label": "Shell: dashboard",
+      "type": "process",
+      "command": "${env:SHELL}",
+      "args": ["-l"],
+      "options": { "cwd": "${workspaceFolder}/frontend/dashboard" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "group": "shell", "panel": "dedicated", "reveal": "always", "focus": true, "showReuseMessage": false, "clear": true }
+    },
+    {
+      "label": "Shell: landing",
+      "type": "process",
+      "command": "${env:SHELL}",
+      "args": ["-l"],
+      "options": { "cwd": "${workspaceFolder}/frontend/landing" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "group": "shell", "panel": "dedicated", "reveal": "always", "focus": true, "showReuseMessage": false, "clear": true }
+    }
+  ]
+}

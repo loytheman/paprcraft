@@ -1,0 +1,166 @@
+/* paprcraft design system - tokens for Tailwind v4.
+   Import AFTER `@import "tailwindcss";` and add `@source` for this folder (see README.md).
+   Obsidian Telemetry look (inherited from the reference project). Dark only. */
+
+@theme {
+  /* Only our palette: utilities like bg-red-500 don't exist, so off-system colours can't creep in. */
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #fff;
+  --color-black: #000;
+
+  /* Surfaces, darkest first. canvas = page, surface-1 = sections/panels, surface-2 = cards,
+     surface-3 = overlays. sunken = inputs and code wells. */
+  --color-canvas: #090d16;
+  --color-sunken: #070a12;
+  --color-surface-1: #0d1322;
+  --color-surface-2: #131b2e;
+  --color-surface-3: #18223a;
+  --color-surface-hover: #1b2540;
+
+  /* Hairlines. Borders never use a solid grey, always white at low alpha. */
+  --color-line-faint: rgb(255 255 255 / 0.04);
+  --color-line-soft: rgb(255 255 255 / 0.06);
+  --color-line: rgb(255 255 255 / 0.1);
+  --color-line-strong: rgb(255 255 255 / 0.16);
+
+  /* Text */
+  --color-ink: #e6eaf3;
+  --color-ink-muted: #9aa8bd;
+  --color-ink-faint: #64748b;
+  --color-ink-inverse: #090d16;
+
+  /* Accents. cyan = live signal and primary action; violet = secondary/synthetic. */
+  --color-cyan: #00f0ff;
+  --color-cyan-dim: #00c4d1;
+  --color-cyan-soft: #7df4ff;
+  --color-violet: #8b5cf6;
+  --color-violet-soft: #c4b5fd;
+
+  /* Status: the only colours that mean up / degraded / down. */
+  --color-ok: #10b981;
+  --color-ok-soft: #6ee7b7;
+  --color-warn: #f59e0b;
+  --color-warn-soft: #fcd34d;
+  --color-down: #ef4444;
+  --color-down-soft: #fca5a5;
+
+  /* Type */
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --text-display: 3.5rem;
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.035em;
+  --text-display--font-weight: 600;
+  --text-h1: 2.5rem;
+  --text-h1--line-height: 3rem;
+  --text-h1--letter-spacing: -0.03em;
+  --text-h1--font-weight: 600;
+  --text-h2: 1.75rem;
+  --text-h2--line-height: 2.25rem;
+  --text-h2--letter-spacing: -0.02em;
+  --text-h2--font-weight: 600;
+  --text-h3: 1.25rem;
+  --text-h3--line-height: 1.75rem;
+  --text-h3--letter-spacing: -0.01em;
+  --text-h3--font-weight: 500;
+  --text-body-lg: 1rem;
+  --text-body-lg--line-height: 1.5rem;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.25rem;
+  --text-small: 0.75rem;
+  --text-small--line-height: 1rem;
+  /* Mono labels: section eyebrows, status chips, region codes. Use with `uppercase`. */
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1rem;
+  --text-label--letter-spacing: 0.08em;
+  --text-label--font-weight: 500;
+
+  /* Shape: controls 4px, cards 8px, sheets 12px. Full rounding only for live dots and badges. */
+  --radius-control: 0.25rem;
+  --radius-card: 0.5rem;
+  --radius-sheet: 0.75rem;
+
+  /* Depth comes from rim glows, not drop shadows. */
+  --shadow-glow: 0 0 20px rgb(0 240 255 / 0.35);
+  --shadow-glow-sm: 0 0 10px rgb(0 240 255 / 0.4);
+  --shadow-rim: 0 0 24px -4px rgb(0 240 255 / 0.14);
+  --shadow-down: 0 0 14px rgb(239 68 68 / 0.55);
+
+  --animate-live: live 1.8s ease-out infinite;
+  --animate-trace: trace 4s linear infinite;
+
+  @keyframes live {
+    0% { box-shadow: 0 0 0 0 currentColor; }
+    70%, 100% { box-shadow: 0 0 0 6px transparent; }
+  }
+  @keyframes trace {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -1000; }
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: rgb(0 240 255 / 0.25);
+  }
+  :focus-visible {
+    outline: 1px solid var(--color-cyan);
+    outline-offset: 2px;
+  }
+  /* Telemetry numbers never shift width while they update. */
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Status tints used by badges, step chips and table rows: `status-ok`, `status-warn`, `status-down`. */
+@utility status-ok {
+  color: var(--color-ok);
+  background-color: rgb(16 185 129 / 0.08);
+  border-color: rgb(16 185 129 / 0.25);
+}
+@utility status-warn {
+  color: var(--color-warn);
+  background-color: rgb(245 158 11 / 0.08);
+  border-color: rgb(245 158 11 / 0.25);
+}
+@utility status-down {
+  color: var(--color-down);
+  background-color: rgb(239 68 68 / 0.12);
+  border-color: rgb(239 68 68 / 0.4);
+}
+@utility status-info {
+  color: var(--color-cyan);
+  background-color: rgb(0 240 255 / 0.06);
+  border-color: rgb(0 240 255 / 0.25);
+}
+
+/* Section eyebrow: small mono uppercase label above a heading. */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  letter-spacing: var(--text-label--letter-spacing);
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--color-cyan);
+}

@@ -1,0 +1,29 @@
+{
+    "name": "paprcraft-landing",
+    "version": "0.0.1",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "aws-profile": "paprcraft-dev-loy",
+        "sso-login": "aws sso login --profile paprcraft-dev-loy",
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "upload-stg": "aws s3 sync ./dist s3://stage.site.paprcraft/site-landing --delete --profile paprcraft-dev-loy",
+        "upload-prod": "aws s3 sync ./dist s3://prod.site.paprcraft/site-landing --delete --profile paprcraft-dev-loy",
+        "invalidate-stg": "aws cloudfront create-invalidation --distribution-id E3835AYQNHFY87 --paths '/*' --profile paprcraft-dev-loy",
+        "invalidate-prod": "aws cloudfront create-invalidation --distribution-id REPLACE_WITH_DISTRIBUTION_ID --paths '/*' --profile paprcraft-dev-loy",
+        "deploy": "yarn build && yarn upload-stg && yarn invalidate-stg",
+        "deploy-prod": "yarn build && yarn upload-prod && yarn invalidate-prod"
+    },
+    "dependencies": {
+        "vue": "^3.5.44"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.3.3",
+        "@vitejs/plugin-basic-ssl": "^2.3.0",
+        "@vitejs/plugin-vue": "^6.0.10",
+        "tailwindcss": "^4.3.3",
+        "vite": "^7.3.7"
+    }
+}
