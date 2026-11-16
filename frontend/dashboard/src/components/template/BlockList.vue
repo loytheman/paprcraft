@@ -11,6 +11,9 @@ import BlockTable from './BlockTable.vue';
 import BlockLayout from './BlockLayout.vue';
 import BlockContainer from './BlockContainer.vue';
 import BlockSign from './BlockSign.vue';
+import BlockFormTable from './BlockFormTable.vue';
+import BlockFormChecklist from './BlockFormChecklist.vue';
+import BlockFormDeclaration from './BlockFormDeclaration.vue';
 import TplMenu from './TplMenu.vue';
 
 const props = defineProps({
@@ -76,6 +79,9 @@ const onDrop = (e, idx) => {
           <BlockText v-else-if="TEXT_TYPES.includes(block.type)" :block="block" />
           <BlockTable v-else-if="TABLE_TYPES.includes(block.type)" :block="block" />
           <BlockSign v-else-if="SIGN_TYPES.includes(block.type)" :block="block" />
+          <BlockFormTable v-else-if="block.type === 'form-table'" :block="block" />
+          <BlockFormChecklist v-else-if="block.type === 'form-checklist'" :block="block" />
+          <BlockFormDeclaration v-else-if="block.type === 'form-declaration'" :block="block" />
           <BlockLayout v-else :block="block" />
         </div>
       </div>

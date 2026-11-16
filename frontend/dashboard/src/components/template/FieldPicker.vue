@@ -5,7 +5,7 @@
 // only where that group repeats (inside a Repeat block, or a table that repeats its first row).
 import { computed, ref, watch } from 'vue';
 import OpButton from '@ds/components/OpButton.vue';
-import { PIPES, pickerEntries, chipText } from '@/helpers/template/blocks';
+import { PIPES, pickerEntries, builtinEntries, chipText } from '@/helpers/template/blocks';
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -15,7 +15,8 @@ const props = defineProps({
 });
 const emit = defineEmits(['insert', 'close']);
 
-const entries = computed(() => pickerEntries(props.schema, props.repeatGroup));
+// The form's fields, then the values the document itself provides (submission reference, date...).
+const entries = computed(() => [...pickerEntries(props.schema, props.repeatGroup), ...builtinEntries()]);
 const hasGroups = computed(() => (props.schema?.sections ?? []).some((s) => (s.fields ?? []).some((f) => f.type === 'group')));
 // An override of the default formatter, per field: { text: pipe }. 'default' = use the field's own default.
 const chosen = ref({});
@@ -31,8 +32,8 @@ const NAMES = { yesno: 'yes / no', date: 'date', upper: 'UPPER', lower: 'lower',
       <p class="text-small font-medium text-ink-muted">Insert a field from the form</p>
       <OpButton size="sm" variant="ghost" @click="emit('close')">Close</OpButton>
     </div>
-    <p v-if="!schema" class="mt-2 text-small text-ink-faint">Choose a data source above first.</p>
-    <p v-else-if="!entries.length" class="mt-2 text-small text-ink-faint">This form has no fields you can insert here.</p>
+    <p v-if="!schema" class="mt-2 text-small text-ink-faint">Choose a data source above to insert the form's fields. The document info values below always work.</p>
+    <p v-else-if="entries.length <= 1" class="mt-2 text-small text-ink-faint">This form has no fields you can insert here.</p>
     <div v-for="s in entries" :key="s.section" class="mt-3">
       <p class="font-mono text-label uppercase text-ink-faint">{{ s.section }}</p>
       <ul class="mt-1 space-y-1">

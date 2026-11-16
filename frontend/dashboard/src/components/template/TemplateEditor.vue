@@ -21,12 +21,17 @@ import {
   blankSection, cloneBlock, countPlaceholders, ensureIds, ensureTableCols, forEachBlock, indexAfterMove, insertAfterFocus,
   moveItem, newBlock, newContainer, normalizeKey, placeholderUsage, placeholdersForSave, renamePlaceholderKey, saveSignature, sectionsForSave, TABLE_TYPES,
   defaultCond, formGroups, formFields, formKeySet, insideRepeat, parseChip, repeatGroupAt,
+  frameForSave, renameTokensIn,
 } from '@/helpers/template/blocks';
 import BlockList from './BlockList.vue';
 import TplMenu from './TplMenu.vue';
 import DialogSign from './DialogSign.vue';
 import DialogTable from './DialogTable.vue';
 import DialogLayout from './DialogLayout.vue';
+import DialogFormTable from './DialogFormTable.vue';
+import DialogChecklist from './DialogChecklist.vue';
+import DialogDeclaration from './DialogDeclaration.vue';
+import DialogPageSetup from './DialogPageSetup.vue';
 import SectionManager from './SectionManager.vue';
 import PlaceholderPanel from './PlaceholderPanel.vue';
 import PlaceholderPicker from './PlaceholderPicker.vue';
@@ -65,7 +70,8 @@ const forms = ref([]); // the data sources to choose from
 const formSchema = ref(null); // the selected form's schema (null = none, or it could not be loaded)
 const formError = ref('');
 const rootEl = ref(null);
-const dialogs = { sign: ref(null), table: ref(null), layout: ref(null) };
+const dialogs = { sign: ref(null), table: ref(null), layout: ref(null), formTable: ref(null), checklist: ref(null), declaration: ref(null) };
+const pageSetup = ref(null);
 
 const readonly = computed(() => !isMaster && !canEdit.value);
 const dirty = computed(() => !readonly.value && savedSig.value !== liveSig.value);
@@ -133,12 +139,14 @@ const renameKey = (from, to) => {
   const map = template.value.placeholders;
   const value = map[from];
   renamePlaceholderKey(template.value.section, from, to);
+  const fr = template.value.frame; // {{from}} in the page header / footer follows too
+  if (fr) for (const k of ['headerLeft', 'headerRight', 'footerLeft']) fr[k] = renameTokensIn(fr[k] ?? '', from, to);
   delete map[from];
   map[to] = value ?? '';
   editKey.value++; // editors reload their text, now with the new key
 };
 const removeKey = async (key) => {
-  const used = placeholderUsage(template.value.section)[key] ?? 0;
+  const used = placeholderUsage(template.value.section, template.value.frame)[key] ?? 0;
   if (used) {
     const ok = await askConfirm({ title: `Remove ${key}?`, message: 'Chips with this key stay in the text and show {{KEY}} until you give them another key.', confirmLabel: 'Remove' });
     if (!ok) return;
@@ -245,6 +253,9 @@ const addItems = computed(() => [
   { label: 'Signature area', action: () => addBlock('sign-area-01') },
   { label: 'Form data', heading: true },
   ...containerItems(),
+  { label: 'Section table', icon: 'layout', action: () => addBlock('form-table') },
+  { label: 'Checklist table', icon: 'check', action: () => addBlock('form-checklist') },
+  { label: 'Declaration', icon: 'pencil', action: () => addBlock('form-declaration') },
 ]);
 
 // ---- sections ------------------------------------------------------------------------------
@@ -346,6 +357,8 @@ const onKeydown = (e) => {
 const normalize = (t) => {
   if (!Array.isArray(t.section) || !t.section.length) t.section = [blankSection()];
   t.placeholders = t.placeholders ?? {};
+  t.style = t.style ?? ''; // '' = letter (older templates)
+  t.frame = t.frame ?? null;
   for (const s of t.section) {
     s.list = ensureIds(s.list ?? []);
     forEachBlock(s.list, (b) => { if (TABLE_TYPES.includes(b.type)) ensureTableCols(b.item?.data ?? [], b.type); });
@@ -401,7 +414,7 @@ const save = async () => {
   saveError.value = '';
   const sig = saveSignature(t);
   try {
-    const res = await api.update(props.id, { name: t.name.trim(), section: sectionsForSave(t.section), placeholders: placeholdersForSave(t.placeholders), formId: t.formId || null });
+    const res = await api.update(props.id, { name: t.name.trim(), section: sectionsForSave(t.section), placeholders: placeholdersForSave(t.placeholders), formId: t.formId || null, ...(t.style && { style: t.style }), frame: frameForSave(t.frame) });
     if (res?.exportHistory) exportHistory.value = res.exportHistory;
     savedSig.value = sig;
     saving.value = false;
@@ -460,6 +473,7 @@ onBeforeRouteLeave(async () => {
       <div class="flex items-center gap-2">
         <span v-if="dirty" class="text-small text-warn">Unsaved changes</span>
         <OpButton variant="secondary" size="sm" aria-label="Reload" @click="reload"><OpIcon name="refresh" :size="14" /></OpButton>
+        <OpButton v-if="!readonly" variant="secondary" size="sm" icon="layout" @click="pageSetup.open(template)">Page setup</OpButton>
         <OpButton v-if="!isMaster" variant="secondary" size="sm" icon="send" @click="showExport = !showExport">Generate</OpButton>
         <OpButton v-if="!readonly" size="sm" icon="check" :disabled="saving || !dirty" @click="save">{{ saving ? 'Saving…' : 'Save' }}</OpButton>
       </div>
@@ -498,7 +512,7 @@ onBeforeRouteLeave(async () => {
         <button type="button" title="Italic" :class="['size-8 rounded-control text-body italic hover:bg-white/4', rangeFormat.italic ? 'bg-white/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('italic')">I</button>
         <button type="button" title="Underline" :class="['size-8 rounded-control text-body underline hover:bg-white/4', rangeFormat.underline ? 'bg-white/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('underline')">U</button>
         <button type="button" title="Strikethrough" :class="['size-8 rounded-control text-body line-through hover:bg-white/4', rangeFormat.strike ? 'bg-white/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('strike')">S</button>
-        <button type="button" title="Insert a field of the form" :disabled="!formSchema" :class="['h-8 rounded-control px-2 text-small hover:bg-white/4 disabled:opacity-40', showFields ? 'bg-warn/15 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFields">Insert field</button>
+        <button type="button" title="Insert a field of the form, or a document value" :class="['h-8 rounded-control px-2 text-small hover:bg-white/4', showFields ? 'bg-warn/15 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFields">Insert field</button>
         <button type="button" title="Insert a placeholder" :class="['h-8 rounded-control px-2 font-mono text-small hover:bg-white/4', showPicker ? 'bg-warn/15 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="togglePicker"><span v-pre>{{x}}</span></button>
         <span class="mx-1 h-5 w-px bg-line" aria-hidden="true" />
         <button type="button" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo" class="size-8 rounded-control text-ink-muted hover:bg-white/4 disabled:opacity-30" :disabled="!canUndo" @mousedown.prevent @click="undo"><OpIcon name="arrow-left" :size="15" class="mx-auto" /></button>
@@ -521,12 +535,16 @@ onBeforeRouteLeave(async () => {
         <BlockList :key="`${current}:${editKey}`" :model-value="section.list" />
         <p v-if="!section.list.length" class="py-8 text-center text-body text-ink-muted">This section is empty. Use <strong class="font-medium text-ink">Add item</strong> to add a paragraph, list, table or layout block.</p>
       </div>
-      <PlaceholderPanel v-if="showPlaceholders" :placeholders="template.placeholders" :sections="template.section" :form-keys="formKeys" :readonly="readonly" @add="addKey" @rename="renameKey" @remove="removeKey" />
+      <PlaceholderPanel v-if="showPlaceholders" :placeholders="template.placeholders" :sections="template.section" :frame="template.frame" :form-keys="formKeys" :readonly="readonly" @add="addKey" @rename="renameKey" @remove="removeKey" />
     </div>
 
     <DialogSign :ref="dialogs.sign" />
     <DialogTable :ref="dialogs.table" />
     <DialogLayout :ref="dialogs.layout" />
+    <DialogFormTable :ref="dialogs.formTable" />
+    <DialogChecklist :ref="dialogs.checklist" />
+    <DialogDeclaration :ref="dialogs.declaration" />
+    <DialogPageSetup ref="pageSetup" />
     <SectionManager
       :open="showSections"
       :sections="template.section"

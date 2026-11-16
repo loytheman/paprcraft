@@ -16,6 +16,24 @@
 //   repeat                  item: { group, list: [block] }       renders `list` once per row of the form's group
 //   if                      item: { cond, list: [block] }        renders `list` only when the visibleIf `cond` holds
 //   table-01/02/03 with item.repeatGroup: the first data row is repeated once per row of that group
+//   form-table              item: { title, rows: [{ repeat?, stack?, cells: [{ label?, value, list?, col? }] }] }
+//                           the corpsec "section table": shaded title row, then label-over-bold-value cells (6/6 for two, full width
+//                           for one...). list: the value is one {{key}} chip resolving to an array, shown as numbered UPPER CASE items.
+//                           stack: all cells of the row share one cell. repeat: the row is repeated per row of that form group.
+//                           head: true makes a cell a column title (small, not bold, no label, the value is substituted, empty stays
+//                           empty): a row of head cells followed by rows of bold values with explicit `col`s is the reference's
+//                           Shareholders / Officers table.
+//   form-checklist          item: { title, subtitle?, rows: [{ text, value }] }
+//                           the corpsec checklist: title row, optional subtitle row, a spacer, then numbered questions with real
+//                           Word check boxes (value = a {{key}} chip resolving to true / false; unanswered = both boxes empty)
+//   form-declaration        item: { title?, text?, signatureLabel?, nameLabel?, dateLabel?, signer? }
+//                           the corpsec declaration table (text, signature line, name line, date line); signer = a {{key}} chip
+//                           whose name is printed on the name line when it resolves
+// Template look: template.style is "letter" (default: Arial, 20 mm margins, white table headers) or "form" (the corpsec CDD form:
+// Calibri, 12.7 mm margins, grey F2F2F2 table headers). template.frame = { headerLeft, headerRight, footerLeft } puts the corpsec
+// header (two shaded cells) and footer (left text, right "Page N/M", per Word section) on every page; strings may hold
+// placeholders. Built-in values anywhere: {{submission_ref}} {{submission_title}} {{form_name}} {{generated_date}} (the caller's
+// `values` win).
 // Placeholders: a Quill placeholder embed ({ text, value }) resolves, in order, to values[KEY] (this
 // export's overrides), the form's data (render's third argument, the form engine's flatten()), then
 // template.placeholders[KEY] (saved on the template), then the embed's own value; if none has it, it
@@ -30,7 +48,7 @@ const {
   AlignmentType, BorderStyle, Document, Footer, Header, HeightRule, PageBreak, Paragraph, ShadingType, TextRun,
   VerticalAlign, convertInchesToTwip,
 } = require('docx');
-const { createStyles } = require('./docxStyles');
+const { createStyles, configFor } = require('./docxStyles');
 const { evalCond } = require('./formEngine');
 
 const normKey = (k) => String(k ?? '').trim().toUpperCase();
@@ -86,6 +104,7 @@ const PIPES = {
     try { return regionNames?.of(code) || code; } catch { return code; }
   },
 };
+const todayText = () => PIPES.date(new Date().toISOString().slice(0, 10));
 const formatValue = (v, pipes) => {
   let cur = v;
   for (const name of pipes) {
@@ -102,9 +121,10 @@ const displayKey = (text) => {
 // formData = { data, raw } from the form engine's flatten() (data: select values as labels, groups as
 // rows; raw: values as stored, for `if` conditions). Optional: a plain template needs none.
 const render = (template, values = {}, formData = null) => {
-  const S = createStyles();
-  const { gc, span, span_sm, b, b_xl, br, p, table, tr, td, td2, td_noBorder } = S;
-  const overrides = buildLookup({}, values);
+  const S = createStyles(configFor(template?.style));
+  const { gc, span, span_sm, span_md, b, b_xl, b_md, b_sm, br, t, p, table, tr, td, td2, td_noBorder, th, tr2, tr_showHeader, tr_empty, checkbox, li } = S;
+  // Built-ins first, then the caller's values (which win): see the header comment.
+  const overrides = buildLookup({ generated_date: todayText() }, values);
   const savedMap = buildLookup(template?.placeholders, {});
   const formValues = formData?.data ?? {};
   const formRaw = formData?.raw ?? {};
@@ -355,6 +375,139 @@ const render = (template, values = {}, formData = null) => {
       : [];
   };
 
+  // ---- the corpsec form blocks: section table, checklist, declaration --------------------------------
+  const NIL = { style: BorderStyle.NIL };
+  const text = (v) => subst(String(v ?? ''));
+  const orDash = (v) => (String(v ?? '').trim() === '' ? '-' : v);
+  // "{{key}}" / "{{key|pipe}}" -> the key, or null when the string is anything else.
+  const chipKeyOf = (v) => {
+    const m = /^\s*\{\{\s*([^}|]+?)\s*(?:\|[^}]*)?\}\}\s*$/.exec(String(v ?? ''));
+    return m ? m[1] : null;
+  };
+  const defaultCol = (n) => ({ 1: 12, 2: 6, 3: 4, 4: 3 })[n] ?? Math.max(1, Math.round(12 / n));
+
+  // A form-table cell's content as paragraphs. `inStack`: shown inside one shared cell (bold md values).
+  const formCellParas = (cell, listId, inStack = false, first = true) => {
+    if (cell?.head) return [p([span_sm(text(cell.value))])]; // a column title
+    const label = cell?.label ? text(cell.label) : '';
+    const out = [];
+    const items = (() => {
+      if (!cell?.list) return null;
+      const key = chipKeyOf(cell.value);
+      const raw = key ? resolveRaw(key) : undefined;
+      const arr = Array.isArray(raw) ? raw.map(asText) : blank(raw) ? [] : [asText(raw)];
+      return arr.length ? arr : ['-'];
+    })();
+    if (inStack) {
+      if (label) out.push(p(first ? [span_sm(label)] : [br(), span_sm(label)]));
+      if (items) items.forEach((it) => out.push(li(b_md(String(it).toUpperCase()), { listId })));
+      else out.push(p([b_md(String(orDash(text(cell?.value))))]));
+      return out;
+    }
+    if (items) {
+      if (label) out.push(p([span_sm(label)]));
+      items.forEach((it) => out.push(li(b_md(String(it).toUpperCase()), { listId })));
+      return out;
+    }
+    const value = String(orDash(text(cell?.value)));
+    out.push(label ? p([span_sm(label), br(), t(), b(value)]) : p([b(value)]));
+    return out;
+  };
+
+  const formTableRow = (row, listId) => {
+    const cells = Array.isArray(row?.cells) ? row.cells.filter((c) => c && typeof c === 'object') : [];
+    if (!cells.length) return null;
+    if (row.stack) return tr([td2(cells.flatMap((c, i) => formCellParas(c, listId, true, i === 0)))]);
+    return tr(cells.map((c) => td(formCellParas(c, listId), { col: Number.isFinite(c.col) && c.col >= 1 && c.col <= 12 ? c.col : defaultCol(cells.length) })));
+  };
+
+  const formTable = (o) => {
+    if (!o.item || typeof o.item !== 'object') return [];
+    const it = o.item;
+    state.listInstance += 1; // numbered list cells restart per table
+    const listId = state.listInstance;
+    const rows = [tr([th(p(span(text(it.title))))])];
+    for (const row of Array.isArray(it.rows) ? it.rows : []) {
+      try {
+        const scopeList = row?.repeat ? scopesFor(row.repeat) : [null];
+        for (const sc of scopeList) {
+          const r = withScope(sc, () => formTableRow(row, listId));
+          if (r) rows.push(r);
+        }
+      } catch (err) {
+        console.error(JSON.stringify({ msg: 'docx: form-table row skipped', error: String(err?.message || err) }));
+      }
+    }
+    return [table(rows)];
+  };
+
+  // true / false / null (unanswered) from a {{key}} chip, or a plain true / false / yes / no.
+  const flagOf = (value) => {
+    const key = chipKeyOf(value);
+    if (key) return toBool(resolveRaw(key));
+    return toBool(text(value));
+  };
+
+  const formChecklist = (o) => {
+    if (!o.item || typeof o.item !== 'object') return [];
+    const it = o.item;
+    state.listInstance += 1; // the question numbers restart per checklist
+    const listId = state.listInstance;
+    const rows = [tr([th(p(span(text(it.title))))])];
+    if (it.subtitle) rows.push(tr([td(p(span_sm(text(it.subtitle))))]));
+    rows.push(tr_empty());
+    for (const row of Array.isArray(it.rows) ? it.rows : []) {
+      try {
+        if (!row || typeof row !== 'object') continue;
+        rows.push(
+          tr2(
+            [
+              td2(li(span_md(text(row.text)), { listId }), { col: 9, borders: { right: NIL } }),
+              td(p(checkbox(flagOf(row.value)), { alignment: AlignmentType.RIGHT }), { col: 3, borders: { left: NIL } }),
+            ],
+            { cantSplit: true }
+          )
+        );
+      } catch (err) {
+        console.error(JSON.stringify({ msg: 'docx: form-checklist row skipped', error: String(err?.message || err) }));
+      }
+    }
+    return [table(rows)];
+  };
+
+  const DECLARATION_TEXT =
+    'I declare that the information provided in this form is accurate and truthful. I understand that if I am found to have knowingly made false statements or intentionally omitted any significant details, I may face prosecution and legal penalties under applicable law.';
+  const LINE = '__________________________________________';
+  const formDeclaration = (o) => {
+    const it = o.item ?? {};
+    const signerKey = chipKeyOf(it.signer);
+    const signer = signerKey ? lookup(signerKey) : it.signer ? text(it.signer) : null;
+    const signerName = signer && signer !== '-' && !/\{\{/.test(signer) ? signer : '';
+    const nameLabel = it.nameLabel
+      ? [b_sm(text(it.nameLabel))]
+      : [b_sm('Name of Officer/ Shareholder/ Beneficial Owner/'), br(), b_sm('Purchaser/ Customer')];
+    return [
+      table([
+        tr_showHeader([th(p(span(text(it.title || 'Declaration'))))]),
+        tr([td2(p([span_md(text(it.text || DECLARATION_TEXT)), br({ break: 3 })]), { borders: { bottom: NIL } })]),
+        tr([td([p([b_sm(text(it.signatureLabel || 'Signature:'))]), p([br({ break: 2 })])], { borders: { top: NIL, bottom: NIL } })]),
+        tr([
+          td2([signerName ? p(span_md(signerName, { underline: {} })) : p(span_sm(LINE)), p(nameLabel)], { col: 8, borders: { top: NIL, right: NIL } }),
+          td2([p(span_sm(LINE)), p(b_sm(text(it.dateLabel || 'Date')))], { col: 4, verticalAlign: top, borders: { top: NIL, left: NIL } }),
+        ]),
+      ]),
+    ];
+  };
+
+  const safely = (fn) => {
+    try {
+      return fn();
+    } catch (err) {
+      console.error(JSON.stringify({ msg: 'docx: block skipped', error: String(err?.message || err) }));
+      return [];
+    }
+  };
+
   // ---- block dispatch --------------------------------------------------------------------------
   const generateItem = (block, level = 0) => {
     const o = fillDataFields(block);
@@ -399,6 +552,9 @@ const render = (template, values = {}, formData = null) => {
       case 'table-01': return table01(o, level);
       case 'table-02': return table02(o, level);
       case 'table-03': return table03(o, level);
+      case 'form-table': return safely(() => formTable(o));
+      case 'form-checklist': return safely(() => formChecklist(o));
+      case 'form-declaration': return safely(() => formDeclaration(o));
       case 'page-break': return [p([new PageBreak()])];
       default: return []; // unknown block types are skipped, never fatal
     }
@@ -412,6 +568,14 @@ const render = (template, values = {}, formData = null) => {
   const fillDeep = (v) => (typeof v === 'string' ? subst(v) : Array.isArray(v) ? v.map(fillDeep) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fillDeep(x)])) : v);
   const fillDataFields = (block) => (/^(layout-|sign-area-)/.test(block?.type ?? '') && block?.item?.data ? { ...block, item: { ...block.item, data: fillDeep(block.item.data) } } : block);
 
+  // template.frame: the same header and footer on every Word section (placeholders and built-ins resolved).
+  const frame = (() => {
+    const f = template?.frame;
+    if (!f || typeof f !== 'object') return null;
+    const r = { headerLeft: text(f.headerLeft), headerRight: text(f.headerRight), footerLeft: text(f.footerLeft) };
+    return Object.values(r).some((v) => v.trim()) ? r : null;
+  })();
+
   // Each template section starts on a new page. A page-break-02 block also ends the current Word
   // section (its footer gets ".../M") and starts one whose header shows "-N-". Word headers and
   // footers belong to a whole section, so they repeat on every page of it.
@@ -419,19 +583,20 @@ const render = (template, values = {}, formData = null) => {
   for (const sec of template?.section ?? []) {
     state.trackItemId = [];
     let children = [];
-    let header = null;
-    let footer = null;
+    let header = frame ? S.frameHeader(frame) : null;
+    let footer = frame ? S.frameFooter(frame) : null;
     const close = () => {
       sections.push({ ...S.pageStyle({ header, footer }), children: children.length ? children : [p([])] });
       children = [];
     };
     for (const block of sec?.list ?? []) {
       if (block?.type === 'page-break-02') {
-        footer = pageNoFooter(block.item?.data?.footerPageNo || '2');
+        // With a template frame the new Word section keeps the frame's header and footer.
+        if (!frame) footer = pageNoFooter(block.item?.data?.footerPageNo || '2');
         const next = block.item?.data?.headerPageNo || '2';
         close();
-        header = pageNoHeader(next);
-        footer = null;
+        header = frame ? S.frameHeader(frame) : pageNoHeader(next);
+        footer = frame ? S.frameFooter(frame) : null;
         continue;
       }
       children.push(...generateItem(block));

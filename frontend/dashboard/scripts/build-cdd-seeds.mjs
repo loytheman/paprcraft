@@ -142,8 +142,10 @@ const companyForm = () => {
 };
 
 // ---- template helpers -----------------------------------------------------------------------------
+// The layout follows the corpsec CDD form (infra/word-to-pdf/docx template/case.individual.js and
+// case.company.js): shaded section tables with label-over-value cells, numbered checklists with Yes/No
+// checkboxes, a declaration box, a "Case Reference" page header and "Page n/m" footer.
 const quill = () => { const el = document.createElement('div'); document.body.appendChild(el); return new Q.Quill(el, { formats: Q.EDITOR_FORMATS, modules: { toolbar: false } }); };
-// "text {{key|pipe}} more" -> delta ops with chips.
 const opsOf = (text, attrs) => {
   const ops = [];
   for (const part of String(text).split(/(\{\{[^}]+\}\})/)) {
@@ -160,70 +162,90 @@ const cell = (text, attrs) => {
 };
 const para = (text, attrs) => ({ id: nanoid(), type: 'paragraph', item: cell(text, attrs) });
 const blank = () => para('');
-const rows2 = (rows) => ({ id: nanoid(), type: 'table-01', item: { data: rows.map(([a, b]) => ({ col1: cell(a, { bold: true }), col2: cell(b) })) } });
 const repeat = (group, list) => ({ id: nanoid(), type: 'repeat', item: { group, list } });
-const ifBlock = (cond, list) => ({ id: nanoid(), type: 'if', item: { cond, list } });
-const sign = () => ({ id: nanoid(), type: 'sign-area-04', item: { data: { desc: 'CUSTOMER', name: '{{declaration_signature}}', desc2: 'Name of Officer / Shareholder / Beneficial Owner / Purchaser / Customer', desc3: null } } });
-const H = (t) => para(t, { bold: true });
-const title = (t) => para(t, { bold: true, size: 'lg' });
-const head = (kind) => [title(`Customer Due Diligence Form (${kind})`), para('This form is for the use of: {{firm_name}}', { size: 'sm' }), blank()];
-const declaration = () => [H('Declaration'), para(CONSENT, { size: 'sm' }), blank(), sign()];
-const checks = (key, list) => questions(list).map((q, i) => para(`${i + 1}. ${q}   {{${key}.q${i + 1}|yesno}}`));
-const partiesBlocks = () => [
-  H('Associated parties: companies'),
-  repeat('parties_company', [
-    rows2([['Entity name', '{{parties_company.c_name}}'], ['Unique entity no.', '{{parties_company.c_uen}}'], ['Country of incorporation', '{{parties_company.c_country|country}}'], ['Date of incorporation', '{{parties_company.c_inc_date|date}}'], ['Registered address', '{{parties_company.c_address}}'], ['Registrable controller of the company?', '{{parties_company.c_registrable_controller|yesno}}'], ['Remarks', '{{parties_company.c_remarks}}']]),
-    blank(),
-  ]),
-  H('Associated parties: individuals'),
-  repeat('parties_individual', [
-    rows2([['Full name', '{{parties_individual.p_name}}'], ['Identification no.', '{{parties_individual.p_id_no}}'], ['Nationality', '{{parties_individual.p_nationality|country}}'], ['Role', '{{parties_individual.p_role}}'], ['Shareholding (%)', '{{parties_individual.p_share_pct}}'], ['Acting on behalf of the customer?', '{{parties_individual.p_custom_behalf|yesno}}'], ['Controls more than 25% of the company?', '{{parties_individual.p_more_than25_percent|yesno}}'], ['Registrable controller of the company?', '{{parties_individual.p_registrable_controller|yesno}}'], ['Politically exposed person (or family / close associate)?', '{{parties_individual.p_pep|yesno}}'], ['Source of wealth or funds information required?', '{{parties_individual.p_fund_info|yesno}}']]),
-    blank(),
-  ]),
-];
-const reviewBlocks = () => [
-  H('Risk assessment review'),
-  rows2([['Risk assessment rating', '{{risk_rating}}'], ['Risk assessment comment', '{{risk_comment}}'], ['Acceptance of customer', '{{recommendation}}'], ['Recommending officer', '{{recommending_officer}}'], ['Recommendation comment', '{{recommendation_comment}}'], ['Approval for acceptance', '{{approval}}'], ['Approving officer', '{{approving_officer}}'], ['Approval comment', '{{approval_comment}}']]),
-  blank(),
-  H('Screening'),
-  para('{{screening_notes}}'),
-];
 
-const individualTemplate = () => ({ name: 'CDD: Individual', placeholders: { firm_name: 'Your firm name' }, section: [
-  { name: 'Customer information', list: [
-    ...head('for Individual'),
-    H('Customer information'),
-    rows2([['Full name', '{{full_name}}'], ['Gender', '{{gender}}'], ['Identification no.', '{{id_no}}'], ['Expiry date of ID', '{{id_expiry|date}}'], ['Nationality', '{{nationality|country}}'], ['Date of birth', '{{dob|date}}'], ['Address', '{{address}}'], ['Email', '{{email}}'], ['Contact number', '{{contact_no}}']]),
-    blank(), H('Case information'),
-    rows2([['Nature of services provided', '{{services|list}}'], ['Remarks', '{{remarks}}']]),
-    blank(), ...declaration(),
-  ] },
-  { name: 'Associated parties', list: partiesBlocks() },
-  { name: 'Risk assessment', list: [H('Risk assessment checklist'), H('Customer risk assessment'), ...checks('risk_customer', C.riskCustomer), blank(), ...reviewBlocks()] },
+// form-table: rows of cells. c(label, value, col?) is a label-over-value cell; v(value, col?) a bare bold value;
+// head(text, col) a small column title; list(label, value) a numbered list of an array answer.
+const c = (label, value, col) => ({ label, value, ...(col && { col }) });
+const v = (value, col) => ({ value, ...(col && { col }) });
+const head = (value, col) => ({ value, head: true, ...(col && { col }) });
+const lst = (label, value) => ({ label, value, list: true });
+const row = (...cells) => ({ cells });
+const rep = (group, ...cells) => ({ repeat: group, cells });
+const stack = (...cells) => ({ stack: true, cells });
+const ftable = (title, rows) => ({ id: nanoid(), type: 'form-table', item: { title, rows } });
+const checklistBlock = (title, subtitle, key, list) => ({ id: nanoid(), type: 'form-checklist', item: { title, ...(subtitle && { subtitle }), rows: questions(list).map((text, i) => ({ text, value: `{{${key}.q${i + 1}}}` })) } });
+const declaration = () => ({ id: nanoid(), type: 'form-declaration', item: { signer: '{{declaration_signature}}' } });
+const title = (t) => para(t, { bold: true });
+const preamble = (kind) => [title(`Customer Due Diligence Form (${kind})`), para('This form is for the use of: {{firm_name}}', { size: 'sm' }), blank()];
+const FRAME = { headerLeft: 'Customer Due Diligence Form', headerRight: 'Case Reference: {{submission_ref}}', footerLeft: '{{firm_name}}' };
+
+const individualCheck = () => ({ id: nanoid(), type: 'form-checklist', item: { title: 'Checklist', rows: C.individualCheckList.map((q) => ({ text: q.key, value: `{{parties_individual.p_${q.value.replace(/Flag$/, '').replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`)}}}` })) } });
+const companyCheck = () => ({ id: nanoid(), type: 'form-checklist', item: { title: 'Checklist', rows: C.companyCheckList.map((q) => ({ text: q.key, value: '{{parties_company.c_registrable_controller}}' })) } });
+
+const partiesSection = () => ({ name: 'Associated parties', list: [
+  repeat('parties_company', [
+    ftable('Associated Party (Company Information)', [
+      row(c('Entity Name', '{{parties_company.c_name|upper}}')), row(c('Unique Entity No.', '{{parties_company.c_uen|upper}}'), c('Country of Incorporation', '{{parties_company.c_country|country|upper}}')),
+      row(c('Date of Incorporation', '{{parties_company.c_inc_date|date}}')), row(c('Registered Address', '{{parties_company.c_address|upper}}')), row(c('Remarks', '{{parties_company.c_remarks}}')),
+    ]),
+    blank(), companyCheck(), blank(), declaration(), blank(),
+  ]),
+  repeat('parties_individual', [
+    ftable('Associated Party (Individual Information)', [
+      row(c('Full Name', '{{parties_individual.p_name|upper}}'), c('Role', '{{parties_individual.p_role|upper}}')),
+      row(c('Identification No', '{{parties_individual.p_id_no|upper}}'), c('Nationality', '{{parties_individual.p_nationality|country|upper}}')),
+      row(c('Shareholding (%)', '{{parties_individual.p_share_pct}}')),
+    ]),
+    blank(), individualCheck(), blank(), declaration(), blank(),
+  ]),
 ] });
 
-const companyTemplate = () => ({ name: 'CDD: Company', placeholders: { firm_name: 'Your firm name' }, section: [
+const reviewBlocks = () => [
+  ftable('Risk Assessment Review', [
+    row(c('Risk Assessment Rating', '{{risk_rating|upper}}')), row(c('Risk Assessment Comment', '{{risk_comment}}')),
+    row(c('Acceptance of Customer', '{{recommendation|upper}}', 3), c('Recommending Officer', '{{recommending_officer|upper}}', 9)), row(c('Recommendation Comment', '{{recommendation_comment}}')),
+    row(c('Approval for Acceptance', '{{approval|upper}}', 3), c('Approving Officer', '{{approving_officer|upper}}', 9)), row(c('Approval Comment', '{{approval_comment}}')),
+  ]),
+  blank(),
+  ftable('Screening', [row(c('Screening results and notes', '{{screening_notes}}'))]),
+];
+
+const individualTemplate = () => ({ name: 'CDD: Individual', style: 'form', frame: FRAME, placeholders: { firm_name: 'Your firm name' }, section: [
   { name: 'Customer information', list: [
-    ...head('for Company'),
-    H('Customer information'),
-    rows2([['Entity name', '{{entity_name}}'], ['Former names', '{{former_names}}'], ['Unique entity no.', '{{uen}}'], ['Entity type', '{{entity_type}}'], ['Country of incorporation', '{{inc_country|country}}'], ['Date of incorporation', '{{inc_date|date}}'], ['Registered address', '{{reg_address}}'], ['Primary activity', '{{primary_activity}}']]),
-    blank(), H('Case information'),
-    rows2([['Nature of services provided', '{{services|list}}'], ['Remarks', '{{remarks}}']]),
+    ...preamble('for Individual'),
+    ftable('Customer Information', [
+      row(c('Full Name', '{{full_name|upper}}'), c('Gender', '{{gender|upper}}')), row(c('Identification No', '{{id_no|upper}}'), c('Expiry Date of ID', '{{id_expiry|date}}')),
+      row(c('Nationality', '{{nationality|country|upper}}'), c('Date of Birth', '{{dob|date}}')), row(c('Address', '{{address|upper}}')), row(c('Email', '{{email|upper}}'), c('Contact Number', '{{contact_no}}')),
+    ]),
+    ftable('Case Information', [stack(lst('Nature of Services Provided', '{{services}}'), c('Remarks', '{{remarks}}'))]),
+    declaration(),
   ] },
-  { name: 'Shareholders and directors', list: [
-    H('Shareholders'),
-    repeat('shareholders', [rows2([['Name', '{{shareholders.sh_name}}'], ['Type', '{{shareholders.sh_type}}'], ['ID / registration no.', '{{shareholders.sh_id}}'], ['Share class', '{{shareholders.sh_class}}'], ['Shareholding (%)', '{{shareholders.sh_pct}}']]), blank()]),
-    H('Directors and officers'),
-    repeat('directors', [rows2([['Full name', '{{directors.d_name}}'], ['Identification no.', '{{directors.d_id}}'], ['Nationality', '{{directors.d_nationality|country}}'], ['Role', '{{directors.d_role}}']]), blank()]),
-    ...declaration(),
+  partiesSection(),
+  { name: 'Risk assessment', list: [checklistBlock('Risk Assessment Checklist', 'Customer Risk Assessment', 'risk_customer', C.riskCustomer), blank(), ...reviewBlocks()] },
+] });
+
+const companyTemplate = () => ({ name: 'CDD: Company', style: 'form', frame: FRAME, placeholders: { firm_name: 'Your firm name' }, section: [
+  { name: 'Customer information', list: [
+    ...preamble('for Company'),
+    ftable('Customer Information', [
+      row(c('Entity Name', '{{entity_name|upper}}')), row(c('Former Names', '{{former_names|upper}}')), row(c('Unique Entity No.', '{{uen|upper}}'), c('Entity Type', '{{entity_type|upper}}')),
+      row(c('Country of Incorporation', '{{inc_country|country|upper}}'), c('Date of Incorporation', '{{inc_date|date}}')), row(c('Registered Address', '{{reg_address|upper}}')), row(c('Primary Activity', '{{primary_activity|upper}}')),
+    ]),
+    ftable('Case Information', [stack(lst('Nature of Services Provided', '{{services}}'), c('Remarks', '{{remarks}}'))]),
   ] },
-  { name: 'Associated parties', list: partiesBlocks() },
+  { name: 'Shareholders and officers', list: [
+    ftable('Company Officers Information', [row(head('Name', 5), head('Id / Register No.', 3), head('Position / Role', 4)), rep('directors', v('{{directors.d_name|upper}}', 5), v('{{directors.d_id|upper}}', 3), v('{{directors.d_role|upper}}', 4))]),
+    blank(),
+    ftable('Shareholders Information', [row(head('Type', 2), head('Name', 4), head('Id / Register No.', 2), head('Share Type', 2), head('Share Ownership', 2)), rep('shareholders', v('{{shareholders.sh_type|upper}}', 2), v('{{shareholders.sh_name|upper}}', 4), v('{{shareholders.sh_id|upper}}', 2), v('{{shareholders.sh_class|upper}}', 2), v('{{shareholders.sh_pct}}%', 2))]),
+    blank(), declaration(),
+  ] },
+  partiesSection(),
   { name: 'Risk assessment', list: [
-    H('Risk assessment checklist'),
-    H('Customer risk assessment'), ...checks('risk_customer', C.riskCustomer), blank(),
-    H('Client risk assessment'), ...checks('risk_client', C.riskClient), blank(),
-    H('Country risk assessment'), ...checks('risk_country', C.riskCountry), blank(),
-    H('Service risk assessment'), ...checks('risk_service', C.riskService), blank(),
+    checklistBlock('Risk Assessment Checklist', 'Customer Risk Assessment', 'risk_customer', C.riskCustomer), blank(),
+    checklistBlock('Risk Assessment Checklist', 'Client Risk Assessment', 'risk_client', C.riskClient), blank(),
+    checklistBlock('Risk Assessment Checklist', 'Country Risk Assessment', 'risk_country', C.riskCountry), blank(),
+    checklistBlock('Risk Assessment Checklist', 'Service Risk Assessment', 'risk_service', C.riskService), blank(),
     ...reviewBlocks(),
   ] },
 ] });
@@ -237,13 +259,19 @@ for (const [file, form, template] of [['cdd-individual.json', individualForm(), 
   // every chip in the template must point at a real field (or a template placeholder)
   const keys = new Set(E.allFields(form.schema).map((f) => f.key));
   const groupFields = Object.fromEntries(E.allFields(form.schema).filter((f) => f.type === 'group').map((f) => [f.key, new Set(f.group.fields.map((g) => g.key))]));
+  const BUILT_IN = new Set(['firm_name', 'submission_ref', 'submission_title', 'generated_date', 'form_name']);
   const bad = [];
   for (const m of JSON.stringify(template).matchAll(/"text":"([^"|]+)(?:\|[a-z]+)?","value":""/g)) {
     const [base, sub] = m[1].split('.');
-    const ok = base === 'firm_name' || (sub === undefined ? keys.has(base) : (groupFields[base]?.has(sub) || (sub !== '#' && keys.has(base))));
+    const ok = BUILT_IN.has(base) || (sub === undefined ? keys.has(base) : (groupFields[base]?.has(sub) || (sub !== '#' && keys.has(base))));
     if (!ok) bad.push(m[1]);
   }
-  for (const m of JSON.stringify(template).matchAll(/\{\{([^}|]+)(?:\|[a-z]+)?\}\}/g)) { const [base] = m[1].split('.'); if (base !== 'firm_name' && !keys.has(base)) bad.push(m[1]); }
+  for (const m of JSON.stringify(template).matchAll(/\{\{([^}|]+)(?:\|[a-z]+)*\}\}/g)) {
+    const [base, sub] = m[1].split('.');
+    if (BUILT_IN.has(base)) continue;
+    if (!keys.has(base)) bad.push(m[1]);
+    else if (sub !== undefined && sub !== '#' && !groupFields[base]?.has(sub) && !(form.schema.sections.some((sec) => sec.fields.some((f) => f.key === base && f.type === 'checklist' && f.options.some((o) => o.value === sub))))) bad.push(m[1]);
+  }
   if (bad.length) { console.error(`${form.name}: template points at unknown fields: ${[...new Set(bad)].join(', ')}`); process.exit(1); }
   writeFileSync(new URL(file, outDir), JSON.stringify({ form, template }, null, 2) + '\n');
   const n = E.allFields(form.schema).length;

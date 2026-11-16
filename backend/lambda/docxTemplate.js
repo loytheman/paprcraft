@@ -147,7 +147,9 @@ const handleSubmission = async (deps, { submissionId, cbId, values }) => {
   }
 
   try {
-    const buffer = await docxBuffer(template, values, flatten(sub.schema, sub.values ?? {}));
+    // Built-in values every template can use ({{submission_ref}}...); the caller's own values win.
+    const builtins = { submission_ref: String(submissionId).slice(-8).toUpperCase(), submission_title: sub.title || sub.formName || '', form_name: sub.formName || '' };
+    const buffer = await docxBuffer(template, { ...builtins, ...(values ?? {}) }, flatten(sub.schema, sub.values ?? {}));
     const path = `accounts/${sub.accountId}/records/${submissionId}/exports/${cbId}.docx`;
     await deps.putObject({ Bucket: bucket, Key: path, Body: buffer, ContentType: DOCX_TYPE });
     const patched = await patchExport(deps, table, submissionKey(submissionId), cbId, { processStatus: 'completed', path, fileName: `${cbId}.docx` });

@@ -5,11 +5,12 @@
 import { computed, ref } from 'vue';
 import OpButton from '@ds/components/OpButton.vue';
 import OpIcon from '@ds/components/OpIcon.vue';
-import { normalizeKey, placeholderUsage } from '@/helpers/template/blocks';
+import { BUILTIN_KEYS, normalizeKey, placeholderUsage } from '@/helpers/template/blocks';
 
 const props = defineProps({
   placeholders: { type: Object, required: true },
   sections: { type: Array, required: true },
+  frame: { type: Object, default: null }, // the page header / footer (their {{tokens}} count as used)
   formKeys: { type: Object, default: null }, // Set of the keys the template's form defines
   readonly: { type: Boolean, default: false },
 });
@@ -17,9 +18,9 @@ const emit = defineEmits(['add', 'rename', 'remove']);
 
 const chip = (k) => `{{${k}}}`;
 const keys = computed(() => Object.keys(props.placeholders));
-const usage = computed(() => placeholderUsage(props.sections));
+const usage = computed(() => placeholderUsage(props.sections, props.frame));
 // Keys used in the text that this list doesn't hold: fields of the form (filled from a submission), or leftovers.
-const others = computed(() => Object.entries(usage.value).filter(([k]) => !(k in props.placeholders)).map(([k, n]) => ({ key: k, n, form: !!props.formKeys?.has(k) || /[a-z.#]/.test(k) })));
+const others = computed(() => Object.entries(usage.value).filter(([k]) => !(k in props.placeholders)).map(([k, n]) => ({ key: k, n, form: !!props.formKeys?.has(k.split('.')[0]) || /[a-z.#]/.test(k), builtin: BUILTIN_KEYS.has(k) })));
 const draftKey = ref('');
 const error = ref('');
 
@@ -97,7 +98,7 @@ const trim = () => { for (const k of keys.value) props.placeholders[k] = String(
       <ul class="mt-2 space-y-1">
         <li v-for="o in others" :key="o.key" class="flex items-center justify-between gap-2 text-small">
           <span class="min-w-0 truncate font-mono text-ink-muted">{{ chip(o.key) }}</span>
-          <span class="shrink-0 text-ink-faint">{{ o.form ? 'form field · ' : '' }}{{ o.n }}×</span>
+          <span class="shrink-0 text-ink-faint">{{ o.builtin ? 'document info · ' : o.form ? 'form field · ' : '' }}{{ o.n }}×</span>
         </li>
       </ul>
     </div>

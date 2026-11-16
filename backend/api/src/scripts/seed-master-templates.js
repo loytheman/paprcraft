@@ -5,12 +5,14 @@
 // bound to each other, and publishes the form so accounts can clone it.
 //   NODE_ENV=development STAGE_ENV=stage AWS_PROFILE=paprcraft-dev-loy node src/scripts/seed-master-templates.js
 //   ... node src/scripts/seed-master-templates.js --apply
+//   ... node src/scripts/seed-master-templates.js --apply --update   (also replaces the output templates of master forms that already exist)
 import { readdirSync, readFileSync } from "node:fs";
 import { MASTER_ACCOUNT_ID } from "../models/model.template.js";
 import { createTemplate, listTemplates, updateTemplate } from "../services/service.template.js";
 import { createForm, listForms, updateForm, publishForm } from "../services/service.form.js";
 
 const apply = process.argv.includes("--apply");
+const update = process.argv.includes("--update");
 const log = (...a) => process.stderr.write(a.join(" ") + "\n");
 const dir = new URL("./masters/", import.meta.url);
 
@@ -26,14 +28,22 @@ for (const f of readdirSync(dir).filter((n) => n.endsWith(".json")).sort()) {
 // Master forms with their templates.
 const formsDir = new URL("./masters/forms/", import.meta.url);
 const stamp = { actionBy: { name: "seed-master-templates script", userId: null }, auditStreamId: `seed-${Date.now()}` };
-const existingForms = new Set((await listForms(MASTER_ACCOUNT_ID)).map((f) => f.name));
+const existingFormRows = await listForms(MASTER_ACCOUNT_ID);
+const existingForms = new Set(existingFormRows.map((f) => f.name));
 const blame = () => ({ ...stamp, auditStreamId: `seed-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` });
 for (const f of readdirSync(formsDir).filter((n) => n.endsWith(".json")).sort()) {
   const { form, template } = JSON.parse(readFileSync(new URL(f, formsDir), "utf8"));
-  if (existingForms.has(form.name)) { log(`skip   form ${form.name} (already there)`); continue; }
+  if (existingForms.has(form.name)) {
+    const row = existingFormRows.find((x) => x.name === form.name);
+    if (update && row.templateId) {
+      log(`${apply ? "update" : "would update"} template of ${form.name}`);
+      if (apply) await updateTemplate({ id: row.templateId, name: template.name, section: template.section, placeholders: template.placeholders, style: template.style, frame: template.frame }, MASTER_ACCOUNT_ID, blame());
+    } else log(`skip   form ${form.name} (already there)`);
+    continue;
+  }
   log(`${apply ? "create" : "would create"} form ${form.name}: ${form.schema.sections.length} sections, with template ${template.name}`);
   if (!apply) continue;
-  const t = await createTemplate(template, MASTER_ACCOUNT_ID, blame());
+  const t = await createTemplate(template, MASTER_ACCOUNT_ID, blame()); // keeps style + frame
   const created = await createForm(form, MASTER_ACCOUNT_ID, blame());
   await updateForm({ id: created.id, templateId: t.id }, MASTER_ACCOUNT_ID, blame());
   await updateTemplate({ id: t.id, formId: created.id }, MASTER_ACCOUNT_ID, blame());

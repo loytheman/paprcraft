@@ -449,6 +449,12 @@
   },
   "template": {
     "name": "CDD: Individual",
+    "style": "form",
+    "frame": {
+      "headerLeft": "Customer Due Diligence Form",
+      "headerRight": "Case Reference: {{submission_ref}}",
+      "footerLeft": "{{firm_name}}"
+    },
     "placeholders": {
       "firm_name": "Your firm name"
     },
@@ -457,15 +463,14 @@
         "name": "Customer information",
         "list": [
           {
-            "id": "MJwg-ygupte4aktSSTMSA",
+            "id": "plsehKPQTvUFlYmkdaJNr",
             "type": "paragraph",
             "item": {
-              "text": "<p><strong class=\"q-size-lg\">Customer&nbsp;Due&nbsp;Diligence&nbsp;Form&nbsp;(for&nbsp;Individual)</strong></p>",
+              "text": "<p><strong>Customer&nbsp;Due&nbsp;Diligence&nbsp;Form&nbsp;(for&nbsp;Individual)</strong></p>",
               "delta": {
                 "ops": [
                   {
                     "attributes": {
-                      "size": "lg",
                       "bold": true
                     },
                     "insert": "Customer Due Diligence Form (for Individual)"
@@ -478,7 +483,7 @@
             }
           },
           {
-            "id": "UR6AeAuzDtS6MNCWmYZ8L",
+            "id": "JtwlAsak9TbbFsBXZDdvq",
             "type": "paragraph",
             "item": {
               "text": "<p><span class=\"q-size-sm\">This&nbsp;form&nbsp;is&nbsp;for&nbsp;the&nbsp;use&nbsp;of:&nbsp;<span class=\"q-placeholder\" data-text=\"firm_name\" data-value=\"\" contenteditable=\"false\">{{firm_name}}</span></span></p>",
@@ -508,7 +513,7 @@
             }
           },
           {
-            "id": "fhhktvU35i_YQKe2jYs7F",
+            "id": "_i5zoabRYlU-oV1aT5k5d",
             "type": "paragraph",
             "item": {
               "text": "<p></p>",
@@ -522,560 +527,98 @@
             }
           },
           {
-            "id": "dpj0nt-hI6RelOwd9ylDj",
-            "type": "paragraph",
+            "id": "N1bW5hZtuab-SlFNLZCS_",
+            "type": "form-table",
             "item": {
-              "text": "<p><strong>Customer&nbsp;information</strong></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "attributes": {
-                      "bold": true
+              "title": "Customer Information",
+              "rows": [
+                {
+                  "cells": [
+                    {
+                      "label": "Full Name",
+                      "value": "{{full_name|upper}}"
                     },
-                    "insert": "Customer information"
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "QLdmbpfivBMSkVO3WcfWD",
-            "type": "table-01",
-            "item": {
-              "data": [
-                {
-                  "col1": {
-                    "text": "<p><strong>Full&nbsp;name</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Full name"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
+                    {
+                      "label": "Gender",
+                      "value": "{{gender|upper}}"
                     }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"full_name\" data-value=\"\" contenteditable=\"false\">{{full_name}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "full_name",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
+                  ]
                 },
                 {
-                  "col1": {
-                    "text": "<p><strong>Gender</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Gender"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
+                  "cells": [
+                    {
+                      "label": "Identification No",
+                      "value": "{{id_no|upper}}"
+                    },
+                    {
+                      "label": "Expiry Date of ID",
+                      "value": "{{id_expiry|date}}"
                     }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"gender\" data-value=\"\" contenteditable=\"false\">{{gender}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "gender",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
+                  ]
                 },
                 {
-                  "col1": {
-                    "text": "<p><strong>Identification&nbsp;no.</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Identification no."
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
+                  "cells": [
+                    {
+                      "label": "Nationality",
+                      "value": "{{nationality|country|upper}}"
+                    },
+                    {
+                      "label": "Date of Birth",
+                      "value": "{{dob|date}}"
                     }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"id_no\" data-value=\"\" contenteditable=\"false\">{{id_no}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "id_no",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
+                  ]
                 },
                 {
-                  "col1": {
-                    "text": "<p><strong>Expiry&nbsp;date&nbsp;of&nbsp;ID</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Expiry date of ID"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
+                  "cells": [
+                    {
+                      "label": "Address",
+                      "value": "{{address|upper}}"
                     }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"id_expiry|date\" data-value=\"\" contenteditable=\"false\">{{id_expiry|date}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "id_expiry|date",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
+                  ]
                 },
                 {
-                  "col1": {
-                    "text": "<p><strong>Nationality</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Nationality"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
+                  "cells": [
+                    {
+                      "label": "Email",
+                      "value": "{{email|upper}}"
+                    },
+                    {
+                      "label": "Contact Number",
+                      "value": "{{contact_no}}"
                     }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"nationality|country\" data-value=\"\" contenteditable=\"false\">{{nationality|country}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "nationality|country",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "col1": {
-                    "text": "<p><strong>Date&nbsp;of&nbsp;birth</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Date of birth"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"dob|date\" data-value=\"\" contenteditable=\"false\">{{dob|date}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "dob|date",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "col1": {
-                    "text": "<p><strong>Address</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Address"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"address\" data-value=\"\" contenteditable=\"false\">{{address}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "address",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "col1": {
-                    "text": "<p><strong>Email</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Email"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"email\" data-value=\"\" contenteditable=\"false\">{{email}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "email",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "col1": {
-                    "text": "<p><strong>Contact&nbsp;number</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Contact number"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"contact_no\" data-value=\"\" contenteditable=\"false\">{{contact_no}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "contact_no",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
+                  ]
                 }
               ]
             }
           },
           {
-            "id": "GLm5axUt_-Az4qabA3EUS",
-            "type": "paragraph",
+            "id": "gfCOXFjX1IpfHN6ICaG6a",
+            "type": "form-table",
             "item": {
-              "text": "<p></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "7uZ11VFPMqy1giHosJKJy",
-            "type": "paragraph",
-            "item": {
-              "text": "<p><strong>Case&nbsp;information</strong></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "attributes": {
-                      "bold": true
+              "title": "Case Information",
+              "rows": [
+                {
+                  "stack": true,
+                  "cells": [
+                    {
+                      "label": "Nature of Services Provided",
+                      "value": "{{services}}",
+                      "list": true
                     },
-                    "insert": "Case information"
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "bZHjKqK2aG8VAHyi3WXF7",
-            "type": "table-01",
-            "item": {
-              "data": [
-                {
-                  "col1": {
-                    "text": "<p><strong>Nature&nbsp;of&nbsp;services&nbsp;provided</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Nature of services provided"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
+                    {
+                      "label": "Remarks",
+                      "value": "{{remarks}}"
                     }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"services|list\" data-value=\"\" contenteditable=\"false\">{{services|list}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "services|list",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "col1": {
-                    "text": "<p><strong>Remarks</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Remarks"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"remarks\" data-value=\"\" contenteditable=\"false\">{{remarks}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "remarks",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
+                  ]
                 }
               ]
             }
           },
           {
-            "id": "XFiNwvae05lDRjlqeEoGk",
-            "type": "paragraph",
+            "id": "MCkdErnWSHI4SXhRVKZnS",
+            "type": "form-declaration",
             "item": {
-              "text": "<p></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "fIwRhZh1E4IuBMyhejdAf",
-            "type": "paragraph",
-            "item": {
-              "text": "<p><strong>Declaration</strong></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "attributes": {
-                      "bold": true
-                    },
-                    "insert": "Declaration"
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "jg19df_pkJcxdDo5RHJJ9",
-            "type": "paragraph",
-            "item": {
-              "text": "<p><span class=\"q-size-sm\">I&nbsp;declare&nbsp;that&nbsp;the&nbsp;information&nbsp;provided&nbsp;in&nbsp;this&nbsp;form&nbsp;is&nbsp;accurate&nbsp;and&nbsp;truthful.&nbsp;I&nbsp;understand&nbsp;that&nbsp;if&nbsp;I&nbsp;am&nbsp;found&nbsp;to&nbsp;have&nbsp;knowingly&nbsp;made&nbsp;false&nbsp;statements&nbsp;or&nbsp;intentionally&nbsp;omitted&nbsp;any&nbsp;significant&nbsp;details,&nbsp;I&nbsp;may&nbsp;face&nbsp;prosecution&nbsp;and&nbsp;legal&nbsp;penalties&nbsp;under&nbsp;applicable&nbsp;law.</span></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "attributes": {
-                      "size": "sm"
-                    },
-                    "insert": "I declare that the information provided in this form is accurate and truthful. I understand that if I am found to have knowingly made false statements or intentionally omitted any significant details, I may face prosecution and legal penalties under applicable law."
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "MB3yBfX0e16jI3rrQSv54",
-            "type": "paragraph",
-            "item": {
-              "text": "<p></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "tlvPFUpRpHhthdj7KPkVw",
-            "type": "sign-area-04",
-            "item": {
-              "data": {
-                "desc": "CUSTOMER",
-                "name": "{{declaration_signature}}",
-                "desc2": "Name of Officer / Shareholder / Beneficial Owner / Purchaser / Customer",
-                "desc3": null
-              }
+              "signer": "{{declaration_signature}}"
             }
           }
         ]
@@ -1084,300 +627,114 @@
         "name": "Associated parties",
         "list": [
           {
-            "id": "ILNcp0-A2BoxtkDKqYSQM",
-            "type": "paragraph",
-            "item": {
-              "text": "<p><strong>Associated&nbsp;parties:&nbsp;companies</strong></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "attributes": {
-                      "bold": true
-                    },
-                    "insert": "Associated parties: companies"
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "SPWfK48JuqEoTSjlWOGOM",
+            "id": "px1DF2ev_NV8Go18Xo6ZT",
             "type": "repeat",
             "item": {
               "group": "parties_company",
               "list": [
                 {
-                  "id": "IlDUOOMurFDiFAxRVuI5O",
-                  "type": "table-01",
+                  "id": "_6-1PSUtjyT72M0RaXxSd",
+                  "type": "form-table",
                   "item": {
-                    "data": [
+                    "title": "Associated Party (Company Information)",
+                    "rows": [
                       {
-                        "col1": {
-                          "text": "<p><strong>Entity&nbsp;name</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Entity name"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
+                        "cells": [
+                          {
+                            "label": "Entity Name",
+                            "value": "{{parties_company.c_name|upper}}"
                           }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_company.c_name\" data-value=\"\" contenteditable=\"false\">{{parties_company.c_name}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_company.c_name",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
+                        ]
                       },
                       {
-                        "col1": {
-                          "text": "<p><strong>Unique&nbsp;entity&nbsp;no.</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Unique entity no."
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
+                        "cells": [
+                          {
+                            "label": "Unique Entity No.",
+                            "value": "{{parties_company.c_uen|upper}}"
+                          },
+                          {
+                            "label": "Country of Incorporation",
+                            "value": "{{parties_company.c_country|country|upper}}"
                           }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_company.c_uen\" data-value=\"\" contenteditable=\"false\">{{parties_company.c_uen}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_company.c_uen",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
+                        ]
                       },
                       {
-                        "col1": {
-                          "text": "<p><strong>Country&nbsp;of&nbsp;incorporation</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Country of incorporation"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
+                        "cells": [
+                          {
+                            "label": "Date of Incorporation",
+                            "value": "{{parties_company.c_inc_date|date}}"
                           }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_company.c_country|country\" data-value=\"\" contenteditable=\"false\">{{parties_company.c_country|country}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_company.c_country|country",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
+                        ]
                       },
                       {
-                        "col1": {
-                          "text": "<p><strong>Date&nbsp;of&nbsp;incorporation</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Date of incorporation"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
+                        "cells": [
+                          {
+                            "label": "Registered Address",
+                            "value": "{{parties_company.c_address|upper}}"
                           }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_company.c_inc_date|date\" data-value=\"\" contenteditable=\"false\">{{parties_company.c_inc_date|date}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_company.c_inc_date|date",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
+                        ]
                       },
                       {
-                        "col1": {
-                          "text": "<p><strong>Registered&nbsp;address</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Registered address"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
+                        "cells": [
+                          {
+                            "label": "Remarks",
+                            "value": "{{parties_company.c_remarks}}"
                           }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_company.c_address\" data-value=\"\" contenteditable=\"false\">{{parties_company.c_address}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_company.c_address",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      {
-                        "col1": {
-                          "text": "<p><strong>Registrable&nbsp;controller&nbsp;of&nbsp;the&nbsp;company?</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Registrable controller of the company?"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_company.c_registrable_controller|yesno\" data-value=\"\" contenteditable=\"false\">{{parties_company.c_registrable_controller|yesno}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_company.c_registrable_controller|yesno",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      {
-                        "col1": {
-                          "text": "<p><strong>Remarks</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Remarks"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_company.c_remarks\" data-value=\"\" contenteditable=\"false\">{{parties_company.c_remarks}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_company.c_remarks",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
+                        ]
                       }
                     ]
                   }
                 },
                 {
-                  "id": "86BGxOWdj9JLotN6OocJO",
+                  "id": "pWON6vAfrA3vTog2Mb2Jr",
+                  "type": "paragraph",
+                  "item": {
+                    "text": "<p></p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "ToIOursUR-Uz9cgvp9Uys",
+                  "type": "form-checklist",
+                  "item": {
+                    "title": "Checklist",
+                    "rows": [
+                      {
+                        "text": "Is the entity a registrable controller of the company?",
+                        "value": "{{parties_company.c_registrable_controller}}"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "4Gwq-y-_gWaxPWjaVCnlh",
+                  "type": "paragraph",
+                  "item": {
+                    "text": "<p></p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "_jcbt-z4w3o66-KP5WP-b",
+                  "type": "form-declaration",
+                  "item": {
+                    "signer": "{{declaration_signature}}"
+                  }
+                },
+                {
+                  "id": "727IyrC8EvmU97tBIeO2V",
                   "type": "paragraph",
                   "item": {
                     "text": "<p></p>",
@@ -1394,411 +751,118 @@
             }
           },
           {
-            "id": "pMS-86DKDwZQDVwP36mCu",
-            "type": "paragraph",
-            "item": {
-              "text": "<p><strong>Associated&nbsp;parties:&nbsp;individuals</strong></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "attributes": {
-                      "bold": true
-                    },
-                    "insert": "Associated parties: individuals"
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "BCp9wAG0LJwQ3VVqW2k-T",
+            "id": "_7OVE31KcFECUQu5O4E6Y",
             "type": "repeat",
             "item": {
               "group": "parties_individual",
               "list": [
                 {
-                  "id": "W34eGj8jvZ54_zPuxZZo1",
-                  "type": "table-01",
+                  "id": "8SdbEZt7LEuVLm04tM-TJ",
+                  "type": "form-table",
                   "item": {
-                    "data": [
+                    "title": "Associated Party (Individual Information)",
+                    "rows": [
                       {
-                        "col1": {
-                          "text": "<p><strong>Full&nbsp;name</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Full name"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
+                        "cells": [
+                          {
+                            "label": "Full Name",
+                            "value": "{{parties_individual.p_name|upper}}"
+                          },
+                          {
+                            "label": "Role",
+                            "value": "{{parties_individual.p_role|upper}}"
                           }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_individual.p_name\" data-value=\"\" contenteditable=\"false\">{{parties_individual.p_name}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_individual.p_name",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
+                        ]
                       },
                       {
-                        "col1": {
-                          "text": "<p><strong>Identification&nbsp;no.</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Identification no."
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
+                        "cells": [
+                          {
+                            "label": "Identification No",
+                            "value": "{{parties_individual.p_id_no|upper}}"
+                          },
+                          {
+                            "label": "Nationality",
+                            "value": "{{parties_individual.p_nationality|country|upper}}"
                           }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_individual.p_id_no\" data-value=\"\" contenteditable=\"false\">{{parties_individual.p_id_no}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_individual.p_id_no",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
+                        ]
                       },
                       {
-                        "col1": {
-                          "text": "<p><strong>Nationality</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Nationality"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
+                        "cells": [
+                          {
+                            "label": "Shareholding (%)",
+                            "value": "{{parties_individual.p_share_pct}}"
                           }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_individual.p_nationality|country\" data-value=\"\" contenteditable=\"false\">{{parties_individual.p_nationality|country}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_individual.p_nationality|country",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      {
-                        "col1": {
-                          "text": "<p><strong>Role</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Role"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_individual.p_role\" data-value=\"\" contenteditable=\"false\">{{parties_individual.p_role}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_individual.p_role",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      {
-                        "col1": {
-                          "text": "<p><strong>Shareholding&nbsp;(%)</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Shareholding (%)"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_individual.p_share_pct\" data-value=\"\" contenteditable=\"false\">{{parties_individual.p_share_pct}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_individual.p_share_pct",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      {
-                        "col1": {
-                          "text": "<p><strong>Acting&nbsp;on&nbsp;behalf&nbsp;of&nbsp;the&nbsp;customer?</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Acting on behalf of the customer?"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_individual.p_custom_behalf|yesno\" data-value=\"\" contenteditable=\"false\">{{parties_individual.p_custom_behalf|yesno}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_individual.p_custom_behalf|yesno",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      {
-                        "col1": {
-                          "text": "<p><strong>Controls&nbsp;more&nbsp;than&nbsp;25%&nbsp;of&nbsp;the&nbsp;company?</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Controls more than 25% of the company?"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_individual.p_more_than25_percent|yesno\" data-value=\"\" contenteditable=\"false\">{{parties_individual.p_more_than25_percent|yesno}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_individual.p_more_than25_percent|yesno",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      {
-                        "col1": {
-                          "text": "<p><strong>Registrable&nbsp;controller&nbsp;of&nbsp;the&nbsp;company?</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Registrable controller of the company?"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_individual.p_registrable_controller|yesno\" data-value=\"\" contenteditable=\"false\">{{parties_individual.p_registrable_controller|yesno}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_individual.p_registrable_controller|yesno",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      {
-                        "col1": {
-                          "text": "<p><strong>Politically&nbsp;exposed&nbsp;person&nbsp;(or&nbsp;family&nbsp;/&nbsp;close&nbsp;associate)?</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Politically exposed person (or family / close associate)?"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_individual.p_pep|yesno\" data-value=\"\" contenteditable=\"false\">{{parties_individual.p_pep|yesno}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_individual.p_pep|yesno",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      {
-                        "col1": {
-                          "text": "<p><strong>Source&nbsp;of&nbsp;wealth&nbsp;or&nbsp;funds&nbsp;information&nbsp;required?</strong></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "bold": true
-                                },
-                                "insert": "Source of wealth or funds information required?"
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        },
-                        "col2": {
-                          "text": "<p><span class=\"q-placeholder\" data-text=\"parties_individual.p_fund_info|yesno\" data-value=\"\" contenteditable=\"false\">{{parties_individual.p_fund_info|yesno}}</span></p>",
-                          "delta": {
-                            "ops": [
-                              {
-                                "attributes": {
-                                  "placeholder": true
-                                },
-                                "insert": {
-                                  "text": "parties_individual.p_fund_info|yesno",
-                                  "value": ""
-                                }
-                              },
-                              {
-                                "insert": "\n"
-                              }
-                            ]
-                          }
-                        }
+                        ]
                       }
                     ]
                   }
                 },
                 {
-                  "id": "iSZwWqVwhA_lXHLnO016g",
+                  "id": "Tx9erTorMU4py9NeQ8bwk",
+                  "type": "paragraph",
+                  "item": {
+                    "text": "<p></p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "fWvyxRxLJEUFerAwg9K2T",
+                  "type": "form-checklist",
+                  "item": {
+                    "title": "Checklist",
+                    "rows": [
+                      {
+                        "text": "Is the individual acting on behalf of the customer?",
+                        "value": "{{parties_individual.p_custom_behalf}}"
+                      },
+                      {
+                        "text": "Does the individual control more than 25% share of the company?",
+                        "value": "{{parties_individual.p_more_than25_percent}}"
+                      },
+                      {
+                        "text": "Is the individual a registrable controller of the company?",
+                        "value": "{{parties_individual.p_registrable_controller}}"
+                      },
+                      {
+                        "text": "Is the individual an Politically Exposed Person (PEP), or an immediate family member or a close associate of a PEP?",
+                        "value": "{{parties_individual.p_pep}}"
+                      },
+                      {
+                        "text": "Are information on Source of Wealth or Source of Funds required?",
+                        "value": "{{parties_individual.p_fund_info}}"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "5GbsnWbKj1kNd7kLPMj5V",
+                  "type": "paragraph",
+                  "item": {
+                    "text": "<p></p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "p8AYIWRYD74p1xkunteSj",
+                  "type": "form-declaration",
+                  "item": {
+                    "signer": "{{declaration_signature}}"
+                  }
+                },
+                {
+                  "id": "OQVXd4l96u0qiRL-jqFOz",
                   "type": "paragraph",
                   "item": {
                     "text": "<p></p>",
@@ -1820,515 +884,37 @@
         "name": "Risk assessment",
         "list": [
           {
-            "id": "lg6MQu8wDHg-zt2vL_imD",
-            "type": "paragraph",
+            "id": "Bn521x39C5NHtOYzSYyGg",
+            "type": "form-checklist",
             "item": {
-              "text": "<p><strong>Risk&nbsp;assessment&nbsp;checklist</strong></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "attributes": {
-                      "bold": true
-                    },
-                    "insert": "Risk assessment checklist"
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "2YdKSNJ6RNvtVnQYVU0vq",
-            "type": "paragraph",
-            "item": {
-              "text": "<p><strong>Customer&nbsp;risk&nbsp;assessment</strong></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "attributes": {
-                      "bold": true
-                    },
-                    "insert": "Customer risk assessment"
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "-l-zXAMin_6e6_zlwi-D1",
-            "type": "paragraph",
-            "item": {
-              "text": "<p>1.&nbsp;Is&nbsp;there&nbsp;any&nbsp;match&nbsp;on&nbsp;Ministry&nbsp;of&nbsp;Home&nbsp;Affairs&nbsp;(“MHA”)’s&nbsp;website&nbsp;on&nbsp;the&nbsp;Inter-Ministry&nbsp;Committee&nbsp;on&nbsp;Terrorist&nbsp;Designation&nbsp;(“IMC-TD”)&nbsp;on&nbsp;terrorist&nbsp;designation&nbsp;(persons&nbsp;and&nbsp;entities&nbsp;designated&nbsp;as&nbsp;terrorists)?&nbsp;&nbsp;&nbsp;<span class=\"q-placeholder\" data-text=\"risk_customer.q1|yesno\" data-value=\"\" contenteditable=\"false\">{{risk_customer.q1|yesno}}</span></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "insert": "1. Is there any match on Ministry of Home Affairs (“MHA”)’s website on the Inter-Ministry Committee on Terrorist Designation (“IMC-TD”) on terrorist designation (persons and entities designated as terrorists)?   "
-                  },
-                  {
-                    "attributes": {
-                      "placeholder": true
-                    },
-                    "insert": {
-                      "text": "risk_customer.q1|yesno",
-                      "value": ""
-                    }
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "WjqvsFAqyZiq9-lhRHNjf",
-            "type": "paragraph",
-            "item": {
-              "text": "<p>2.&nbsp;Is&nbsp;there&nbsp;any&nbsp;match&nbsp;on&nbsp;Monetary&nbsp;Authority&nbsp;of&nbsp;Singapore&nbsp;(“MAS”)’s&nbsp;website&nbsp;on&nbsp;targeted&nbsp;financial&nbsp;sanctions&nbsp;under&nbsp;the&nbsp;United&nbsp;Nations&nbsp;Regulations&nbsp;(“UN&nbsp;Regulations”)&nbsp;for&nbsp;the&nbsp;lists&nbsp;of&nbsp;designated&nbsp;individuals&nbsp;and&nbsp;entities?&nbsp;&nbsp;&nbsp;<span class=\"q-placeholder\" data-text=\"risk_customer.q2|yesno\" data-value=\"\" contenteditable=\"false\">{{risk_customer.q2|yesno}}</span></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "insert": "2. Is there any match on Monetary Authority of Singapore (“MAS”)’s website on targeted financial sanctions under the United Nations Regulations (“UN Regulations”) for the lists of designated individuals and entities?   "
-                  },
-                  {
-                    "attributes": {
-                      "placeholder": true
-                    },
-                    "insert": {
-                      "text": "risk_customer.q2|yesno",
-                      "value": ""
-                    }
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "yJUxT_eKhGtMDD8TxOh7A",
-            "type": "paragraph",
-            "item": {
-              "text": "<p>3.&nbsp;Is&nbsp;the&nbsp;customer&nbsp;a&nbsp;PEP?&nbsp;&nbsp;&nbsp;<span class=\"q-placeholder\" data-text=\"risk_customer.q3|yesno\" data-value=\"\" contenteditable=\"false\">{{risk_customer.q3|yesno}}</span></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "insert": "3. Is the customer a PEP?   "
-                  },
-                  {
-                    "attributes": {
-                      "placeholder": true
-                    },
-                    "insert": {
-                      "text": "risk_customer.q3|yesno",
-                      "value": ""
-                    }
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "1lXGqCMd8GrxVAEJfZFGp",
-            "type": "paragraph",
-            "item": {
-              "text": "<p>4.&nbsp;Is&nbsp;the&nbsp;customer&#39;s&nbsp;country&nbsp;on&nbsp;FATF&nbsp;public&nbsp;list&nbsp;on&nbsp;high-risk&nbsp;and&nbsp;other&nbsp;monitored&nbsp;jurisdictions?&nbsp;&nbsp;&nbsp;<span class=\"q-placeholder\" data-text=\"risk_customer.q4|yesno\" data-value=\"\" contenteditable=\"false\">{{risk_customer.q4|yesno}}</span></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "insert": "4. Is the customer's country on FATF public list on high-risk and other monitored jurisdictions?   "
-                  },
-                  {
-                    "attributes": {
-                      "placeholder": true
-                    },
-                    "insert": {
-                      "text": "risk_customer.q4|yesno",
-                      "value": ""
-                    }
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "sDeKpA04xslGfTQKT8Cex",
-            "type": "paragraph",
-            "item": {
-              "text": "<p>5.&nbsp;Does&nbsp;the&nbsp;customer&nbsp;fit&nbsp;the&nbsp;profile&nbsp;of&nbsp;a&nbsp;higher-risk&nbsp;customer&nbsp;based&nbsp;on&nbsp;their&nbsp;own&nbsp;risk&nbsp;assessment&nbsp;conducted&nbsp;by&nbsp;regulated&nbsp;dealer?&nbsp;&nbsp;&nbsp;<span class=\"q-placeholder\" data-text=\"risk_customer.q5|yesno\" data-value=\"\" contenteditable=\"false\">{{risk_customer.q5|yesno}}</span></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "insert": "5. Does the customer fit the profile of a higher-risk customer based on their own risk assessment conducted by regulated dealer?   "
-                  },
-                  {
-                    "attributes": {
-                      "placeholder": true
-                    },
-                    "insert": {
-                      "text": "risk_customer.q5|yesno",
-                      "value": ""
-                    }
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "nAg-x5vy_EQ29u7vKKmBI",
-            "type": "paragraph",
-            "item": {
-              "text": "<p></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "nyHeb8OPuqvvrQ0pXTTKD",
-            "type": "paragraph",
-            "item": {
-              "text": "<p><strong>Risk&nbsp;assessment&nbsp;review</strong></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "attributes": {
-                      "bold": true
-                    },
-                    "insert": "Risk assessment review"
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": "xG5YbvDpA32ufu-QZ6Hh8",
-            "type": "table-01",
-            "item": {
-              "data": [
+              "title": "Risk Assessment Checklist",
+              "subtitle": "Customer Risk Assessment",
+              "rows": [
                 {
-                  "col1": {
-                    "text": "<p><strong>Risk&nbsp;assessment&nbsp;rating</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Risk assessment rating"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"risk_rating\" data-value=\"\" contenteditable=\"false\">{{risk_rating}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "risk_rating",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
+                  "text": "Is there any match on Ministry of Home Affairs (“MHA”)’s website on the Inter-Ministry Committee on Terrorist Designation (“IMC-TD”) on terrorist designation (persons and entities designated as terrorists)?",
+                  "value": "{{risk_customer.q1}}"
                 },
                 {
-                  "col1": {
-                    "text": "<p><strong>Risk&nbsp;assessment&nbsp;comment</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Risk assessment comment"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"risk_comment\" data-value=\"\" contenteditable=\"false\">{{risk_comment}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "risk_comment",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
+                  "text": "Is there any match on Monetary Authority of Singapore (“MAS”)’s website on targeted financial sanctions under the United Nations Regulations (“UN Regulations”) for the lists of designated individuals and entities?",
+                  "value": "{{risk_customer.q2}}"
                 },
                 {
-                  "col1": {
-                    "text": "<p><strong>Acceptance&nbsp;of&nbsp;customer</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Acceptance of customer"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"recommendation\" data-value=\"\" contenteditable=\"false\">{{recommendation}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "recommendation",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
+                  "text": "Is the customer a PEP?",
+                  "value": "{{risk_customer.q3}}"
                 },
                 {
-                  "col1": {
-                    "text": "<p><strong>Recommending&nbsp;officer</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Recommending officer"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"recommending_officer\" data-value=\"\" contenteditable=\"false\">{{recommending_officer}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "recommending_officer",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
+                  "text": "Is the customer's country on FATF public list on high-risk and other monitored jurisdictions?",
+                  "value": "{{risk_customer.q4}}"
                 },
                 {
-                  "col1": {
-                    "text": "<p><strong>Recommendation&nbsp;comment</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Recommendation comment"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"recommendation_comment\" data-value=\"\" contenteditable=\"false\">{{recommendation_comment}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "recommendation_comment",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "col1": {
-                    "text": "<p><strong>Approval&nbsp;for&nbsp;acceptance</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Approval for acceptance"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"approval\" data-value=\"\" contenteditable=\"false\">{{approval}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "approval",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "col1": {
-                    "text": "<p><strong>Approving&nbsp;officer</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Approving officer"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"approving_officer\" data-value=\"\" contenteditable=\"false\">{{approving_officer}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "approving_officer",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "col1": {
-                    "text": "<p><strong>Approval&nbsp;comment</strong></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "bold": true
-                          },
-                          "insert": "Approval comment"
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  },
-                  "col2": {
-                    "text": "<p><span class=\"q-placeholder\" data-text=\"approval_comment\" data-value=\"\" contenteditable=\"false\">{{approval_comment}}</span></p>",
-                    "delta": {
-                      "ops": [
-                        {
-                          "attributes": {
-                            "placeholder": true
-                          },
-                          "insert": {
-                            "text": "approval_comment",
-                            "value": ""
-                          }
-                        },
-                        {
-                          "insert": "\n"
-                        }
-                      ]
-                    }
-                  }
+                  "text": "Does the customer fit the profile of a higher-risk customer based on their own risk assessment conducted by regulated dealer?",
+                  "value": "{{risk_customer.q5}}"
                 }
               ]
             }
           },
           {
-            "id": "Voz-abYCpitbei68muakD",
+            "id": "tVgJGUWVFmoE4v2Groejy",
             "type": "paragraph",
             "item": {
               "text": "<p></p>",
@@ -2342,18 +928,81 @@
             }
           },
           {
-            "id": "bpqZgK-AnUI6WUbpm4yHc",
+            "id": "hX2r05zjcXcDzv0V7OO3L",
+            "type": "form-table",
+            "item": {
+              "title": "Risk Assessment Review",
+              "rows": [
+                {
+                  "cells": [
+                    {
+                      "label": "Risk Assessment Rating",
+                      "value": "{{risk_rating|upper}}"
+                    }
+                  ]
+                },
+                {
+                  "cells": [
+                    {
+                      "label": "Risk Assessment Comment",
+                      "value": "{{risk_comment}}"
+                    }
+                  ]
+                },
+                {
+                  "cells": [
+                    {
+                      "label": "Acceptance of Customer",
+                      "value": "{{recommendation|upper}}",
+                      "col": 3
+                    },
+                    {
+                      "label": "Recommending Officer",
+                      "value": "{{recommending_officer|upper}}",
+                      "col": 9
+                    }
+                  ]
+                },
+                {
+                  "cells": [
+                    {
+                      "label": "Recommendation Comment",
+                      "value": "{{recommendation_comment}}"
+                    }
+                  ]
+                },
+                {
+                  "cells": [
+                    {
+                      "label": "Approval for Acceptance",
+                      "value": "{{approval|upper}}",
+                      "col": 3
+                    },
+                    {
+                      "label": "Approving Officer",
+                      "value": "{{approving_officer|upper}}",
+                      "col": 9
+                    }
+                  ]
+                },
+                {
+                  "cells": [
+                    {
+                      "label": "Approval Comment",
+                      "value": "{{approval_comment}}"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "F_Sd6fRrSeFJQUdI-tQ99",
             "type": "paragraph",
             "item": {
-              "text": "<p><strong>Screening</strong></p>",
+              "text": "<p></p>",
               "delta": {
                 "ops": [
-                  {
-                    "attributes": {
-                      "bold": true
-                    },
-                    "insert": "Screening"
-                  },
                   {
                     "insert": "\n"
                   }
@@ -2362,26 +1011,20 @@
             }
           },
           {
-            "id": "SXqUws15HwQu40gwyzIxh",
-            "type": "paragraph",
+            "id": "lXGVrEY6ELCtBCYWUbGyz",
+            "type": "form-table",
             "item": {
-              "text": "<p><span class=\"q-placeholder\" data-text=\"screening_notes\" data-value=\"\" contenteditable=\"false\">{{screening_notes}}</span></p>",
-              "delta": {
-                "ops": [
-                  {
-                    "attributes": {
-                      "placeholder": true
-                    },
-                    "insert": {
-                      "text": "screening_notes",
-                      "value": ""
+              "title": "Screening",
+              "rows": [
+                {
+                  "cells": [
+                    {
+                      "label": "Screening results and notes",
+                      "value": "{{screening_notes}}"
                     }
-                  },
-                  {
-                    "insert": "\n"
-                  }
-                ]
-              }
+                  ]
+                }
+              ]
             }
           }
         ]

@@ -20,6 +20,11 @@
 //   repeat                            item: { group, list: [block] }   renders `list` once per row of the form's repeating group `group`
 //   if                                item: { cond, list: [block] }     renders `list` only when `cond` (the forms' visibleIf shape) holds
 //   table-0x with item.repeatGroup    the first data row is repeated once per row of that group
+//   form-table                        item: { title, rows: [{ repeat?, stack?, cells: [{ label?, value, list?, col?, head? }] }] }   a section table (grey title row, label-over-value cells; head = a small column title: value only, may be empty)
+//   form-checklist                    item: { title, subtitle?, rows: [{ text, value }] }   numbered questions with Yes/No checkboxes; value is a "{{field.optionKey}}" token
+//   form-declaration                  item: { title?, text?, signatureLabel?, nameLabel?, dateLabel?, signer? }   the declaration box with signature lines
+//   (the three blocks above keep "{{key|pipe}}" tokens as plain text in their strings, like the header and signature blocks)
+// Template-level page setup, saved next to `section`: style ('letter' | 'form') and frame ({ headerLeft, headerRight, footerLeft }).
 // Placeholders are Quill embeds: a delta op { insert: { text, value }, attributes: { placeholder: true } }.
 // `text` is a manual KEY ("COMPANY_NAME"), or, for a field of the template's form, the field key with
 // an optional formatter: "full_name", "dob|date", "owners.name" (inside a repeat of `owners`),
@@ -32,7 +37,8 @@ export const TEXT_TYPES = ['paragraph', 'list-item-paragraph'];
 export const TABLE_TYPES = ['table-01', 'table-02', 'table-03', 'table-04']; // table-04 is only rendered if it exists (older templates); the editor offers 01-03
 export const SIGN_TYPES = ['sign-area-01', 'sign-area-02', 'sign-area-03', 'sign-area-04'];
 // Blocks that only make sense at the top level of a section.
-export const ROOT_ONLY_TYPES = ['layout-corpsec-header-01', 'layout-company-header-01', 'layout-company-act', 'layout-form-45b', 'sign-area-01', 'sign-area-02', 'sign-area-03', 'sign-area-04', 'page-break', 'page-break-02'];
+export const FORM_BLOCK_TYPES = ['form-table', 'form-checklist', 'form-declaration'];
+export const ROOT_ONLY_TYPES = ['form-table', 'form-checklist', 'form-declaration', 'layout-corpsec-header-01', 'layout-company-header-01', 'layout-company-act', 'layout-form-45b', 'sign-area-01', 'sign-area-02', 'sign-area-03', 'sign-area-04', 'page-break', 'page-break-02'];
 
 export const CONTAINER_TYPES = ['repeat', 'if'];
 // Page breaks always sit at the top level of a section, never inside a repeat / if.
@@ -71,6 +77,9 @@ export const defaultItem = (type) => {
     case 'layout-company-act': return { data: { title: '', subHeader: '' } };
     case 'layout-corpsec-header-01': return { data: { companyName: '', companyRegNo: '', subHeader: '' } };
     case 'layout-form-45b': return { data: { title: '', subHeader: '' } };
+    case 'form-table': return formTableDefault();
+    case 'form-checklist': return checklistDefault();
+    case 'form-declaration': return declarationDefault();
     case 'page-break': return { data: {} };
     case 'page-break-02': return { data: { footerPageNo: '2', headerPageNo: '2' } };
     default:
@@ -241,17 +250,24 @@ export const countPlaceholders = (list, values = {}, formKeys = null) => {
     for (const op of placeholderOps(cell)) {
       total++;
       const { base } = parseChip(op.insert.text);
-      if (op.insert.value || values[op.insert.text] || values[base] || formKeys?.has(base)) replaced++;
+      if (op.insert.value || values[op.insert.text] || values[base] || formKeys?.has(base) || BUILTIN_KEYS.has(base)) replaced++;
     }
   });
+  // {{tokens}} in the section table, checklist and declaration blocks count the same way.
+  // (a token's first segment is the field: "risk.q1" is the answer q1 of the field risk)
+  forEachToken(list, (t) => { total++; if (values[t.base] || formKeys?.has(t.base.split('.')[0]) || BUILTIN_KEYS.has(t.base)) replaced++; });
   return { total, replaced };
 };
 
 // How many times each key is used across the given sections: { key: n }. A formatter ("dob|date")
 // counts for its key ("dob").
-export const placeholderUsage = (sections) => {
+export const placeholderUsage = (sections, frame = null) => {
   const out = {};
-  for (const s of sections ?? []) forEachCell(s.list, (cell) => { for (const op of placeholderOps(cell)) { const { base } = parseChip(op.insert.text); out[base] = (out[base] ?? 0) + 1; } });
+  for (const s of sections ?? []) {
+    forEachCell(s.list, (cell) => { for (const op of placeholderOps(cell)) { const { base } = parseChip(op.insert.text); out[base] = (out[base] ?? 0) + 1; } });
+    forEachToken(s.list, (t) => { out[t.base] = (out[t.base] ?? 0) + 1; });
+  }
+  forEachToken([], (t) => { out[t.base] = (out[t.base] ?? 0) + 1; }, frame); // the page frame's tokens
   return out;
 };
 
@@ -262,6 +278,16 @@ const escapeAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;
 // ("dob|date" -> "born|date"). Returns how many chips changed.
 export const renamePlaceholderKey = (sections, from, to) => {
   let n = 0;
+  // {{from|pipe}} tokens in the form blocks follow the rename too.
+  for (const s of sections ?? []) {
+    forEachBlock(s.list, (b) => {
+      if (!FORM_BLOCK_TYPES.includes(b.type)) return;
+      const fix = (str) => { const next = renameTokensIn(str, from, to); if (next !== str) n++; return next; };
+      if (b.type === 'form-table') for (const r of b.item?.rows ?? []) for (const c of r.cells ?? []) c.value = fix(c.value ?? '');
+      else if (b.type === 'form-checklist') for (const r of b.item?.rows ?? []) r.value = fix(r.value ?? '');
+      else if (b.item?.signer !== undefined) b.item.signer = fix(b.item.signer ?? '');
+    });
+  }
   const attr = /data-text="([^"]*)"/g;
   for (const s of sections ?? []) {
     forEachCell(s.list, (cell) => {
@@ -351,12 +377,173 @@ export const defaultCond = (schema) => {
   return f ? { key: f.key, op: f.type === 'yesno' ? 'eq' : 'notEmpty', ...(f.type === 'yesno' ? { value: true } : {}) } : { key: '', op: 'notEmpty' };
 };
 
+
+// ---- form blocks: section table, checklist table, declaration --------------------------------------------------
+
+export const MAX_CELLS = 6; // the seeded CDD tables use up to 5 columns (2/4/2/2/2)
+export const DEFAULT_DECLARATION = 'I declare that the information provided in this form is accurate and truthful. I understand that if I am found to have knowingly made false statements or intentionally omitted any significant details, I may face prosecution and legal penalties under applicable law.';
+
+export const newCell = (over = {}) => ({ label: '', value: '', ...over });
+export const newRow = (cells = 2) => ({ cells: Array.from({ length: Math.max(1, Math.min(MAX_CELLS, cells)) }, () => newCell()) });
+export const formTableDefault = () => ({ title: 'Section', rows: [newRow(2)] });
+export const checklistDefault = () => ({ title: 'Checklist', subtitle: '', rows: [{ text: '', value: '' }, { text: '', value: '' }] });
+export const declarationDefault = () => ({ title: 'Declaration', text: DEFAULT_DECLARATION, signatureLabel: 'Signature:', nameLabel: 'Name of Officer/ Shareholder/ Beneficial Owner/ Purchaser/ Customer', dateLabel: 'Date', signer: '' });
+
+// The page frame a template starts with (nothing set).
+export const emptyFrame = () => ({ headerLeft: '', headerRight: '', footerLeft: '' });
+// What is saved: null when nothing is set (the API clears the frame), else the three strings.
+export const frameForSave = (frame) => {
+  const f = { ...emptyFrame(), ...(frame ?? {}) };
+  for (const k of Object.keys(f)) f[k] = String(f[k] ?? '').trim();
+  return Object.values(f).some(Boolean) ? f : null;
+};
+export const PAGE_STYLES = [{ value: 'letter', label: 'Letter (Arial, wide margins)' }, { value: 'form', label: 'Form (Calibri, narrow margins, grey table headers)' }];
+
+// Values the document itself provides, usable anywhere a field is ({{submission_ref}}).
+export const BUILTIN_VALUES = [
+  { key: 'submission_ref', label: 'Submission reference' },
+  { key: 'submission_title', label: 'Submission title' },
+  { key: 'generated_date', label: 'Date generated' },
+  { key: 'form_name', label: 'Form name' },
+];
+export const BUILTIN_KEYS = new Set(BUILTIN_VALUES.map((b) => b.key));
+export const builtinEntries = () => [{ section: 'Document info', items: BUILTIN_VALUES.map((b) => ({ text: b.key, label: b.label, type: 'text', pipe: b.key === 'generated_date' ? 'date' : '' })) }];
+
+// ---- {{tokens}} in the strings of form blocks and the frame
+
+export const tokenText = (text, pipe = '') => `{{${chipText(text, pipe)}}}`;
+const TOKEN_RE = /\{\{\s*([^{}]+?)\s*\}\}/g;
+// "Born {{dob|date}}, {{full_name}}" -> [{ raw: 'dob|date', base: 'dob', pipe: 'date' }, { raw: 'full_name', base: 'full_name', pipe: '' }]
+export const tokensIn = (str) => [...String(str ?? '').matchAll(TOKEN_RE)].map((m) => ({ raw: m[1], ...parseChip(m[1]) }));
+// A value that is exactly one token: "{{risk.q1}}" -> 'risk.q1', else null.
+export const singleToken = (str) => {
+  const m = /^\s*\{\{\s*([^{}|]+?)\s*(?:\|[^{}]*)?\}\}\s*$/.exec(String(str ?? ''));
+  return m ? m[1] : null;
+};
+// Inserts `token` into `str` at `caret` (or `end` of a selection), returns { value, caret } with the caret after it.
+export const insertTokenAt = (str, token, caret = null, selectionEnd = null) => {
+  const s = String(str ?? '');
+  const a = caret == null ? s.length : Math.max(0, Math.min(caret, s.length));
+  const b = selectionEnd == null ? a : Math.max(a, Math.min(selectionEnd, s.length));
+  return { value: s.slice(0, a) + token + s.slice(b), caret: a + token.length };
+};
+// Renames the base of every token "{{from|pipe}}" -> "{{to|pipe}}" in a string.
+export const renameTokensIn = (str, from, to) =>
+  String(str ?? '').replace(TOKEN_RE, (m, raw) => { const { base, pipe } = parseChip(raw); return base === from ? tokenText(to, pipe) : m; });
+
+// Every string of a form block that can hold tokens.
+export const tokenStrings = (block) => {
+  const it = block?.item ?? {};
+  if (block?.type === 'form-table') return (it.rows ?? []).flatMap((r) => (r.cells ?? []).map((c) => c.value));
+  if (block?.type === 'form-checklist') return (it.rows ?? []).map((r) => r.value);
+  if (block?.type === 'form-declaration') return [it.signer];
+  return [];
+};
+export const frameStrings = (frame) => [frame?.headerLeft, frame?.headerRight, frame?.footerLeft];
+// Calls fn(token, block|null) for each token in the form blocks of `list` (and in the frame, with block null).
+export const forEachToken = (list, fn, frame = null) => {
+  forEachBlock(list, (b) => { if (FORM_BLOCK_TYPES.includes(b.type)) for (const str of tokenStrings(b)) for (const t of tokensIn(str)) fn(t, b); });
+  for (const str of frameStrings(frame)) for (const t of tokensIn(str)) fn(t, null);
+};
+
+// Section table: row and cell operations. All mutate in place and return the row / cells touched.
+export const addRow = (rows, cells = 2, at = rows.length) => { const r = newRow(cells); rows.splice(at, 0, r); return r; };
+export const addCell = (row) => { if (row.cells.length >= MAX_CELLS) return null; const c = newCell(); row.cells.push(c); return c; };
+export const removeCell = (row, idx) => { if (row.cells.length <= 1) return null; return row.cells.splice(idx, 1)[0]; };
+// Gives the row exactly `n` cells (1 to MAX_CELLS), keeping the first ones.
+export const setCellCount = (row, n) => {
+  const want = Math.max(1, Math.min(MAX_CELLS, n));
+  while (row.cells.length > want) row.cells.pop();
+  while (row.cells.length < want) row.cells.push(newCell());
+  return row;
+};
+// Width of each cell in twelfths: the cell's own `col`, else an equal share of what is left.
+export const cellWidths = (row) => {
+  const cells = row.cells ?? [];
+  const fixed = cells.reduce((n, c) => n + (c.col || 0), 0);
+  const auto = cells.filter((c) => !c.col).length;
+  const share = auto ? Math.max(1, Math.floor((12 - Math.min(fixed, 11)) / auto)) : 0;
+  return cells.map((c) => c.col || share);
+};
+// A column-title cell has a value only (no label, no list): turning it on clears those.
+export const toggleHead = (cell, on = !cell.head) => {
+  cell.head = !!on;
+  if (cell.head) { cell.label = ''; cell.list = false; }
+  return cell;
+};
+// A row as saved: only the keys the renderer reads, no empty extras.
+export const cleanRow = (row) => ({
+  ...(row.repeat ? { repeat: row.repeat } : {}),
+  ...(row.stack ? { stack: true } : {}),
+  cells: (row.cells ?? []).map((c) => ({
+    ...(!c.head && String(c.label ?? '').trim() ? { label: String(c.label).trim() } : {}),
+    value: String(c.value ?? ''),
+    ...(c.list && !c.head ? { list: true } : {}),
+    ...(Number.isInteger(c.col) && c.col >= 1 && c.col <= 12 ? { col: c.col } : {}),
+    ...(c.head ? { head: true } : {}),
+  })),
+});
+export const cleanFormTable = (item) => ({ title: String(item?.title ?? '').trim(), rows: (item?.rows ?? []).map(cleanRow) });
+
+// Does the token refer to a multiselect (an array value, shown as a numbered list when `list` is on)?
+export const tokenIsArray = (schema, str) => {
+  const key = singleToken(str);
+  if (!key) return false;
+  const [a, b] = key.split('.');
+  const f = formFields(schema).find((x) => x.key === a);
+  if (!f) return false;
+  if (b === undefined) return f.type === 'multiselect';
+  return f.type === 'group' && (f.group?.fields ?? []).some((g) => g.key === b && g.type === 'multiselect');
+};
+
+// Checklist table: the form's checklist fields, and one row per option of one of them.
+export const checklistFields = (schema) => formFields(schema).filter((f) => f.type === 'checklist').map((f) => ({ key: f.key, label: f.label, options: f.options ?? [] }));
+export const checklistRows = (schema, fieldKey) => {
+  const f = checklistFields(schema).find((x) => x.key === fieldKey);
+  return (f?.options ?? []).map((o) => ({ text: String(o.label ?? ''), value: tokenText(`${f.key}.${o.value}`) }));
+};
+export const cleanChecklist = (item) => ({ title: String(item?.title ?? '').trim(), ...(String(item?.subtitle ?? '').trim() ? { subtitle: String(item.subtitle).trim() } : {}), rows: (item?.rows ?? []).map((r) => ({ text: String(r.text ?? '').trim(), value: String(r.value ?? '').trim() })) });
+export const cleanDeclaration = (item) => {
+  const out = {};
+  for (const k of ['title', 'text', 'signatureLabel', 'nameLabel', 'dateLabel', 'signer']) if (String(item?.[k] ?? '').trim() !== '') out[k] = String(item[k]).trim();
+  return out;
+};
+
+// Problems a form block has (strings for the dialogs). `schema` (optional) lets it check groups.
+export const validateFormBlock = (block, schema = null) => {
+  const it = block?.item ?? {};
+  const out = [];
+  if (block?.type === 'form-table') {
+    if (!String(it.title ?? '').trim()) out.push('Give the table a title.');
+    if (!it.rows?.length) out.push('Add at least one row.');
+    (it.rows ?? []).forEach((r, i) => {
+      if (!r.cells?.length || r.cells.length > MAX_CELLS) out.push(`Row ${i + 1}: use 1 to ${MAX_CELLS} cells.`);
+      (r.cells ?? []).forEach((c, j) => {
+        if (!c.head && !String(c.value ?? '').trim()) out.push(`Row ${i + 1}, cell ${j + 1}: add a value (insert a field).`); // a column title may be empty
+        // an unset width (0, empty) means Auto
+        if (c.col && !(Number.isInteger(c.col) && c.col >= 1 && c.col <= 12)) out.push(`Row ${i + 1}, cell ${j + 1}: the width must be 1 to 12.`);
+      });
+      const total = cellWidths(r).reduce((a, b) => a + b, 0);
+      if (r.cells?.length && total > 12) out.push(`Row ${i + 1}: the cells are wider than the page (12 in total).`);
+      if (r.repeat && schema && !formGroups(schema).some((g) => g.key === r.repeat)) out.push(`Row ${i + 1}: "${r.repeat}" is not a repeating group of the form.`);
+    });
+  } else if (block?.type === 'form-checklist') {
+    if (!String(it.title ?? '').trim()) out.push('Give the checklist a title.');
+    if (!it.rows?.length) out.push('Add at least one question.');
+    (it.rows ?? []).forEach((r, i) => {
+      if (!String(r.text ?? '').trim()) out.push(`Question ${i + 1}: write the question.`);
+      if (!singleToken(r.value)) out.push(`Question ${i + 1}: choose the checklist answer it shows.`);
+    });
+  }
+  return out;
+};
+
 // ---- saving -------------------------------------------------------------------------------
 
 // What the API accepts: sections are exactly { name, list }.
 export const sectionsForSave = (sections) => sections.map((s) => ({ name: String(s.name ?? '').trim() || 'section', list: JSON.parse(JSON.stringify(s.list ?? [])) }));
 export const placeholdersForSave = (map) => Object.fromEntries(Object.entries(map ?? {}).filter(([k]) => k).map(([k, v]) => [k, String(v ?? '')]));
 // One comparable string of what would be saved (the dirty check).
-export const saveSignature = ({ name, section, placeholders, formId }) => JSON.stringify([name ?? '', sectionsForSave(section ?? []), placeholdersForSave(placeholders), formId ?? '']);
+export const saveSignature = ({ name, section, placeholders, formId, style, frame }) => JSON.stringify([name ?? '', sectionsForSave(section ?? []), placeholdersForSave(placeholders), formId ?? '', style ?? '', frameForSave(frame)]);
 
 export const blankSection = (name = 'section 1') => ({ name, list: [] });

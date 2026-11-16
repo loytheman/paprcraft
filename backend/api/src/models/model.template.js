@@ -33,6 +33,11 @@ export const templateSchema = {
   // appended by the API, completed by the docx Lambda (matched by cbId).
   exportHistory: { type: Array },
   keywordSearch: { type: String },
+  // Page look: style "letter" (default: Arial, 20 mm margins) or "form" (Calibri, narrow margins, grey table headers, like the CDD forms).
+  style: { type: String, enum: ["letter", "form"] },
+  // Repeating page header / footer of every page (strings may hold {{key}} placeholders and the built-ins
+  // {{submission_ref}}, {{submission_title}}, {{generated_date}}): { headerLeft, headerRight, footerLeft }. Footer right is always "Page N/M".
+  frame: { type: Object },
   formId: { type: String }, // the form whose fields this template renders (the editor offers its keys); see service.form.js
 
   createdBy: { type: Object },
@@ -50,6 +55,8 @@ const fields = () => ({
   section: Joi.array().items(sectionSchema).min(1).max(30).label("Sections"),
   placeholders: Joi.object().pattern(Joi.string().max(100), Joi.string().allow("").max(2000)).label("Placeholders"),
   formId: Joi.string().allow(null, ""),
+  style: Joi.valid("letter", "form"),
+  frame: Joi.object({ headerLeft: Joi.string().allow("").max(200), headerRight: Joi.string().allow("").max(200), footerLeft: Joi.string().allow("").max(200) }).allow(null),
 });
 
 export class TemplateJoiSchema {
