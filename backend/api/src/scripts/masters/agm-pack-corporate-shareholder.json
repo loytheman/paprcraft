@@ -1,0 +1,1986 @@
+{
+  "name": "AGM pack: audited accounts, corporate shareholder",
+  "section": [
+    {
+      "name": "cover letter",
+      "list": [
+        {
+          "id": "-V9AZlS4yVZs6DT1BpKXc",
+          "type": "layout-corpsec-header-01",
+          "item": {
+            "data": {
+              "companyName": "{{SECRETARIAL_AGENT}}"
+            }
+          }
+        },
+        {
+          "id": "ZhcUMN66egVo9tJHh3sbU",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>Date:&nbsp;<span class=\"q-placeholder\" data-text=\"DATE\" data-value=\"\" contenteditable=\"false\">{{DATE}}</span></p><p></p><p>The&nbsp;Board&nbsp;of&nbsp;Directors</p><p><strong><span class=\"q-placeholder\" data-text=\"COMPANY_NAME\" data-value=\"\" contenteditable=\"false\">{{COMPANY_NAME}}</span></strong></p><p><span class=\"q-placeholder\" data-text=\"COMPANY_REGISTERED_ADDRESS\" data-value=\"\" contenteditable=\"false\">{{COMPANY_REGISTERED_ADDRESS}}</span></p><p></p><p>Dear&nbsp;Sir(s),</p><p></p><p>We&nbsp;refer&nbsp;to&nbsp;the&nbsp;captioned&nbsp;matters&nbsp;and&nbsp;enclose&nbsp;herewith&nbsp;the&nbsp;following&nbsp;for&nbsp;your&nbsp;attention:</p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "Date: "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n\nThe Board of Directors\n"
+                },
+                {
+                  "attributes": {
+                    "placeholder": true,
+                    "bold": true
+                  },
+                  "insert": {
+                    "text": "COMPANY_NAME",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n"
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "COMPANY_REGISTERED_ADDRESS",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n\nDear Sir(s),\n\nWe refer to the captioned matters and enclose herewith the following for your attention:\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "t4enp2Un43IrUZJATagl4",
+          "type": "list",
+          "item": [
+            {
+              "id": "h5bF0KPFfNwGdoNpltKuc",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p><strong>ANNUAL&nbsp;GENERAL&nbsp;MEETING</strong></p><p></p><p>We&nbsp;refer&nbsp;to&nbsp;your&nbsp;Audited&nbsp;Financial&nbsp;Statements&nbsp;for&nbsp;the&nbsp;financial&nbsp;year&nbsp;ended&nbsp;<strong><span class=\"q-placeholder\" data-text=\"FYE_DATE\" data-value=\"\" contenteditable=\"false\">{{FYE_DATE}}</span></strong>&nbsp;and&nbsp;advise&nbsp;that&nbsp;the&nbsp;said&nbsp;Audited&nbsp;Financial&nbsp;Statements&nbsp;must&nbsp;be&nbsp;presented&nbsp;at&nbsp;an&nbsp;Annual&nbsp;General&nbsp;Meeting&nbsp;(AGM)&nbsp;so&nbsp;that&nbsp;the&nbsp;Annual&nbsp;Return&nbsp;(AR)&nbsp;can&nbsp;be&nbsp;lodged&nbsp;with&nbsp;the&nbsp;Accounting&nbsp;and&nbsp;Corporate&nbsp;Regulatory&nbsp;Authority&nbsp;(ACRA)&nbsp;to&nbsp;indicate&nbsp;that&nbsp;the&nbsp;AGM&nbsp;has&nbsp;been&nbsp;held.<strong> </strong></p><p></p><p>For&nbsp;the&nbsp;purpose&nbsp;of&nbsp;holding&nbsp;this&nbsp;AGM,&nbsp;we&nbsp;enclose&nbsp;herewith&nbsp;the&nbsp;following&nbsp;for&nbsp;your&nbsp;attention:<strong> </strong></p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": "ANNUAL GENERAL MEETING"
+                    },
+                    {
+                      "insert": "\n\nWe refer to your Audited Financial Statements for the financial year ended "
+                    },
+                    {
+                      "attributes": {
+                        "placeholder": true,
+                        "bold": true
+                      },
+                      "insert": {
+                        "text": "FYE_DATE",
+                        "value": ""
+                      }
+                    },
+                    {
+                      "insert": " and advise that the said Audited Financial Statements must be presented at an Annual General Meeting (AGM) so that the Annual Return (AR) can be lodged with the Accounting and Corporate Regulatory Authority (ACRA) to indicate that the AGM has been held."
+                    },
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": " "
+                    },
+                    {
+                      "insert": "\n\nFor the purpose of holding this AGM, we enclose herewith the following for your attention:"
+                    },
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": " "
+                    },
+                    {
+                      "insert": "\n"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "K2_mK4NuCAmmx0mDemZij",
+              "type": "list",
+              "item": [
+                {
+                  "id": "uS6RDfjUGJoqQ5LEEDXvU",
+                  "type": "list-item-paragraph",
+                  "item": {
+                    "text": "<p>Directors&#39;&nbsp;Resolution&nbsp;to&nbsp;receive&nbsp;and&nbsp;adopt&nbsp;the&nbsp;Audited&nbsp;Financial&nbsp;Statements&nbsp;for&nbsp;the&nbsp;year&nbsp;ended&nbsp;<span class=\"q-placeholder\" data-text=\"FYE_DATE\" data-value=\"\" contenteditable=\"false\">{{FYE_DATE}}</span>&nbsp;which&nbsp;is&nbsp;to&nbsp;be&nbsp;signed&nbsp;by&nbsp;the&nbsp;Director(s)&nbsp;named&nbsp;therein.</p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "Directors' Resolution to receive and adopt the Audited Financial Statements for the year ended "
+                        },
+                        {
+                          "attributes": {
+                            "placeholder": true
+                          },
+                          "insert": {
+                            "text": "FYE_DATE",
+                            "value": ""
+                          }
+                        },
+                        {
+                          "insert": " which is to be signed by the Director(s) named therein.\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "EUljJZFunSnMwaCatY6eL",
+                  "type": "list-item-paragraph",
+                  "item": {
+                    "text": "<p>Notice&nbsp;of&nbsp;AGM</p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "Notice of AGM\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "0XXN9OKVF5sNoMUskVCBP",
+                  "type": "list-item-paragraph",
+                  "item": {
+                    "text": "<p>Consent&nbsp;to&nbsp;Shorter&nbsp;Notice</p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "Consent to Shorter Notice\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "592w0d-A9NDkYBLV0O_xM",
+                  "type": "list-item-paragraph",
+                  "item": {
+                    "text": "<p>Minutes&nbsp;of&nbsp;AGM<strong> </strong></p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "Minutes of AGM"
+                        },
+                        {
+                          "attributes": {
+                            "bold": true
+                          },
+                          "insert": " "
+                        },
+                        {
+                          "insert": "\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "HQAdEx2_ykyelHkFE9U3W",
+                  "type": "list-item-paragraph",
+                  "item": {
+                    "text": "<p>Directors’&nbsp;Resolution&nbsp;relating&nbsp;to&nbsp;the&nbsp;Minutes&nbsp;by&nbsp;a&nbsp;representative&nbsp;of&nbsp;holding&nbsp;company&nbsp;to&nbsp;be&nbsp;signed&nbsp;by&nbsp;the&nbsp;Director(s)&nbsp;named&nbsp;therein.</p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "Directors’ Resolution relating to the Minutes by a representative of holding company to be signed by the Director(s) named therein.\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "WTRFA28VgHUFzxbFBRDHL",
+                  "type": "list-item-paragraph",
+                  "item": {
+                    "text": "<p>Annual&nbsp;Return</p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "Annual Return\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "8A78TH3lja7QnuTKxFDcw",
+                  "type": "list-item-paragraph",
+                  "item": {
+                    "text": "<p>Letter&nbsp;of&nbsp;Authority&nbsp;for&nbsp;filing&nbsp;of&nbsp;XBRL</p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "Letter of Authority for filing of XBRL\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "1wsIEyPenDfw7YzATNEpB",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p><strong>ANNUAL&nbsp;COMPLIANCE&nbsp;FOR&nbsp;REGISTER&nbsp;OF&nbsp;REGISTRABLE&nbsp;CONTROLLERS&nbsp;AND&nbsp;REGISTER&nbsp;OF&nbsp;NOMINEE&nbsp;DIRECTORS&nbsp;(YEAR&nbsp;<span class=\"q-placeholder\" data-text=\"YEAR\" data-value=\"\" contenteditable=\"false\">{{YEAR}}</span>)</strong></p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": "ANNUAL COMPLIANCE FOR REGISTER OF REGISTRABLE CONTROLLERS AND REGISTER OF NOMINEE DIRECTORS (YEAR "
+                    },
+                    {
+                      "attributes": {
+                        "placeholder": true,
+                        "bold": true
+                      },
+                      "insert": {
+                        "text": "YEAR",
+                        "value": ""
+                      }
+                    },
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": ")"
+                    },
+                    {
+                      "insert": "\n"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "L9aKogbwuf_Gx4XjprfZk",
+              "type": "list",
+              "item": [
+                {
+                  "id": "O_cZxCY-SAy0Vvi5-g5eq",
+                  "type": "list-item-paragraph",
+                  "item": {
+                    "text": "<p><span class=\"q-placeholder\" data-text=\"NUMBER1\" data-value=\"\" contenteditable=\"false\">{{NUMBER1}}</span>&nbsp;sets&nbsp;of&nbsp;Form(s)&nbsp;for&nbsp;the&nbsp;change&nbsp;of&nbsp;Registrable&nbsp;Controllers&nbsp;to&nbsp;be&nbsp;signed&nbsp;by&nbsp;person(s)&nbsp;named&nbsp;therein.</p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "attributes": {
+                            "placeholder": true
+                          },
+                          "insert": {
+                            "text": "NUMBER1",
+                            "value": ""
+                          }
+                        },
+                        {
+                          "insert": " sets of Form(s) for the change of Registrable Controllers to be signed by person(s) named therein.\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "WbdOn8sO8e1IYHdSv_sgA",
+                  "type": "list-item-paragraph",
+                  "item": {
+                    "text": "<p><span class=\"q-placeholder\" data-text=\"NUMBER2\" data-value=\"\" contenteditable=\"false\">{{NUMBER2}}</span>&nbsp;sets&nbsp;of&nbsp;Registrable&nbsp;Controllers&nbsp;Form&nbsp;to&nbsp;be&nbsp;signed&nbsp;by&nbsp;person(s)&nbsp;named&nbsp;therein.</p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "attributes": {
+                            "placeholder": true
+                          },
+                          "insert": {
+                            "text": "NUMBER2",
+                            "value": ""
+                          }
+                        },
+                        {
+                          "insert": " sets of Registrable Controllers Form to be signed by person(s) named therein.\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "eZLmTIMVoSMLypJyfchr6",
+                  "type": "list-item-paragraph",
+                  "item": {
+                    "text": "<p><strong><span class=\"q-placeholder\" data-text=\"NUMBER3\" data-value=\"\" contenteditable=\"false\">{{NUMBER3}}</span></strong>&nbsp;set(s)&nbsp;of&nbsp;Director’s&nbsp;Declaration&nbsp;Form&nbsp;to&nbsp;be&nbsp;signed&nbsp;by&nbsp;the&nbsp;Director(s)&nbsp;named&nbsp;therein.</p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "attributes": {
+                            "placeholder": true,
+                            "bold": true
+                          },
+                          "insert": {
+                            "text": "NUMBER3",
+                            "value": ""
+                          }
+                        },
+                        {
+                          "insert": " set(s) of Director’s Declaration Form to be signed by the Director(s) named therein.\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "PJTCiUURsLVnvF9odg6Bv",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p><strong>MANDATORY&nbsp;CLIENT&nbsp;DUE&nbsp;DILIGENCE&nbsp;DOCUMENTS&nbsp;REQUIRED&nbsp;BY&nbsp;ACRA</strong></p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": "MANDATORY CLIENT DUE DILIGENCE DOCUMENTS REQUIRED BY ACRA"
+                    },
+                    {
+                      "insert": "\n"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "OKcU6A7-VjZwrA8597-Nr",
+              "type": "list",
+              "item": [
+                {
+                  "id": "5b1CtKbyK46ZRmkOqFeT3",
+                  "type": "list-item-paragraph",
+                  "item": {
+                    "text": "<p>Customer&nbsp;Declaration&nbsp;Form&nbsp;to&nbsp;be&nbsp;signed&nbsp;by&nbsp;the&nbsp;persons&nbsp;named&nbsp;therein.</p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "Customer Declaration Form to be signed by the persons named therein.\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "AEZrE_m8Z5WnhlNBUoSto",
+                  "type": "list-item-paragraph",
+                  "item": {
+                    "text": "<p>List&nbsp;of&nbsp;Documents&nbsp;to&nbsp;be&nbsp;Requested</p>",
+                    "delta": {
+                      "ops": [
+                        {
+                          "insert": "List of Documents to be Requested\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "c2VqllMV8FF5NveKToSI3",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>Please&nbsp;note&nbsp;that:</p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "Please note that:\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "VFd07AchsUli66wuRCfCK",
+          "type": "list",
+          "item": [
+            {
+              "id": "t7s6ZoHzye2K4mCaOt8ow",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p>For&nbsp;administrative&nbsp;convenience,&nbsp;we&nbsp;have&nbsp;left&nbsp;the&nbsp;date&nbsp;of&nbsp;the&nbsp;documents&nbsp;blank.&nbsp;Kindly&nbsp;inform&nbsp;us&nbsp;when&nbsp;the&nbsp;Annual&nbsp;General&nbsp;Meeting&nbsp;would&nbsp;be&nbsp;held&nbsp;so&nbsp;that&nbsp;we&nbsp;can&nbsp;proceed&nbsp;with&nbsp;the&nbsp;dating&nbsp;of&nbsp;the&nbsp;documents&nbsp;upon&nbsp;receipt.<strong> </strong></p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "insert": "For administrative convenience, we have left the date of the documents blank. Kindly inform us when the Annual General Meeting would be held so that we can proceed with the dating of the documents upon receipt."
+                    },
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": " "
+                    },
+                    {
+                      "insert": "\n"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "zfGvYYlc89Ocl_8IhHp8u",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p>The&nbsp;AR&nbsp;should&nbsp;be&nbsp;checked&nbsp;carefully&nbsp;and&nbsp;please&nbsp;sign&nbsp;in&nbsp;the&nbsp;places&nbsp;where&nbsp;indicated.</p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "insert": "The AR should be checked carefully and please sign in the places where indicated.\n"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "yMuEnBt0pz2LpHziqIG6G",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>Kindly&nbsp;arrange&nbsp;for&nbsp;the&nbsp;above&nbsp;documents&nbsp;to&nbsp;be&nbsp;signed&nbsp;and&nbsp;returned&nbsp;to&nbsp;us&nbsp;for&nbsp;our&nbsp;further&nbsp;action.</p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "Kindly arrange for the above documents to be signed and returned to us for our further action.\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "8CES1EUEsNFdklZEWQvuw",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>Please&nbsp;note&nbsp;that&nbsp;pursuant&nbsp;to&nbsp;Section&nbsp;203&nbsp;of&nbsp;the&nbsp;Companies&nbsp;Act,&nbsp;each&nbsp;shareholder&nbsp;of&nbsp;the&nbsp;Company&nbsp;is&nbsp;entitled&nbsp;to&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;Audited&nbsp;Financial&nbsp;Statements.&nbsp;We&nbsp;would&nbsp;therefore&nbsp;advise&nbsp;that&nbsp;after&nbsp;the&nbsp;Audited&nbsp;Financial&nbsp;Statements&nbsp;have&nbsp;been&nbsp;signed&nbsp;a&nbsp;copy&nbsp;be&nbsp;sent&nbsp;to&nbsp;every&nbsp;shareholder&nbsp;14&nbsp;days&nbsp;before&nbsp;the&nbsp;date&nbsp;of&nbsp;the&nbsp;Annual&nbsp;General&nbsp;Meeting.<strong> </strong></p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "Please note that pursuant to Section 203 of the Companies Act, each shareholder of the Company is entitled to a copy of the Audited Financial Statements. We would therefore advise that after the Audited Financial Statements have been signed a copy be sent to every shareholder 14 days before the date of the Annual General Meeting."
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "z5X0OemI5JhCPNk_LGp3E",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>Yours&nbsp;faithfully, </p><p><strong> </strong></p><p><strong><span class=\"q-placeholder\" data-text=\"SECRETARIAL_AGENT\" data-value=\"\" contenteditable=\"false\">{{SECRETARIAL_AGENT}}</span> </strong></p><p><strong> </strong></p><p><em>*&nbsp;This&nbsp;is&nbsp;a&nbsp;computer-generated&nbsp;letter&nbsp;and&nbsp;no&nbsp;signature&nbsp;is&nbsp;required.</em> </p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "Yours faithfully, \n"
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "\n"
+                },
+                {
+                  "attributes": {
+                    "placeholder": true,
+                    "bold": true
+                  },
+                  "insert": {
+                    "text": "SECRETARIAL_AGENT",
+                    "value": ""
+                  }
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "\n"
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "\n"
+                },
+                {
+                  "attributes": {
+                    "italic": true
+                  },
+                  "insert": "* This is a computer-generated letter and no signature is required."
+                },
+                {
+                  "insert": " \n"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Director Resolution",
+      "list": [
+        {
+          "id": "gXaJg4KVl8kU_mrw7RJJv",
+          "type": "layout-company-header-01",
+          "item": {
+            "data": {
+              "subHeader": "DIRECTORS' RESOLUTION IN WRITING PASSED PURSUANT TO REGULATION OF THE COMPANY’S CONSTITUTION",
+              "companyName": "{{COMPANY_NAME}}",
+              "companyRegNo": "{{REGISTRATION_NO}}"
+            }
+          }
+        },
+        {
+          "id": "nwaVaPIJBoUQQ5ihHMzRk",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><strong>RESOLVED:</strong></p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "RESOLVED:"
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "lVRxUtLgiACpcxtGRjSxx",
+          "type": "list",
+          "item": [
+            {
+              "id": "pfNCoxKB7wxw-k_0H6ctc",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p><strong>LETTER&nbsp;OF&nbsp;REPRESENTATION</strong></p><p></p><p><strong>THAT</strong>&nbsp;the&nbsp;Letter&nbsp;of&nbsp;Representation&nbsp;to&nbsp;the&nbsp;Independent&nbsp;Auditor,&nbsp;<strong><span class=\"q-placeholder\" data-text=\"NAME_OF_AUDITOR\" data-value=\"\" contenteditable=\"false\">{{NAME_OF_AUDITOR}}</span></strong>,&nbsp;Chartered&nbsp;Accountants&nbsp;Singapore,&nbsp;pertaining&nbsp;to&nbsp;the&nbsp;Audited&nbsp;Financial&nbsp;Statements&nbsp;of&nbsp;the&nbsp;Company&nbsp;for&nbsp;the&nbsp;year&nbsp;ended&nbsp;<strong><span class=\"q-placeholder\" data-text=\"FYE_DATE\" data-value=\"\" contenteditable=\"false\">{{FYE_DATE}}</span></strong>&nbsp;be&nbsp;approved&nbsp;and&nbsp;that&nbsp;any&nbsp;Director&nbsp;be&nbsp;authorised&nbsp;to&nbsp;sign&nbsp;the&nbsp;said&nbsp;Letter&nbsp;on&nbsp;behalf&nbsp;of&nbsp;the&nbsp;Board.<strong> </strong></p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": "LETTER OF REPRESENTATION"
+                    },
+                    {
+                      "insert": "\n\n"
+                    },
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": "THAT"
+                    },
+                    {
+                      "insert": " the Letter of Representation to the Independent Auditor, "
+                    },
+                    {
+                      "attributes": {
+                        "placeholder": true,
+                        "bold": true
+                      },
+                      "insert": {
+                        "text": "NAME_OF_AUDITOR",
+                        "value": ""
+                      }
+                    },
+                    {
+                      "insert": ", Chartered Accountants Singapore, pertaining to the Audited Financial Statements of the Company for the year ended "
+                    },
+                    {
+                      "attributes": {
+                        "placeholder": true,
+                        "bold": true
+                      },
+                      "insert": {
+                        "text": "FYE_DATE",
+                        "value": ""
+                      }
+                    },
+                    {
+                      "insert": " be approved and that any Director be authorised to sign the said Letter on behalf of the Board."
+                    },
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": " "
+                    },
+                    {
+                      "insert": "\n"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "RUC71CL4yBz9rf6XavYxv",
+              "type": "paragraph",
+              "item": {
+                "text": ""
+              }
+            },
+            {
+              "id": "D6MP_rLnJtY-TBnOXk2qC",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p><strong>STATEMENT&nbsp;BY&nbsp;THE&nbsp;DIRECTOR(S)&nbsp;AND&nbsp;FINANCIAL&nbsp;STATEMENTS </strong></p><p></p><p><strong>THAT</strong>&nbsp;the&nbsp;Audited&nbsp;Financial&nbsp;Statements&nbsp;for&nbsp;the&nbsp;financial&nbsp;year&nbsp;ended&nbsp;<strong><span class=\"q-placeholder\" data-text=\"FYE_DATE\" data-value=\"\" contenteditable=\"false\">{{FYE_DATE}}</span></strong>&nbsp;together&nbsp;with&nbsp;the&nbsp;Statement&nbsp;by&nbsp;the&nbsp;Director(s)&nbsp;and&nbsp;the&nbsp;Independent&nbsp;Auditor’s&nbsp;Report&nbsp;thereon&nbsp;be&nbsp;and&nbsp;are&nbsp;hereby&nbsp;approved&nbsp;for&nbsp;submission&nbsp;at&nbsp;the&nbsp;forthcoming&nbsp;Annual&nbsp;General&nbsp;Meeting&nbsp;of&nbsp;the&nbsp;Company.<strong> </strong></p><p></p><p><strong>THAT</strong>&nbsp;the&nbsp;Statement&nbsp;by&nbsp;the&nbsp;Director(s)&nbsp;on&nbsp;the&nbsp;Audited&nbsp;Financial&nbsp;Statements&nbsp;be&nbsp;and&nbsp;is&nbsp;hereby&nbsp;approved&nbsp;and&nbsp;the&nbsp;Director(s)&nbsp;be&nbsp;and&nbsp;is/are&nbsp;hereby&nbsp;authorised&nbsp;to&nbsp;sign&nbsp;the&nbsp;said&nbsp;Statement&nbsp;dated&nbsp;as&nbsp;of&nbsp;the&nbsp;date&nbsp;indicated&nbsp;below&nbsp;for&nbsp;and&nbsp;on&nbsp;behalf&nbsp;of&nbsp;the&nbsp;Board.<strong> </strong></p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": "STATEMENT BY THE DIRECTOR(S) AND FINANCIAL STATEMENTS "
+                    },
+                    {
+                      "insert": "\n\n"
+                    },
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": "THAT"
+                    },
+                    {
+                      "insert": " the Audited Financial Statements for the financial year ended "
+                    },
+                    {
+                      "attributes": {
+                        "placeholder": true,
+                        "bold": true
+                      },
+                      "insert": {
+                        "text": "FYE_DATE",
+                        "value": ""
+                      }
+                    },
+                    {
+                      "insert": " together with the Statement by the Director(s) and the Independent Auditor’s Report thereon be and are hereby approved for submission at the forthcoming Annual General Meeting of the Company."
+                    },
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": " "
+                    },
+                    {
+                      "insert": "\n\n"
+                    },
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": "THAT"
+                    },
+                    {
+                      "insert": " the Statement by the Director(s) on the Audited Financial Statements be and is hereby approved and the Director(s) be and is/are hereby authorised to sign the said Statement dated as of the date indicated below for and on behalf of the Board."
+                    },
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": " "
+                    },
+                    {
+                      "insert": "\n"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "VRmXmzvJrcX0GEa69unWc",
+              "type": "paragraph",
+              "item": {
+                "text": ""
+              }
+            },
+            {
+              "id": "rtoXFMdbvTXv5I57_S1bT",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p><strong>ANNUAL&nbsp;GENERAL&nbsp;MEETING</strong></p><p></p><p><strong>THAT</strong>&nbsp;the&nbsp;Annual&nbsp;General&nbsp;Meeting&nbsp;of&nbsp;the&nbsp;Company&nbsp;be&nbsp;convened&nbsp;as&nbsp;soon&nbsp;as&nbsp;practicable,&nbsp;and&nbsp;the/any&nbsp;Director&nbsp;be&nbsp;and&nbsp;is&nbsp;hereby&nbsp;authorized&nbsp;to&nbsp;issue&nbsp;notice&nbsp;in&nbsp;respect&nbsp;thereof. <strong> </strong></p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": "ANNUAL GENERAL MEETING"
+                    },
+                    {
+                      "insert": "\n\n"
+                    },
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": "THAT"
+                    },
+                    {
+                      "insert": " the Annual General Meeting of the Company be convened as soon as practicable, and the/any Director be and is hereby authorized to issue notice in respect thereof. "
+                    },
+                    {
+                      "attributes": {
+                        "bold": true
+                      },
+                      "insert": " "
+                    },
+                    {
+                      "insert": "\n"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "ldoMHdFMXRJVZQrrgKfi9",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>DATED:&nbsp;<span class=\"q-placeholder\" data-text=\"FS_DATE\" data-value=\"\" contenteditable=\"false\">{{FS_DATE}}</span></p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "DATED: "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "FS_DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "b6aHieIEG__h6Y0QbHoV3",
+          "type": "sign-area-01",
+          "item": {
+            "data": {
+              "desc": "SHAREHOLDER(S)",
+              "signers": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notice Annual",
+      "list": [
+        {
+          "id": "6DAbsf-IUoVth-X4Aij0b",
+          "type": "layout-company-header-01",
+          "item": {
+            "data": {
+              "subHeader": "NOTICE OF ANNUAL GENERAL MEETING",
+              "companyName": "{{COMPANY_NAME}}",
+              "companyRegNo": "{{REGISTRATION_NO}}"
+            }
+          }
+        },
+        {
+          "id": "FRx6exrXsCs2R3KU344kM",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><strong>TO&nbsp;ALL&nbsp;MEMBER(S)</strong></p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "TO ALL MEMBER(S)"
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "OzCjNduLXycfExiuDcZdH",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>Notice&nbsp;is&nbsp;hereby&nbsp;given&nbsp;that&nbsp;the&nbsp;Annual&nbsp;General&nbsp;Meeting&nbsp;of&nbsp;the&nbsp;Company&nbsp;will&nbsp;be&nbsp;held&nbsp;on:<strong> </strong></p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "Notice is hereby given that the Annual General Meeting of the Company will be held on:"
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "UW9g51Oo1xJ8ldE2gJXnW",
+          "type": "table-01",
+          "item": {
+            "data": [
+              {
+                "col2": {
+                  "text": "<p><span class=\"q-placeholder\" data-text=\"AGM_DATE\" data-value=\"\" contenteditable=\"false\">{{AGM_DATE}}</span></p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "AGM_DATE",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": "\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p>Date</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "Date\n"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "col2": {
+                  "text": "<p><span class=\"q-placeholder\" data-text=\"AGM_TIME\" data-value=\"\" contenteditable=\"false\">{{AGM_TIME}}</span></p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "AGM_TIME",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": "\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p>Time</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "Time\n"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "col2": {
+                  "text": "<p><span class=\"q-placeholder\" data-text=\"COMPANY_REGISTERED_OFFICE\" data-value=\"\" contenteditable=\"false\">{{COMPANY_REGISTERED_OFFICE}}</span></p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "COMPANY_REGISTERED_OFFICE",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": "\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p>Venue</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "Venue\n"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "pxF_dqXp3Ynyl_Fi3G3zo",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>for&nbsp;the&nbsp;following&nbsp;purpose</p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "for the following purpose\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "kRazX2nKuqjRbQ_F8bEtT",
+          "type": "list",
+          "item": [
+            {
+              "id": "lDdvlYFE6NIZeaqme85kP",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p>To&nbsp;receive&nbsp;and&nbsp;if&nbsp;thought&nbsp;fit,&nbsp;adopt&nbsp;the&nbsp;Statement&nbsp;by&nbsp;the&nbsp;Director(s)&nbsp;and&nbsp;Audited&nbsp;Financial&nbsp;Statements&nbsp;for&nbsp;the&nbsp;year&nbsp;ended&nbsp;<span class=\"q-placeholder\" data-text=\"FYE_DATE\" data-value=\"\" contenteditable=\"false\">{{FYE_DATE}}</span>.</p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "insert": "To receive and if thought fit, adopt the Statement by the Director(s) and Audited Financial Statements for the year ended "
+                    },
+                    {
+                      "attributes": {
+                        "placeholder": true
+                      },
+                      "insert": {
+                        "text": "FYE_DATE",
+                        "value": ""
+                      }
+                    },
+                    {
+                      "insert": ".\n"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "OVV5dJdODY5LFk3xUwKEP",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p>To&nbsp;approve&nbsp;Remuneration&nbsp;and/or&nbsp;Benefits-in-kind&nbsp;(if&nbsp;any)&nbsp;paid&nbsp;to&nbsp;Director(s)&nbsp;for&nbsp;the&nbsp;year&nbsp;ended&nbsp;<span class=\"q-placeholder\" data-text=\"FYE_DATE\" data-value=\"\" contenteditable=\"false\">{{FYE_DATE}}</span></p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "insert": "To approve Remuneration and/or Benefits-in-kind (if any) paid to Director(s) for the year ended "
+                    },
+                    {
+                      "attributes": {
+                        "placeholder": true
+                      },
+                      "insert": {
+                        "text": "FYE_DATE",
+                        "value": ""
+                      }
+                    },
+                    {
+                      "insert": "\n"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "B5rnYowFBYtgsMmtk2mc0",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p>To&nbsp;confirm&nbsp;the&nbsp;payment&nbsp;of&nbsp;One-Tier&nbsp;Exempt&nbsp;Dividend&nbsp;of&nbsp;<span class=\"q-placeholder\" data-text=\"DIV_AMOUNT\" data-value=\"\" contenteditable=\"false\">{{DIV_AMOUNT}}</span>&nbsp;and&nbsp;be&nbsp;payable&nbsp;on/or&nbsp;before&nbsp;<span class=\"q-placeholder\" data-text=\"DIV_DATE\" data-value=\"\" contenteditable=\"false\">{{DIV_DATE}}</span>.</p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "insert": "To confirm the payment of One-Tier Exempt Dividend of "
+                    },
+                    {
+                      "attributes": {
+                        "placeholder": true
+                      },
+                      "insert": {
+                        "text": "DIV_AMOUNT",
+                        "value": ""
+                      }
+                    },
+                    {
+                      "insert": " and be payable on/or before "
+                    },
+                    {
+                      "attributes": {
+                        "placeholder": true
+                      },
+                      "insert": {
+                        "text": "DIV_DATE",
+                        "value": ""
+                      }
+                    },
+                    {
+                      "insert": ".\n"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "QExRSN1CA5IPCjU5H_4Jr",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p>To&nbsp;re-elect&nbsp;Director(s)&nbsp;retiring&nbsp;in&nbsp;accordance&nbsp;with&nbsp;the&nbsp;Regulation(s)&nbsp;of&nbsp;the&nbsp;Company.</p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "insert": "To re-elect Director(s) retiring in accordance with the Regulation(s) of the Company.\n"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "DrIgvZHHjk572MgRPz655",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p>To&nbsp;reappoint&nbsp;<span class=\"q-placeholder\" data-text=\"NAME_OF_AUDITOR\" data-value=\"\" contenteditable=\"false\">{{NAME_OF_AUDITOR}}</span>&nbsp;as&nbsp;Independent&nbsp;Auditor&nbsp;of&nbsp;the&nbsp;Company&nbsp;and&nbsp;to&nbsp;authorise&nbsp;the&nbsp;Director(s)&nbsp;to&nbsp;fix&nbsp;their&nbsp;remuneration.</p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "insert": "To reappoint "
+                    },
+                    {
+                      "attributes": {
+                        "placeholder": true
+                      },
+                      "insert": {
+                        "text": "NAME_OF_AUDITOR",
+                        "value": ""
+                      }
+                    },
+                    {
+                      "insert": " as Independent Auditor of the Company and to authorise the Director(s) to fix their remuneration.\n"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "0NwYzflbgGkDu_srDE-gt",
+              "type": "list-item-paragraph",
+              "item": {
+                "text": "<p>To&nbsp;transact&nbsp;any&nbsp;other&nbsp;matters&nbsp;that&nbsp;may&nbsp;be&nbsp;properly&nbsp;transacted&nbsp;at&nbsp;an&nbsp;Annual&nbsp;General&nbsp;Meeting.</p>",
+                "delta": {
+                  "ops": [
+                    {
+                      "insert": "To transact any other matters that may be properly transacted at an Annual General Meeting.\n"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "W866uD1xWJidUgkSwV2Qt",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>DATED:&nbsp;<span class=\"q-placeholder\" data-text=\"FS_DATE\" data-value=\"\" contenteditable=\"false\">{{FS_DATE}}</span></p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "DATED: "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "FS_DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "4FQzhJf9XvsQ-t0p5xzAO",
+          "type": "sign-area-01",
+          "item": {
+            "data": {
+              "desc": "SHAREHOLDER(S)",
+              "signers": []
+            }
+          }
+        },
+        {
+          "id": "UlFiYG96ihPTKFzppQjnm",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><em><u>NOTE:</u></em></p><p></p><p><em>A&nbsp;member&nbsp;of&nbsp;the&nbsp;Company&nbsp;entitled&nbsp;to&nbsp;attend&nbsp;and&nbsp;vote&nbsp;at&nbsp;the&nbsp;General&nbsp;Meeting&nbsp;is&nbsp;entitled&nbsp;to&nbsp;appoint&nbsp;a&nbsp;proxy&nbsp;to&nbsp;attend&nbsp;and&nbsp;vote&nbsp;in&nbsp;his/her&nbsp;stead.&nbsp;A&nbsp;proxy&nbsp;need&nbsp;not&nbsp;be&nbsp;a&nbsp;member&nbsp;of&nbsp;the&nbsp;Company.&nbsp;The&nbsp;instrument&nbsp;appointing&nbsp;a&nbsp;proxy&nbsp;must&nbsp;be&nbsp;deposited&nbsp;at&nbsp;the&nbsp;registered&nbsp;office&nbsp;of&nbsp;the&nbsp;Company&nbsp;not&nbsp;less&nbsp;than&nbsp;48/72&nbsp;hours&nbsp;before&nbsp;the&nbsp;time&nbsp;set&nbsp;for&nbsp;holding&nbsp;on&nbsp;the&nbsp;meeting.</em></p><p></p><p><em>Pursuant&nbsp;to&nbsp;Section&nbsp;177(3)(b)&nbsp;and&nbsp;Section&nbsp;203&nbsp;of&nbsp;the&nbsp;Companies&nbsp;Act,&nbsp;shareholder(s)&nbsp;will&nbsp;be&nbsp;asked&nbsp;to&nbsp;consent&nbsp;to&nbsp;the&nbsp;transaction&nbsp;of&nbsp;the&nbsp;business&nbsp;as&nbsp;detailed&nbsp;in&nbsp;the&nbsp;Notice,&nbsp;notwithstanding&nbsp;that&nbsp;the&nbsp;full&nbsp;notice&nbsp;prescribed&nbsp;had&nbsp;not&nbsp;been&nbsp;given.</em></p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "underline": true,
+                    "italic": true
+                  },
+                  "insert": "NOTE:"
+                },
+                {
+                  "insert": "\n\n"
+                },
+                {
+                  "attributes": {
+                    "italic": true
+                  },
+                  "insert": "A member of the Company entitled to attend and vote at the General Meeting is entitled to appoint a proxy to attend and vote in his/her stead. A proxy need not be a member of the Company. The instrument appointing a proxy must be deposited at the registered office of the Company not less than 48/72 hours before the time set for holding on the meeting."
+                },
+                {
+                  "insert": "\n\n"
+                },
+                {
+                  "attributes": {
+                    "italic": true
+                  },
+                  "insert": "Pursuant to Section 177(3)(b) and Section 203 of the Companies Act, shareholder(s) will be asked to consent to the transaction of the business as detailed in the Notice, notwithstanding that the full notice prescribed had not been given."
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Agreement",
+      "list": [
+        {
+          "id": "exD4oEG0Ay-cEpASJQDOJ",
+          "type": "layout-company-header-01",
+          "item": {
+            "data": {
+              "subHeader": "AGREEMENT BY MEMBERS TO SHORTER NOTICE FOR THE ANNUAL GENERAL MEETING",
+              "companyName": "{{COMPANY_NAME}}",
+              "companyRegNo": "{{REGISTRATION_NO}}"
+            }
+          }
+        },
+        {
+          "id": "uxsG5FK5xweVFSfNSpUf9",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>Pursuant&nbsp;to&nbsp;Section&nbsp;177(3)(b)&nbsp;and&nbsp;Section&nbsp;203&nbsp;of&nbsp;the&nbsp;Companies&nbsp;Act,&nbsp;I&nbsp;the&nbsp;undersigned,&nbsp;being&nbsp;the&nbsp;Corporate&nbsp;Representative&nbsp;of&nbsp;Holding&nbsp;Company&nbsp;<strong><span class=\"q-placeholder\" data-text=\"CORPORATE_SHAREHOLDER\" data-value=\"\" contenteditable=\"false\">{{CORPORATE_SHAREHOLDER}}</span></strong>&nbsp;holding&nbsp;the&nbsp;entire&nbsp;share&nbsp;capital&nbsp;of&nbsp;the&nbsp;Company,&nbsp;hereby&nbsp;agree&nbsp;to&nbsp;the&nbsp;Annual&nbsp;General&nbsp;Meeting&nbsp;of&nbsp;the&nbsp;Company&nbsp;to&nbsp;be&nbsp;held&nbsp;on:<strong> </strong></p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "Pursuant to Section 177(3)(b) and Section 203 of the Companies Act, I the undersigned, being the Corporate Representative of Holding Company "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true,
+                    "bold": true
+                  },
+                  "insert": {
+                    "text": "CORPORATE_SHAREHOLDER",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": " holding the entire share capital of the Company, hereby agree to the Annual General Meeting of the Company to be held on:"
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "mUdiYwdfUBmULuAeqKaE4",
+          "type": "table-01",
+          "item": {
+            "data": [
+              {
+                "col2": {
+                  "text": "<p><span class=\"q-placeholder\" data-text=\"AGM_DATE\" data-value=\"\" contenteditable=\"false\">{{AGM_DATE}}</span></p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "AGM_DATE",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": "\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p>Date</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "Date\n"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "col2": {
+                  "text": "<p><span class=\"q-placeholder\" data-text=\"AGM_TIME\" data-value=\"\" contenteditable=\"false\">{{AGM_TIME}}</span></p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "AGM_TIME",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": "\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p>Time</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "Time\n"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "col2": {
+                  "text": "<p><span class=\"q-placeholder\" data-text=\"COMPANY_REGISTERED_ADDRESS\" data-value=\"\" contenteditable=\"false\">{{COMPANY_REGISTERED_ADDRESS}}</span></p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "COMPANY_REGISTERED_ADDRESS",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": "\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p>Venue</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "Venue\n"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "dL7lSGJAC0udUEMOUx4q5",
+          "type": "sign-area-01",
+          "item": {
+            "data": {
+              "desc": "SHAREHOLDER(S)",
+              "signers": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Minutes",
+      "list": [
+        {
+          "id": "yKnmyhGQ_VH-X8qk4w2bI",
+          "type": "layout-company-header-01",
+          "item": {
+            "data": {
+              "subHeader": "MINUTES OF ANNUAL GENERAL MEETING",
+              "companyName": "{{COMPANY_NAME}}",
+              "companyRegNo": "{{REGISTRATION_NO}}"
+            }
+          }
+        },
+        {
+          "id": "4rJwmQUi3xCwHSGUcPj6V",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>I,&nbsp;the&nbsp;undersigned,&nbsp;<span class=\"q-placeholder\" data-text=\"NAME_OF_CORPORATE_REPRESENTATIVE\" data-value=\"\" contenteditable=\"false\">{{NAME_OF_CORPORATE_REPRESENTATIVE}}</span><strong>,</strong>&nbsp;the&nbsp;duly&nbsp;appointed&nbsp;Corporate&nbsp;Representative&nbsp;of&nbsp;<span class=\"q-placeholder\" data-text=\"CORPORATE_SHAREHOLDER\" data-value=\"\" contenteditable=\"false\">{{CORPORATE_SHAREHOLDER}}</span><strong>&nbsp;</strong>which&nbsp;is&nbsp;beneficially&nbsp;entitled&nbsp;to&nbsp;the&nbsp;whole&nbsp;of&nbsp;the&nbsp;issued&nbsp;shares&nbsp;of&nbsp;<span class=\"q-placeholder\" data-text=\"COMPANY_NAME\" data-value=\"\" contenteditable=\"false\">{{COMPANY_NAME}}</span>hereby&nbsp;confirmed&nbsp;that&nbsp;the&nbsp;Annual&nbsp;General&nbsp;Meeting&nbsp;of&nbsp;<span class=\"q-placeholder\" data-text=\"COMPANY_NAME\" data-value=\"\" contenteditable=\"false\">{{COMPANY_NAME}}</span>&nbsp;was&nbsp;deemed&nbsp;to&nbsp;have&nbsp;been&nbsp;held&nbsp;on&nbsp;the&nbsp;<span class=\"q-placeholder\" data-text=\"DATE\" data-value=\"\" contenteditable=\"false\">{{DATE}}</span>&nbsp;and&nbsp;that&nbsp;the&nbsp;ordinary&nbsp;resolutions&nbsp;hereunder&nbsp;were&nbsp;passed&nbsp;thereof&nbsp;pursuant&nbsp;to&nbsp;Section&nbsp;179(6)&nbsp;of&nbsp;the&nbsp;Companies&nbsp;Act&nbsp;of&nbsp;Singapore:</p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "I, the undersigned, "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "NAME_OF_CORPORATE_REPRESENTATIVE",
+                    "value": ""
+                  }
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": ","
+                },
+                {
+                  "insert": " the duly appointed Corporate Representative of "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "CORPORATE_SHAREHOLDER",
+                    "value": ""
+                  }
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "which is beneficially entitled to the whole of the issued shares of "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "COMPANY_NAME",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "hereby confirmed that the Annual General Meeting of "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "COMPANY_NAME",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": " was deemed to have been held on the "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": " and that the ordinary resolutions hereunder were passed thereof pursuant to Section 179(6) of the Companies Act of Singapore:\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "DLWjv2sw8GAlMRY6rdaaq",
+          "type": "table-02",
+          "item": {
+            "data": [
+              {
+                "col2": {
+                  "text": "<p>It&nbsp;was&nbsp;resolved&nbsp;that&nbsp;the&nbsp;Statement&nbsp;of&nbsp;Financial&nbsp;Position&nbsp;as&nbsp;at&nbsp;<span class=\"q-placeholder\" data-text=\"FYE_DATE\" data-value=\"\" contenteditable=\"false\">{{FYE_DATE}}</span>and&nbsp;the&nbsp;Statement&nbsp;of&nbsp;Comprehensive<strong>&nbsp;</strong>Income&nbsp;for&nbsp;the&nbsp;year&nbsp;ended&nbsp;together&nbsp;with&nbsp;the&nbsp;Statement&nbsp;by&nbsp;the&nbsp;Director(s)&nbsp;and&nbsp;the&nbsp;Independent&nbsp;Auditor’s&nbsp;Report&nbsp;thereon&nbsp;be&nbsp;hereby&nbsp;received&nbsp;and&nbsp;adopted.</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "It was resolved that the Statement of Financial Position as at "
+                      },
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "FYE_DATE",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": "and the Statement of Comprehensive"
+                      },
+                      {
+                        "attributes": {
+                          "bold": true
+                        },
+                        "insert": " "
+                      },
+                      {
+                        "insert": "Income for the year ended together with the Statement by the Director(s) and the Independent Auditor’s Report thereon be hereby received and adopted.\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p>Audited&nbsp;Financial&nbsp;Statements&nbsp;and&nbsp;Statement&nbsp;by&nbsp;the&nbsp;Director(s)</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "Audited Financial Statements and Statement by the Director(s)\n"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "col2": {
+                  "text": "<p>It&nbsp;was&nbsp;resolved&nbsp;that&nbsp;the&nbsp;Remuneration&nbsp;and/or&nbsp;Benefits-in-kind&nbsp;(if&nbsp;any)&nbsp;as&nbsp;shown&nbsp;in&nbsp;the&nbsp;Audited&nbsp;Financial&nbsp;Statements&nbsp;for&nbsp;the&nbsp;year&nbsp;ended&nbsp;<span class=\"q-placeholder\" data-text=\"FYE_DATE\" data-value=\"\" contenteditable=\"false\">{{FYE_DATE}}</span>&nbsp;and&nbsp;paid&nbsp;to&nbsp;Director(s)&nbsp;be&nbsp;and&nbsp;is/are&nbsp;hereby&nbsp;approved.</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "It was resolved that the Remuneration and/or Benefits-in-kind (if any) as shown in the Audited Financial Statements for the year ended "
+                      },
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "FYE_DATE",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": " and paid to Director(s) be and is/are hereby approved.\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p>Remuneration&nbsp;and/or&nbsp;Benefits-in-kind&nbsp;(if&nbsp;any)&nbsp;Paid&nbsp;to&nbsp;Director(s)</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "Remuneration and/or Benefits-in-kind (if any) Paid to Director(s)\n"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "col2": {
+                  "text": "<p>It&nbsp;was&nbsp;resolved&nbsp;that&nbsp;One-Tier&nbsp;Exempt&nbsp;Dividend&nbsp;of&nbsp;<span class=\"q-placeholder\" data-text=\"DIV_AMOUNT\" data-value=\"\" contenteditable=\"false\">{{DIV_AMOUNT}}</span>&nbsp;in&nbsp;respect&nbsp;of&nbsp;the&nbsp;financial&nbsp;year&nbsp;ended&nbsp;<strong><span class=\"q-placeholder\" data-text=\"FYE_DATE\" data-value=\"\" contenteditable=\"false\">{{FYE_DATE}}</span></strong>&nbsp;and&nbsp;be&nbsp;paid&nbsp;to&nbsp;members&nbsp;on/or&nbsp;before&nbsp;<span class=\"q-placeholder\" data-text=\"DIV_DATE\" data-value=\"\" contenteditable=\"false\">{{DIV_DATE}}</span>&nbsp;be&nbsp;hereby&nbsp;confirmed&nbsp;and&nbsp;ratified.<strong> </strong></p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "It was resolved that One-Tier Exempt Dividend of "
+                      },
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "DIV_AMOUNT",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": " in respect of the financial year ended "
+                      },
+                      {
+                        "attributes": {
+                          "placeholder": true,
+                          "bold": true
+                        },
+                        "insert": {
+                          "text": "FYE_DATE",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": " and be paid to members on/or before "
+                      },
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "DIV_DATE",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": " be hereby confirmed and ratified."
+                      },
+                      {
+                        "attributes": {
+                          "bold": true
+                        },
+                        "insert": " "
+                      },
+                      {
+                        "insert": "\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p>One-Tier&nbsp;Exempt&nbsp;Dividend</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "One-Tier Exempt Dividend\n"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "col2": {
+                  "text": "<p>In&nbsp;accordance&nbsp;with&nbsp;Regulation(s)&nbsp;of&nbsp;the&nbsp;Company&#39;s&nbsp;Constitution,&nbsp;<span class=\"q-placeholder\" data-text=\"DIRECTOR_RETIRE\" data-value=\"\" contenteditable=\"false\">{{DIRECTOR_RETIRE}}</span>&nbsp;shall&nbsp;retire&nbsp;from&nbsp;the&nbsp;Board&nbsp;at&nbsp;the&nbsp;Annual&nbsp;General&nbsp;Meeting&nbsp;and&nbsp;be&nbsp;eligible&nbsp;for&nbsp;re-election. </p><p> </p><p>It&nbsp;was&nbsp;resolved&nbsp;that&nbsp;<span class=\"q-placeholder\" data-text=\"DIRECTOR_ELECT\" data-value=\"\" contenteditable=\"false\">{{DIRECTOR_ELECT}}</span>&nbsp;be&nbsp;hereby&nbsp;re-elected&nbsp;as&nbsp;Director(s)&nbsp;of&nbsp;the&nbsp;Company.</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "In accordance with Regulation(s) of the Company's Constitution, "
+                      },
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "DIRECTOR_RETIRE",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": " shall retire from the Board at the Annual General Meeting and be eligible for re-election. \n \nIt was resolved that "
+                      },
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "DIRECTOR_ELECT",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": " be hereby re-elected as Director(s) of the Company.\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p>Directorate</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "Directorate\n"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "col2": {
+                  "text": "<p>It&nbsp;was&nbsp;resolved&nbsp;that&nbsp;<span class=\"q-placeholder\" data-text=\"NAME_OF_AUDITOR\" data-value=\"\" contenteditable=\"false\">{{NAME_OF_AUDITOR}}</span>&nbsp;be&nbsp;hereby&nbsp;reappointed&nbsp;as&nbsp;Independent&nbsp;Auditor&nbsp;of&nbsp;the&nbsp;Company&nbsp;to&nbsp;hold&nbsp;office&nbsp;until&nbsp;the&nbsp;conclusion&nbsp;of&nbsp;the&nbsp;next&nbsp;annual&nbsp;general&nbsp;meeting&nbsp;at&nbsp;a&nbsp;remuneration&nbsp;to&nbsp;be&nbsp;agreed&nbsp;upon&nbsp;between&nbsp;the&nbsp;Director(s)&nbsp;and&nbsp;the&nbsp;Independent&nbsp;Auditor.</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "It was resolved that "
+                      },
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "NAME_OF_AUDITOR",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": " be hereby reappointed as Independent Auditor of the Company to hold office until the conclusion of the next annual general meeting at a remuneration to be agreed upon between the Director(s) and the Independent Auditor.\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p>Audit</p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "insert": "Audit\n"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "hsEFenEvJy08vnrRnP27z",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>DATED:&nbsp;<span class=\"q-placeholder\" data-text=\"FS_DATE\" data-value=\"\" contenteditable=\"false\">{{FS_DATE}}</span></p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "DATED: "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "FS_DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "yGvh_Ej6Sv3LAhrha5vF5",
+          "type": "sign-area-01",
+          "item": {
+            "data": {
+              "desc": "SHAREHOLDER(S)",
+              "signers": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Representative",
+      "list": [
+        {
+          "id": "3HjdbzrLXGjd9wiAp_42J",
+          "type": "layout-company-header-01",
+          "item": {
+            "data": {
+              "subHeader": "DIRECTORS' RESOLUTION IN WRITING PASSED PURSUANT TO REGULATION OF THE COMPANY’S CONSTITUTION",
+              "companyName": "{{COMPANY_NAME}}",
+              "companyRegNo": "{{REGISTRATION_NO}}"
+            }
+          }
+        },
+        {
+          "id": "FTqt5wkhTJJ5wMNncXlpz",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><strong>MINUTES&nbsp;BY&nbsp;REPRESENTATIVE&nbsp;OF&nbsp;HOLDING&nbsp;COMPANY</strong></p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "MINUTES BY REPRESENTATIVE OF HOLDING COMPANY"
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "EZ5AgafpFGN5IskpZG_I6",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><strong>RESOLVED:</strong></p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "RESOLVED:"
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "opvszrYgI5P-Qku_CIKMx",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><strong>THAT</strong>&nbsp;the&nbsp;minutes,&nbsp;signed&nbsp;by&nbsp;<strong><span class=\"q-placeholder\" data-text=\"NAME_OF_CORPORATE_REPRESENTATIVE\" data-value=\"\" contenteditable=\"false\">{{NAME_OF_CORPORATE_REPRESENTATIVE}}</span></strong>&nbsp;as&nbsp;the&nbsp;Corporate&nbsp;Representative&nbsp;of&nbsp;<strong><span class=\"q-placeholder\" data-text=\"CORPORATE_SHAREHOLDER\" data-value=\"\" contenteditable=\"false\">{{CORPORATE_SHAREHOLDER}}</span>&nbsp;</strong>(the&nbsp;Holding&nbsp;Company)&nbsp;on&nbsp;the&nbsp;<span class=\"q-placeholder\" data-text=\"AGM_DAY\" data-value=\"\" contenteditable=\"false\">{{AGM_DAY}}</span>&nbsp;day&nbsp;of&nbsp;<span class=\"q-placeholder\" data-text=\"AGM_MONTH\" data-value=\"\" contenteditable=\"false\">{{AGM_MONTH}}</span><strong>&nbsp;</strong><span class=\"q-placeholder\" data-text=\"AGM_YEAR\" data-value=\"\" contenteditable=\"false\">{{AGM_YEAR}}</span>&nbsp;relating&nbsp;to&nbsp;the&nbsp;Annual&nbsp;General&nbsp;Meeting&nbsp;of&nbsp;the&nbsp;Company&nbsp;be&nbsp;and&nbsp;are&nbsp;hereby&nbsp;noted.<strong> </strong></p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "THAT"
+                },
+                {
+                  "insert": " the minutes, signed by "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true,
+                    "bold": true
+                  },
+                  "insert": {
+                    "text": "NAME_OF_CORPORATE_REPRESENTATIVE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": " as the Corporate Representative of "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true,
+                    "bold": true
+                  },
+                  "insert": {
+                    "text": "CORPORATE_SHAREHOLDER",
+                    "value": ""
+                  }
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "(the Holding Company) on the "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "AGM_DAY",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": " day of "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "AGM_MONTH",
+                    "value": ""
+                  }
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "AGM_YEAR",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": " relating to the Annual General Meeting of the Company be and are hereby noted."
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "OMfizZ1aaWDpPWBmKx96l",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>DATED:&nbsp;<span class=\"q-placeholder\" data-text=\"FS_DATE\" data-value=\"\" contenteditable=\"false\">{{FS_DATE}}</span></p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "DATED: "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "FS_DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "ttP86Z1LhsVVtZE6tnAR3",
+          "type": "sign-area-01",
+          "item": {
+            "data": {
+              "desc": "SHAREHOLDER(S)",
+              "signers": []
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "placeholders": {
+    "AGM_DATE": "",
+    "AGM_DAY": "",
+    "AGM_MONTH": "",
+    "AGM_TIME": "",
+    "AGM_YEAR": "",
+    "COMPANY_NAME": "",
+    "COMPANY_REGISTERED_ADDRESS": "",
+    "COMPANY_REGISTERED_OFFICE": "",
+    "CORPORATE_SHAREHOLDER": "",
+    "DATE": "",
+    "DIRECTOR_ELECT": "",
+    "DIRECTOR_RETIRE": "",
+    "DIV_AMOUNT": "",
+    "DIV_DATE": "",
+    "FS_DATE": "",
+    "FYE_DATE": "",
+    "NAME_OF_AUDITOR": "",
+    "NAME_OF_CORPORATE_REPRESENTATIVE": "",
+    "NUMBER1": "",
+    "NUMBER2": "",
+    "NUMBER3": "",
+    "REGISTRATION_NO": "",
+    "SECRETARIAL_AGENT": "",
+    "YEAR": ""
+  }
+}

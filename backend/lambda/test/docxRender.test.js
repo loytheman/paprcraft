@@ -148,6 +148,18 @@ test('several sections each start a page; unknown blocks and empty templates are
 
 // ---- handler -----------------------------------------------------------------------------------
 
+test('{{KEY}} typed in header and signature data resolves from values and saved placeholders', async () => {
+  const doc = render(tpl([
+    { id: 'h', type: 'layout-company-header-01', item: { data: { companyName: '{{COMPANY_NAME}}', companyRegNo: '{{REG_NO}}', subHeader: 'NOTICE' } } },
+    { id: 's', type: 'sign-area-02', item: { data: { name: '{{SIGNER}}', desc: 'Director' } } },
+  ], { placeholders: { COMPANY_NAME: 'Saved Co' } }), { REG_NO: '123X', SIGNER: 'Pat Doe' });
+  const text = textOf((await unzip(doc)).doc);
+  assert.ok(text.includes('Saved Co'));
+  assert.ok(text.includes('123X'));
+  assert.ok(text.includes('Pat Doe'));
+  assert.ok(!text.includes('{{'));
+});
+
 const fakes = (item, { putFails = false, conflicts = 0, updateFails = false } = {}) => {
   const db = { item: item && JSON.parse(JSON.stringify(item)) };
   const log = { puts: [], updates: [], conflictsLeft: conflicts };

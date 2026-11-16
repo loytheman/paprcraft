@@ -266,6 +266,11 @@ const render = (template, values = {}) => {
   const pageNoHeader = (n) => new Header({ children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun(`-${n}-`)] })] });
   const pageNoFooter = (n) => new Footer({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun(`.../${n}`)] })] });
 
+  // Headers and signature blocks keep plain strings in item.data (company name, reg no., signer
+  // names...): {{KEY}} typed there resolves like a chip does.
+  const fillDeep = (v) => (typeof v === 'string' ? subst(v) : Array.isArray(v) ? v.map(fillDeep) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fillDeep(x)])) : v);
+  const fillDataFields = (block) => (/^(layout-|sign-area-)/.test(block?.type ?? '') && block?.item?.data ? { ...block, item: { ...block.item, data: fillDeep(block.item.data) } } : block);
+
   // Each template section starts on a new page. A page-break-02 block also ends the current Word
   // section (its footer gets ".../M") and starts one whose header shows "-N-". Word headers and
   // footers belong to a whole section, so they repeat on every page of it.
@@ -279,7 +284,8 @@ const render = (template, values = {}) => {
       sections.push({ ...S.pageStyle({ header, footer }), children: children.length ? children : [p([])] });
       children = [];
     };
-    for (const block of sec?.list ?? []) {
+    for (const rawBlock of sec?.list ?? []) {
+      const block = fillDataFields(rawBlock);
       if (block?.type === 'list') {
         state.listInstance += 1;
         state.listFontSize = block?.item?.[0]?.item?.delta?.ops?.[0]?.attributes?.size;

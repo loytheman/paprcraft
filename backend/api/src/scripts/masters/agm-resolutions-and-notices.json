@@ -1,0 +1,833 @@
+{
+  "name": "AGM: resolutions and ACRA notices",
+  "section": [
+    {
+      "name": "Change of Registered Office",
+      "list": [
+        {
+          "id": "PW60OIhE7bxv6JFWL8P3N",
+          "type": "layout-company-header-01",
+          "item": {
+            "data": {
+              "subHeader": "DIRECTORS' RESOLUTION IN WRITING PASSED PURSUANT TO REGULATION OF THE COMPANY’S CONSTITUTION",
+              "companyName": "{{COMPANY_NAME}}",
+              "companyRegNo": "{{REGISTRATION_NO}}"
+            }
+          }
+        },
+        {
+          "id": "M8Gkkxz5Ok1f4GX0pANTu",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><strong>CHANGE&nbsp;OF&nbsp;REGISTERED&nbsp;OFFICE</strong></p><p> </p><p><strong>RESOLVED:</strong></p><p> </p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "CHANGE OF REGISTERED OFFICE"
+                },
+                {
+                  "insert": "\n \n"
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "RESOLVED:"
+                },
+                {
+                  "insert": "\n \n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "9R7-iW9nbXl4JCxWuK_Mu",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><strong>THAT&nbsp;</strong>the&nbsp;registered&nbsp;office&nbsp;of&nbsp;the&nbsp;Company&nbsp;be&nbsp;and&nbsp;is&nbsp;hereby&nbsp;changed&nbsp;with&nbsp;immediate&nbsp;effect&nbsp;to:</p><p> </p><p><span class=\"q-placeholder\" data-text=\"NEW_REGISTERED_ADDRESS\" data-value=\"\" contenteditable=\"false\">{{NEW_REGISTERED_ADDRESS}}</span></p><p> </p><p>THAT&nbsp;the&nbsp;Company&#39;s&nbsp;Secretarial&nbsp;Agent&nbsp;be&nbsp;hereby&nbsp;authorised&nbsp;and&nbsp;instructed&nbsp;to&nbsp;lodge&nbsp;the&nbsp;above&nbsp;forms&nbsp;via&nbsp;ACRA&nbsp;electronic&nbsp;filing&nbsp;system&nbsp;Bizfile,&nbsp;accordingly.</p><p> </p><p>DATED:&nbsp;<span class=\"q-placeholder\" data-text=\"DATE\" data-value=\"\" contenteditable=\"false\">{{DATE}}</span></p><p> </p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "THAT "
+                },
+                {
+                  "insert": "the registered office of the Company be and is hereby changed with immediate effect to:\n \n"
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "NEW_REGISTERED_ADDRESS",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n \nTHAT the Company's Secretarial Agent be hereby authorised and instructed to lodge the above forms via ACRA electronic filing system Bizfile, accordingly.\n \nDATED: "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n \n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "fW89nEHL2HZ0Jf0qVsasp",
+          "type": "sign-area-01",
+          "item": {
+            "data": {
+              "desc": "DIRECTOR(S)",
+              "signers": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Change of Registered Office and Office Hours",
+      "list": [
+        {
+          "id": "vQID4482VkLuwmzik4CKO",
+          "type": "layout-company-header-01",
+          "item": {
+            "data": {
+              "subHeader": "NOTICE OF CHANGE OF SITUATION OF REGISTERED OFFICE AND OF OFFICE HOURS",
+              "companyName": "{{COMPANY_NAME}}",
+              "companyRegNo": "{{REGISTRATION_NO}}"
+            }
+          }
+        },
+        {
+          "id": "3mocXgBLm_CMYo-t9PmBe",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>The&nbsp;Accounting&nbsp;and&nbsp;Corporate&nbsp;Regulatory&nbsp;Authority.&nbsp;Singapore.</p><p> </p><p>The&nbsp;above&nbsp;named&nbsp;company&nbsp;hereby&nbsp;gives&nbsp;notice&nbsp;that&nbsp;with&nbsp;effective&nbsp;from:&nbsp;<span class=\"q-placeholder\" data-text=\"DATE\" data-value=\"\" contenteditable=\"false\">{{DATE}}</span></p><p> </p><p>Its&nbsp;registered&nbsp;office&nbsp;will&nbsp;be&nbsp;situated&nbsp;at:</p><p> </p><p><span class=\"q-placeholder\" data-text=\"NEW_REGISTERED_ADDRESS\" data-value=\"\" contenteditable=\"false\">{{NEW_REGISTERED_ADDRESS}}</span></p><p> </p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "The Accounting and Corporate Regulatory Authority. Singapore.\n \nThe above named company hereby gives notice that with effective from: "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n \nIts registered office will be situated at:\n \n"
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "NEW_REGISTERED_ADDRESS",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n \n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "huwDOak2t8UiOMeUm6Ww-",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>Dated:&nbsp;<span class=\"q-placeholder\" data-text=\"DATE\" data-value=\"\" contenteditable=\"false\">{{DATE}}</span></p><p> </p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "Dated: "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n \n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "5icSosWxNqotHqYf9qVgt",
+          "type": "sign-area-04",
+          "item": {
+            "data": {
+              "desc": null,
+              "name": null,
+              "desc2": "Name of *Director/Secretary in Singapore"
+            }
+          }
+        },
+        {
+          "id": "XDP6XmzLfEtoCKUnun0Vn",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><span class=\"q-size-sm\">*Delete&nbsp;where&nbsp;inapplicable</span></p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "size": "sm"
+                  },
+                  "insert": "*Delete where inapplicable"
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Director Reso",
+      "list": [
+        {
+          "id": "yte8pK-IU5zmnNH0Kprx7",
+          "type": "layout-company-header-01",
+          "item": {
+            "data": {
+              "subHeader": "DIRECTORS' RESOLUTION IN WRITING PASSED PURSUANT TO REGULATION OF THE COMPANY’S CONSTITUTION",
+              "companyName": "{{COMPANY_NAME}}",
+              "companyRegNo": "{{REGISTRATION_NO}}"
+            }
+          }
+        },
+        {
+          "id": "u-Q5eCc3nCkDVs1SAXPBS",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><strong>APPOINTMENT&nbsp;OF&nbsp;SECRETARIAL&nbsp;AGENTS</strong></p><p> </p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "APPOINTMENT OF SECRETARIAL AGENTS"
+                },
+                {
+                  "insert": "\n \n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "MUeLpwxUDYZ5f_jEeLcZI",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><strong>RESOLVED&nbsp;THAT&nbsp;<span class=\"q-placeholder\" data-text=\"SECRETARIAL_AGENT\" data-value=\"\" contenteditable=\"false\">{{SECRETARIAL_AGENT}}</span> </strong>be&nbsp;appointed&nbsp;as&nbsp;secretarial&nbsp;agents&nbsp;of&nbsp;the&nbsp;Company&nbsp;with&nbsp;effect&nbsp;from&nbsp;<span class=\"q-placeholder\" data-text=\"EFFECTIVE_DATE\" data-value=\"\" contenteditable=\"false\">{{EFFECTIVE_DATE}}</span>.</p><p> </p><p>DATED:&nbsp;<span class=\"q-placeholder\" data-text=\"DATE\" data-value=\"\" contenteditable=\"false\">{{DATE}}</span></p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "RESOLVED THAT "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true,
+                    "bold": true
+                  },
+                  "insert": {
+                    "text": "SECRETARIAL_AGENT",
+                    "value": ""
+                  }
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "be appointed as secretarial agents of the Company with effect from "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "EFFECTIVE_DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": ".\n \nDATED: "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "VhFrDVbh5k2gp1EFLxOhf",
+          "type": "sign-area-01",
+          "item": {
+            "data": {
+              "desc": "DIRECTOR(S)",
+              "signers": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appointment of Secretarial Agents",
+      "list": [
+        {
+          "id": "DXf8C4VlIYWhtFbO_3OCx",
+          "type": "layout-company-header-01",
+          "item": {
+            "data": {
+              "subHeader": "DIRECTORS' RESOLUTION IN WRITING PASSED PURSUANT TO REGULATION OF THE COMPANY’S CONSTITUTION",
+              "companyName": "{{COMPANY_NAME}}",
+              "companyRegNo": "{{REGISTRATION_NO}}"
+            }
+          }
+        },
+        {
+          "id": "bpnqEkiFpGiIrLku7l-bW",
+          "type": "list-item-paragraph",
+          "item": {
+            "text": "<p><strong>APPOINTMENT&nbsp;OF&nbsp;SECRETARIAL&nbsp;AGENTS</strong></p><p> </p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "APPOINTMENT OF SECRETARIAL AGENTS"
+                },
+                {
+                  "insert": "\n \n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "mBrRdzY8h328ZBAuDotLK",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>RESOLVED&nbsp;THAT&nbsp;<span class=\"q-placeholder\" data-text=\"SECRETARIAL_AGENT\" data-value=\"\" contenteditable=\"false\">{{SECRETARIAL_AGENT}}</span>&nbsp;be&nbsp;appointed&nbsp;as&nbsp;secretarial&nbsp;agents&nbsp;of&nbsp;the&nbsp;Company&nbsp;with&nbsp;effect&nbsp;from&nbsp;APPOINT_DATE</p><p></p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "RESOLVED THAT "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "SECRETARIAL_AGENT",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": " be appointed as secretarial agents of the Company with effect from APPOINT_DATE\n\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "vX3KToGcflakd4njzMJ17",
+          "type": "list-item-paragraph",
+          "item": {
+            "text": "<p>CHANGE&nbsp;OF&nbsp;COMPANY&nbsp;SECRETARY</p><p></p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "CHANGE OF COMPANY SECRETARY\n\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "X5ndcsDpY0W-tIOSA9iPJ",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><strong>RESOLVED:</strong></p><p></p><p><strong>THAT&nbsp;</strong>the&nbsp;registration&nbsp;of&nbsp;<strong><span class=\"q-placeholder\" data-text=\"SECRETARY_RESIGN\" data-value=\"\" contenteditable=\"false\">{{SECRETARY_RESIGN}}</span> </strong>as&nbsp;Secretary&nbsp;of&nbsp;the&nbsp;Company&nbsp;be&nbsp;and&nbsp;is&nbsp;hereby&nbsp;accepted&nbsp;with&nbsp;effect&nbsp;from&nbsp;<span class=\"q-placeholder\" data-text=\"RESIGN_DATE\" data-value=\"\" contenteditable=\"false\">{{RESIGN_DATE}}</span>.</p><p></p><p><strong>THAT&nbsp;<span class=\"q-placeholder\" data-text=\"SECRETARY_APPOINT\" data-value=\"\" contenteditable=\"false\">{{SECRETARY_APPOINT}}</span> </strong>having&nbsp;consented&nbsp;to&nbsp;act&nbsp;as&nbsp;Secretary&nbsp;of&nbsp;the&nbsp;Company,&nbsp;be&nbsp;and&nbsp;is&nbsp;hereby&nbsp;appointed&nbsp;as&nbsp;Secretary&nbsp;of&nbsp;the&nbsp;Company&nbsp;with&nbsp;effect&nbsp;from&nbsp;<span class=\"q-placeholder\" data-text=\"APPOINT_DATE\" data-value=\"\" contenteditable=\"false\">{{APPOINT_DATE}}</span>.</p><p></p><p><strong>THAT&nbsp;<span class=\"q-placeholder\" data-text=\"SECRETARY_APPOINT\" data-value=\"\" contenteditable=\"false\">{{SECRETARY_APPOINT}}</span></strong> shall&nbsp;not&nbsp;be&nbsp;involved&nbsp;in&nbsp;the&nbsp;business&nbsp;and&nbsp;management&nbsp;decision&nbsp;of&nbsp;the&nbsp;Company.</p><p></p><p><strong>THAT&nbsp;</strong>the&nbsp;Company&#39;s&nbsp;Secretarial&nbsp;Agent&nbsp;be&nbsp;hereby&nbsp;authorised&nbsp;and&nbsp;instructed&nbsp;to&nbsp;lodge&nbsp;the&nbsp;above&nbsp;forms&nbsp;via&nbsp;ACRA&nbsp;filing&nbsp;system&nbsp;Bizfile,&nbsp;accordingly.</p><p></p><p>DATED:&nbsp;<span class=\"q-placeholder\" data-text=\"DATE\" data-value=\"\" contenteditable=\"false\">{{DATE}}</span></p><p></p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "RESOLVED:"
+                },
+                {
+                  "insert": "\n\n"
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "THAT "
+                },
+                {
+                  "insert": "the registration of "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true,
+                    "bold": true
+                  },
+                  "insert": {
+                    "text": "SECRETARY_RESIGN",
+                    "value": ""
+                  }
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "as Secretary of the Company be and is hereby accepted with effect from "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "RESIGN_DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": ".\n\n"
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "THAT "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true,
+                    "bold": true
+                  },
+                  "insert": {
+                    "text": "SECRETARY_APPOINT",
+                    "value": ""
+                  }
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "having consented to act as Secretary of the Company, be and is hereby appointed as Secretary of the Company with effect from "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "APPOINT_DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": ".\n\n"
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "THAT "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true,
+                    "bold": true
+                  },
+                  "insert": {
+                    "text": "SECRETARY_APPOINT",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": " shall not be involved in the business and management decision of the Company.\n\n"
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "THAT "
+                },
+                {
+                  "insert": "the Company's Secretarial Agent be hereby authorised and instructed to lodge the above forms via ACRA filing system Bizfile, accordingly.\n\nDATED: "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "L9gk4WnObr_icUJOyWD4b",
+          "type": "sign-area-01",
+          "item": {
+            "data": {
+              "desc": "DIRECTOR(S)",
+              "signers": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Return Giving Particulars",
+      "list": [
+        {
+          "id": "TTFE-VIm3qppa8bAhusSf",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>THE&nbsp;COMPANIES&nbsp;ACT</p><p></p><p><strong>RETURN&nbsp;GIVING&nbsp;PARTICULARS&nbsp;IN&nbsp;REGISTER&nbsp;OF&nbsp;DIRECTORS,&nbsp;CHIEF&nbsp;EXECUTIVE&nbsp;OFFICER,&nbsp;SECRETARIES&nbsp;AND&nbsp;AUDITOR&nbsp;AND&nbsp;CHANGES&nbsp;OF&nbsp;PARTICULARS</strong></p><p></p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "THE COMPANIES ACT\n\n"
+                },
+                {
+                  "attributes": {
+                    "bold": true
+                  },
+                  "insert": "RETURN GIVING PARTICULARS IN REGISTER OF DIRECTORS, CHIEF EXECUTIVE OFFICER, SECRETARIES AND AUDITOR AND CHANGES OF PARTICULARS"
+                },
+                {
+                  "insert": "\n\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "RaHykWqEqmO8PVYHDj4nk",
+          "type": "table-01",
+          "item": {
+            "data": [
+              {
+                "col2": {
+                  "text": "<p><span class=\"q-placeholder\" data-text=\"COMPANY_NAME\" data-value=\"\" contenteditable=\"false\">{{COMPANY_NAME}}</span></p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "COMPANY_NAME",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": "\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p><strong>Name&nbsp;of&nbsp;Company</strong></p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "attributes": {
+                          "bold": true
+                        },
+                        "insert": "Name of Company"
+                      },
+                      {
+                        "insert": "\n"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "col2": {
+                  "text": "<p><span class=\"q-placeholder\" data-text=\"REGISTRATION_NO\" data-value=\"\" contenteditable=\"false\">{{REGISTRATION_NO}}</span></p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "attributes": {
+                          "placeholder": true
+                        },
+                        "insert": {
+                          "text": "REGISTRATION_NO",
+                          "value": ""
+                        }
+                      },
+                      {
+                        "insert": "\n"
+                      }
+                    ]
+                  }
+                },
+                "col1": {
+                  "text": "<p><strong>Company&nbsp;No</strong></p>",
+                  "delta": {
+                    "ops": [
+                      {
+                        "attributes": {
+                          "bold": true
+                        },
+                        "insert": "Company No"
+                      },
+                      {
+                        "insert": "\n"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "GPO8YFaQ5Lz7d8QcpqsC1",
+          "type": "paragraph",
+          "item": {
+            "text": null
+          }
+        },
+        {
+          "id": "qDoOANR-DUH2zPizSI0_i",
+          "type": "paragraph",
+          "item": {
+            "text": "<p>The&nbsp;*particulars/changes&nbsp;of&nbsp;particulars&nbsp;are&nbsp;as&nbsp;follows:</p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "The *particulars/changes of particulars are as follows:\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "tT0HtocUGH07RujuQBOXv",
+          "type": "table-01",
+          "item": {
+            "data": [
+              {
+                "col2": {
+                  "delta": null,
+                  "text": ""
+                },
+                "col1": {
+                  "delta": null,
+                  "text": ""
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "lynHBKW8W4UJEky60ed0x",
+          "type": "paragraph",
+          "item": {
+            "text": "<p></p><p>Dated&nbsp;:&nbsp;<span class=\"q-placeholder\" data-text=\"DATE\" data-value=\"\" contenteditable=\"false\">{{DATE}}</span></p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "\nDated : "
+                },
+                {
+                  "attributes": {
+                    "placeholder": true
+                  },
+                  "insert": {
+                    "text": "DATE",
+                    "value": ""
+                  }
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "7cHCwGdzRAv1j0rNdUTGS",
+          "type": "sign-area-04",
+          "item": {
+            "data": {
+              "desc": null,
+              "name": null,
+              "desc2": "Name of *Director/Secretary"
+            }
+          }
+        },
+        {
+          "id": "hF3AoVaq7C4eQSaSrhwSi",
+          "type": "paragraph",
+          "item": {
+            "text": "<p></p><p><span class=\"q-size-sm\">This&nbsp;Form&nbsp;consists&nbsp;of&nbsp;this&nbsp;page</span></p><p><span class=\"q-size-sm\">*and </span><u class=\"q-size-sm\">&nbsp; &nbsp;- &nbsp; </u><span class=\"q-size-sm\">&nbsp;continuation&nbsp;sheet(s)</span></p><p><span class=\"q-size-sm\">*Delete&nbsp;where&nbsp;inapplicable.</span></p><p><span class=\"q-size-sm\">**Insert&nbsp;headings,&nbsp;ie,&nbsp;Directors,&nbsp;Chief&nbsp;Executive&nbsp;Officer,&nbsp;Secretaries&nbsp;or&nbsp;Auditor.</span></p><p></p>",
+            "delta": {
+              "ops": [
+                {
+                  "insert": "\n"
+                },
+                {
+                  "attributes": {
+                    "size": "sm"
+                  },
+                  "insert": "This Form consists of this page"
+                },
+                {
+                  "insert": "\n"
+                },
+                {
+                  "attributes": {
+                    "size": "sm"
+                  },
+                  "insert": "*and "
+                },
+                {
+                  "attributes": {
+                    "size": "sm",
+                    "underline": true
+                  },
+                  "insert": "   -   "
+                },
+                {
+                  "attributes": {
+                    "size": "sm"
+                  },
+                  "insert": " continuation sheet(s)"
+                },
+                {
+                  "insert": "\n"
+                },
+                {
+                  "attributes": {
+                    "size": "sm"
+                  },
+                  "insert": "*Delete where inapplicable."
+                },
+                {
+                  "insert": "\n"
+                },
+                {
+                  "attributes": {
+                    "size": "sm"
+                  },
+                  "insert": "**Insert headings, ie, Directors, Chief Executive Officer, Secretaries or Auditor."
+                },
+                {
+                  "insert": "\n\n"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "brNPvMprez8oBE2JzQa7z",
+          "type": "paragraph",
+          "item": {
+            "text": "<p><em class=\"q-size-xs\">Note&nbsp;:&nbsp;Attach&nbsp;Annexes&nbsp;for&nbsp;particulars&nbsp;of&nbsp;other&nbsp;directorships&nbsp;of&nbsp;public&nbsp;companies&nbsp;or&nbsp;their&nbsp;subsidiaries&nbsp;in&nbsp;Singapore.&nbsp;Changes&nbsp;in&nbsp;respect&nbsp;of&nbsp;NRIC/Passport&nbsp;No&nbsp;and&nbsp;address&nbsp;notified&nbsp;herein&nbsp;will&nbsp;be&nbsp;updated&nbsp;by&nbsp;the&nbsp;Registry&nbsp;in&nbsp;all&nbsp;other&nbsp;companies&nbsp;of&nbsp;which&nbsp;the&nbsp;above&nbsp;persons&nbsp;are&nbsp;officers&nbsp;and&nbsp;shareholders.&nbsp;Auditors&nbsp;need&nbsp;only&nbsp;to&nbsp;give&nbsp;their&nbsp;firm’s&nbsp;name&nbsp;address.</em><strong class=\"q-size-xs\"> </strong></p>",
+            "delta": {
+              "ops": [
+                {
+                  "attributes": {
+                    "size": "xs",
+                    "italic": true
+                  },
+                  "insert": "Note : Attach Annexes for particulars of other directorships of public companies or their subsidiaries in Singapore. Changes in respect of NRIC/Passport No and address notified herein will be updated by the Registry in all other companies of which the above persons are officers and shareholders. Auditors need only to give their firm’s name address."
+                },
+                {
+                  "attributes": {
+                    "size": "xs",
+                    "bold": true
+                  },
+                  "insert": " "
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "placeholders": {
+    "APPOINT_DATE": "",
+    "COMPANY_NAME": "",
+    "DATE": "",
+    "EFFECTIVE_DATE": "",
+    "NEW_REGISTERED_ADDRESS": "",
+    "REGISTRATION_NO": "",
+    "RESIGN_DATE": "",
+    "SECRETARIAL_AGENT": "",
+    "SECRETARY_APPOINT": "",
+    "SECRETARY_RESIGN": ""
+  }
+}
