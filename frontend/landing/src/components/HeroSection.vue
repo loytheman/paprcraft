@@ -19,7 +19,7 @@ import { hero } from '../data/content.js';
 
         <h1 class="text-[2.25rem] leading-[1.15] font-bold tracking-[-0.03em] text-ink sm:text-display">
           {{ hero.headlineLead }}
-          <span class="text-primary underline decoration-secondary-bright decoration-4 underline-offset-4">{{ hero.headlineAccent }}</span>
+          <span class="text-primary-text underline decoration-primary decoration-4 underline-offset-4">{{ hero.headlineAccent }}</span>
           {{ hero.headlineTail }}
         </h1>
 
@@ -32,7 +32,7 @@ import { hero } from '../data/content.js';
 
         <ul class="mt-8 flex w-full flex-wrap items-center gap-x-6 gap-y-3 rounded-sheet border border-line-soft bg-surface-3/70 px-4 py-3 text-small font-medium text-ink-muted">
           <li v-for="f in hero.facts" :key="f.text" class="flex items-center gap-2">
-            <OpIcon :name="f.icon" :size="16" class="text-primary" />
+            <OpIcon :name="f.icon" :size="16" class="text-primary-text" />
             {{ f.text }}
           </li>
         </ul>
@@ -56,7 +56,7 @@ import { hero } from '../data/content.js';
                 </div>
               </div>
             </div>
-            <div class="flex items-center justify-center text-primary"><span class="flex size-9 items-center justify-center rounded-full bg-primary-soft"><OpIcon name="arrow-right" :size="18" /></span></div>
+            <div class="flex items-center justify-center text-primary-text"><span class="flex size-9 items-center justify-center rounded-full bg-primary-soft"><OpIcon name="arrow-right" :size="18" /></span></div>
             <!-- The document -->
             <div class="rounded-card border border-line bg-surface-1 p-4 shadow-rim">
               <div class="rounded-sm bg-sunken px-2 py-1 text-small font-semibold text-ink">Customer Information</div>

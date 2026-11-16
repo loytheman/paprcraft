@@ -1,7 +1,7 @@
 /* paprcraft design system: COLOUR AND SHAPE CONSTANTS.
    The single place raw values live. To re-skin the product, edit values here (or point a semantic
    token in theme.css at a different palette step); nothing else in the code base has a hex colour.
-   Source: the "Paprcraft System" design spec (Precision Modernism: slate canvas, cyan-green primary,
+   Source: the "Paprcraft System" design spec (Precision Modernism: slate canvas, lime-green primary,
    Sunny Lemon accents, sky blue tertiary).
 
    Layers:
@@ -21,24 +21,25 @@
   --palette-slate-900: #0f172a;
   --palette-white: #ffffff;
 
-  /* Cyan green (teal): the primary, affirmative colour (actions, success, focus) */
-  --palette-teal-50: #f0fdfa;
-  --palette-teal-200: #99f6e4;
-  --palette-teal-300: #5eead4;
-  --palette-teal-400: #2dd4bf;
-  --palette-teal-500: #14b8a6;
-  --palette-teal-600: #0d9488;
-  --palette-teal-700: #0f766e;
-  --palette-teal-800: #115e59;
+  /* Lime green: the primary, affirmative colour (actions, success, focus) */
+  --palette-green-50: #f6ffe5;
+  --palette-green-200: #d9ff99;
+  --palette-green-300: #80ff00;
+  --palette-green-400: #40ff00;
+  --palette-green-500: #00ff00;
+  --palette-green-600: #40ff00;
+  --palette-green-700: #2ed600;
+  --palette-green-800: #1a6b00;
+  --palette-green-900: #0f3d00;
 
   /* Lemon: secondary accent (notices, tags, versions). Never a primary button. */
-  --palette-lemon-50: #fffde7;
-  --palette-lemon-200: #fff59d;
-  --palette-lemon-300: #fff176;
-  --palette-lemon-400: #ffe135;
-  --palette-lemon-600: #ca8a04;
-  --palette-lemon-800: #854d0e;
-  --palette-lemon-900: #713f12;
+  --palette-lemon-50: #ffffe0;
+  --palette-lemon-200: #ffff99;
+  --palette-lemon-300: #ffff4d;
+  --palette-lemon-400: #ffff00;
+  --palette-lemon-600: #a3a300;
+  --palette-lemon-800: #666600;
+  --palette-lemon-900: #4d4d00;
 
   /* Sky: tertiary (links, metadata, information) */
   --palette-sky-50: #f0f9ff;
@@ -71,6 +72,6 @@
 
   /* Elevation (tinted slate, never heavy black) */
   --shadow-color: 15 23 42;
-  --glow-color: 20 184 166;
+  --glow-color: 64 255 0;
   --danger-color: 239 68 68;
 }

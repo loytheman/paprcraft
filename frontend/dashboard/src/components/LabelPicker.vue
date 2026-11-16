@@ -84,7 +84,7 @@ const create = async () => {
       <LabelColorPicker v-model="draft.color" label="New label colour" />
       <OpLabel v-if="draft.name.trim()" :name="draft.name.trim()" :color="draft.color" />
       <div class="flex gap-2">
-        <button type="button" class="h-8 rounded-control bg-primary px-3 text-small font-medium text-ink-inverse disabled:opacity-40" :disabled="saving || !draft.name.trim()" @click="create">{{ saving ? 'Adding…' : 'Add' }}</button>
+        <button type="button" class="h-8 rounded-control bg-primary px-3 text-small font-medium text-on-primary disabled:opacity-40" :disabled="saving || !draft.name.trim()" @click="create">{{ saving ? 'Adding…' : 'Add' }}</button>
         <button type="button" class="h-8 px-2 text-small text-ink-muted hover:text-ink" @click="creating = false; error = ''">Cancel</button>
       </div>
     </div>

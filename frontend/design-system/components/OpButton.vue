@@ -13,7 +13,7 @@ const props = defineProps({
 });
 
 const variants = {
-  primary: 'bg-primary text-ink-inverse border-primary hover:bg-primary-hover hover:border-primary-hover hover:shadow-glow-sm active:bg-primary-active active:border-primary-active',
+  primary: 'bg-primary text-on-primary border-primary hover:bg-primary-hover hover:border-primary-hover hover:shadow-glow-sm active:bg-primary-active active:border-primary-active',
   secondary: 'bg-surface-1 text-ink border-line hover:bg-canvas hover:border-line-strong',
   ghost: 'bg-transparent text-ink-muted border-transparent hover:bg-sunken hover:text-ink',
   accent: 'bg-secondary-soft text-secondary-text border-secondary-line hover:bg-secondary-edge/50',
