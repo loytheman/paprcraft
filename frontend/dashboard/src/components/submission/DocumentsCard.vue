@@ -6,6 +6,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import OpButton from '@ds/components/OpButton.vue';
 import OpIcon from '@ds/components/OpIcon.vue';
+import DocPreview from '@/components/DocPreview.vue';
 import * as SubmissionService from '@/services/service.submission';
 import { generateBlock } from '@/helpers/forms/submission';
 import { formatDateTime } from '@/helpers/Format';
@@ -20,6 +21,7 @@ const props = defineProps({
 const emit = defineEmits(['history']);
 const router = useRouter();
 
+const previewUrl = ref('');
 const busy = ref(false);
 const error = ref('');
 const entries = computed(() => (props.submission.exportHistory ?? []).slice().reverse());
@@ -89,9 +91,11 @@ const STATUS = { processing: 'Processing…', completed: 'Ready', failed: 'Faile
           <span class="ml-2 text-small text-ink-faint">{{ formatDateTime(h.createdAt) }}<template v-if="h.createdBy"> · {{ h.createdBy.name || h.createdBy.email }}</template></span>
           <p v-if="h.error" class="text-small text-down">{{ h.error }}</p>
         </div>
+        <OpButton v-if="h.url" size="sm" variant="secondary" icon="play" @click="previewUrl = h.url">Preview</OpButton>
         <a v-if="h.url" :href="h.url" download class="inline-flex h-8 items-center gap-1.5 rounded-control border border-line-strong px-3 text-small text-ink hover:bg-ink/4"><OpIcon name="download" :size="14" /> Download</a>
         <span v-else-if="h.processStatus === 'processing'" class="text-small text-ink-faint">Checking again in a few seconds…</span>
       </li>
     </ul>
+    <DocPreview :url="previewUrl" title="Document preview" @close="previewUrl = ''" />
   </section>
 </template>
