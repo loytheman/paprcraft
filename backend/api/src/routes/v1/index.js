@@ -1,6 +1,6 @@
 import { Router } from "express";
 import joi, { addDataFromClaim } from "../../middlewares/prepareJoi.js";
-import { blameableBehaviour, keywordSearchBehaviour, staffBehaviour } from "../../middlewares/behaviour.js";
+import { blameableBehaviour, keywordSearchBehaviour, staffBehaviour, publicLinkBehaviour } from "../../middlewares/behaviour.js";
 import { auth, requireOwner, authRefreshToken, requireAdmin } from "../../middlewares/auth.js";
 
 import { AuthController } from "../../controllers/controller.auth.js";
@@ -15,6 +15,11 @@ import { LabelJoiSchema } from "../../models/model.label.js";
 import { customJoi as Joi } from "../../models/customJoi.js";
 import { TemplateController, MasterTemplateController } from "../../controllers/controller.template.js";
 import { TemplateJoiSchema } from "../../models/model.template.js";
+import { FormController, MasterFormController } from "../../controllers/controller.form.js";
+import { FormJoiSchema } from "../../models/model.form.js";
+import { SubmissionController, PublicFormController } from "../../controllers/controller.submission.js";
+import { SubmissionJoiSchema } from "../../models/model.submission.js";
+import { publicFormLimiter, publicSubmitLimiter } from "../../middlewares/rateLimiter.js";
 import { ApiKeyController } from "../../controllers/controller.apiKey.js";
 import { AttachmentController } from "../../controllers/controller.attachment.js";
 import { AttachmentJoiSchema } from "../../services/service.attachment.js";
@@ -161,4 +166,55 @@ const r = router;
   r.get("/staff/master-templates/:id", auth(), requireAdmin(), joi(s.byId), m.get)
   r.put("/staff/master-templates/:id", auth(), requireAdmin(), joi(s.update), staffBehaviour, m.update)
   r.delete("/staff/master-templates/:id", auth(), requireAdmin(), joi(s.byId), staffBehaviour, m.remove)
+}
+
+{
+  // Dynamic forms (service.form.js): an account's own, plus staff-managed masters to clone.
+  const s = new FormJoiSchema();
+  const c = new FormController();
+  r.get("/forms", auth(), c.list)
+  r.get("/form-masters", auth(), c.listMasters)
+  r.post("/form/clone-master", auth(), joi(s.byId), blameableBehaviour, c.cloneMaster)
+  r.post("/form", auth(), joi(s.create), blameableBehaviour, c.create)
+  r.get("/form/:id", auth(), joi(s.byId), c.get)
+  r.put("/form/:id", auth(), joi(s.update), blameableBehaviour, c.update)
+  r.post("/form/:id/publish", auth(), joi(s.byId), blameableBehaviour, c.publish)
+  r.post("/form/:id/unpublish", auth(), joi(s.byId), blameableBehaviour, c.unpublish)
+  r.post("/form/:id/duplicate", auth(), joi(s.byId), blameableBehaviour, c.duplicate)
+  r.delete("/form/:id", auth(), joi(s.byId), blameableBehaviour, c.remove)
+
+  const m = new MasterFormController();
+  r.get("/staff/master-forms", auth(), requireAdmin(), m.list)
+  r.post("/staff/master-forms", auth(), requireAdmin(), joi(s.create), staffBehaviour, m.create)
+  r.get("/staff/master-forms/:id", auth(), requireAdmin(), joi(s.byId), m.get)
+  r.put("/staff/master-forms/:id", auth(), requireAdmin(), joi(s.update), staffBehaviour, m.update)
+  r.post("/staff/master-forms/:id/publish", auth(), requireAdmin(), joi(s.byId), staffBehaviour, m.publish)
+  r.post("/staff/master-forms/:id/unpublish", auth(), requireAdmin(), joi(s.byId), staffBehaviour, m.unpublish)
+  r.delete("/staff/master-forms/:id", auth(), requireAdmin(), joi(s.byId), staffBehaviour, m.remove)
+}
+
+{
+  // Form submissions (service.submission.js): fill, submit, approve / reject, share with a customer.
+  const s = new SubmissionJoiSchema();
+  const c = new SubmissionController();
+  r.get("/submissions", auth(), joi(s.list), c.list)
+  r.post("/submission", auth(), joi(s.create), blameableBehaviour, c.create)
+  r.post("/submission/attachment-url", auth(), joi(s.attachmentUrl), c.attachmentUrl)
+  r.get("/submission/:id", auth(), joi(s.byId), c.get)
+  r.put("/submission/:id", auth(), joi(s.save), blameableBehaviour, c.save)
+  r.post("/submission/:id/submit", auth(), joi(s.submit), blameableBehaviour, c.submit)
+  r.post("/submission/:id/approve", auth(), joi(s.decide), blameableBehaviour, c.approve)
+  r.post("/submission/:id/reject", auth(), joi(s.reject), blameableBehaviour, c.reject)
+  r.post("/submission/:id/reopen", auth(), joi(s.byId), blameableBehaviour, c.reopen)
+  r.post("/submission/:id/link", auth(), joi(s.link), blameableBehaviour, c.createLink)
+  r.delete("/submission/:id/link", auth(), joi(s.byId), blameableBehaviour, c.revokeLink)
+  r.delete("/submission/:id", auth(), joi(s.byId), blameableBehaviour, c.remove)
+
+  // A customer's link (frontend/public-form): no login, the token is the credential. Rate limited
+  // per IP; CORS is the app's allow-list (it must include the forms site).
+  const p = new PublicFormController();
+  r.get("/form-link/:token", publicFormLimiter, joi(s.tokenOnly), p.get)
+  r.put("/form-link/:token", publicFormLimiter, joi(s.publicSave), publicLinkBehaviour, p.save)
+  r.post("/form-link/:token/attachment-url", publicFormLimiter, joi(s.publicAttachmentUrl), p.attachmentUrl)
+  r.post("/form-link/:token/submit", publicSubmitLimiter, joi(s.publicSave), publicLinkBehaviour, p.submit)
 }

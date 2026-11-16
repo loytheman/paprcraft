@@ -11,6 +11,8 @@ export const accountClosedEmail = ({ firstName, counts, hadPlan, byStaff }) => {
   const deleted = [
     counts.labels && plural(counts.labels, "label"),
     counts.templates && plural(counts.templates, "document template"),
+    counts.forms && plural(counts.forms, "form"),
+    counts.submissions && plural(counts.submissions, "form submission"),
   ].filter(Boolean);
   const lines = [
     deleted.length ? `We've deleted ${deleted.join(", ")}, with their history.` : "We've deleted your data.",

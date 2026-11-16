@@ -1,6 +1,7 @@
 // paprcraft plans and what each allows. The single source for limits, enforced in:
 //   service.label.js   label count
 //   service.template.js  template count (own templates; masters are unlimited)
+//   service.form.js / service.submission.js  form and submission counts
 //   service.team.js    team size (teamLimit; 1 = no team)
 // There is no billing yet: every account is on "free" unless staff made it complimentary
 // (billingExempt, compPlan) or set per-account limitOverrides. When billing is added, copy the
@@ -15,8 +16,8 @@ import { ApiError, errorType } from "../middlewares/error.js";
 // labelLimit = how many labels the account can have. Add your own limit fields here, then list
 // them in LIMIT_FIELDS and LIMIT_RANGES so staff can override them.
 export const PLANS = {
-  free: { name: "Free", labelLimit: 10, templateLimit: 5, teamLimit: 1, priceCents: 0, yearlyPriceCents: 0 },
-  pro: { name: "Pro", labelLimit: 30, templateLimit: 100, teamLimit: 5, priceCents: 0, yearlyPriceCents: 0 }, // TODO: set prices
+  free: { name: "Free", labelLimit: 10, templateLimit: 5, formLimit: 3, submissionLimit: 100, teamLimit: 1, priceCents: 0, yearlyPriceCents: 0 },
+  pro: { name: "Pro", labelLimit: 30, templateLimit: 100, formLimit: 50, submissionLimit: 10000, teamLimit: 5, priceCents: 0, yearlyPriceCents: 0 }, // TODO: set prices
 };
 // priceCents = per month on monthly billing; yearlyPriceCents = per year on yearly billing.
 export const BILLING_INTERVALS = ["month", "year"];
@@ -31,9 +32,9 @@ export const planOf = (account) =>
   account?.billingExempt ? (COMP_PLANS.includes(account.compPlan) ? account.compPlan : TOP_PLAN) : PLANS[account?.plan] ? account.plan : "free";
 
 // The limits staff can set per account (limitOverrides: { field: { value, until? } }).
-export const LIMIT_FIELDS = ["labelLimit", "templateLimit", "teamLimit"];
+export const LIMIT_FIELDS = ["labelLimit", "templateLimit", "formLimit", "submissionLimit", "teamLimit"];
 export const LIMIT_RANGES = {
-  labelLimit: [0, 500], templateLimit: [0, 5000], teamLimit: [1, 50],
+  labelLimit: [0, 500], templateLimit: [0, 5000], formLimit: [0, 5000], submissionLimit: [0, 1000000], teamLimit: [1, 50],
 };
 const isLive = (o, now) => o && Number.isFinite(o.value) && (!o.until || Date.parse(o.until) > now);
 

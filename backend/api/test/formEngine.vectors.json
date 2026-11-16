@@ -1,0 +1,69 @@
+{
+  "schema": {
+    "sections": [
+      { "id": "s1", "title": "Customer", "fields": [
+        { "id": "f1", "key": "full_name", "type": "text", "label": "Full name", "required": true },
+        { "id": "f2", "key": "age", "type": "number", "label": "Age", "min": 0, "max": 150 },
+        { "id": "f3", "key": "dob", "type": "date", "label": "Date of birth" },
+        { "id": "f4", "key": "kind", "type": "select", "label": "Kind", "required": true, "options": [{ "value": "ind", "label": "Individual" }, { "value": "co", "label": "Company" }] },
+        { "id": "f5", "key": "company_name", "type": "text", "label": "Company name", "required": true, "visibleIf": { "key": "kind", "op": "eq", "value": "co" } },
+        { "id": "f6", "key": "pep", "type": "yesno", "label": "Is a PEP?", "required": true },
+        { "id": "f7", "key": "owners", "type": "group", "label": "Owners", "required": true, "group": { "min": 1, "max": 3, "fields": [
+          { "id": "g1", "key": "name", "type": "text", "label": "Name", "required": true },
+          { "id": "g2", "key": "pct", "type": "number", "label": "Percent", "min": 0, "max": 100 },
+          { "id": "g3", "key": "role", "type": "select", "label": "Role", "options": [{ "value": "dir", "label": "Director" }, { "value": "sh", "label": "Shareholder" }] }
+        ] } },
+        { "id": "f8", "key": "services", "type": "multiselect", "label": "Services", "options": [{ "value": "a", "label": "Alpha" }, { "value": "b", "label": "Beta" }] },
+        { "id": "f9", "key": "checks", "type": "checklist", "label": "Checks", "required": true, "options": [{ "value": "q1", "label": "Q1" }, { "value": "q2", "label": "Q2" }] },
+        { "id": "f10", "key": "sign", "type": "signature", "label": "Signature", "required": true }
+      ] },
+      { "id": "s2", "title": "Officer use", "fields": [
+        { "id": "f11", "key": "risk", "type": "select", "label": "Risk", "required": true, "internal": true, "options": [{ "value": "low", "label": "Low" }, { "value": "high", "label": "High" }] }
+      ] }
+    ]
+  },
+  "normalize": [
+    { "name": "draft keeps good values, drops empty and unknown keys, trims", "mode": "draft",
+      "input": { "full_name": "  Ann Lee ", "age": "34", "bogus": "x", "dob": "", "kind": "ind" },
+      "values": { "full_name": "Ann Lee", "age": 34, "kind": "ind" }, "errors": [] },
+    { "name": "draft reports bad types but not missing required", "mode": "draft",
+      "input": { "age": 200, "dob": "2024-02-31", "kind": "nope", "services": ["a", "z"] },
+      "values": {}, "errors": [
+        { "key": "age", "message": "At most 150." },
+        { "key": "dob", "message": "Enter a valid date." },
+        { "key": "kind", "message": "Choose one of the options." },
+        { "key": "services", "message": "Choose from the options." } ] },
+    { "name": "a field hidden by visibleIf loses its value and is not required", "mode": "submit",
+      "input": { "full_name": "A", "kind": "ind", "company_name": "Acme", "pep": false, "owners": [{ "name": "O" }], "checks": { "q1": true, "q2": false }, "sign": { "name": "A", "consent": true }, "risk": "low" },
+      "values": { "full_name": "A", "kind": "ind", "pep": false, "owners": [{ "name": "O" }], "checks": { "q1": true, "q2": false }, "sign": { "name": "A", "consent": true }, "risk": "low" }, "errors": [] },
+    { "name": "submit requires visible required fields, group rows, checklist answers and the signature", "mode": "submit",
+      "input": { "kind": "co", "checks": { "q1": true }, "sign": { "name": "A", "consent": false } },
+      "values": { "kind": "co", "checks": { "q1": true }, "sign": { "name": "A", "consent": false } }, "errors": [
+        { "key": "full_name", "message": "This is required." },
+        { "key": "company_name", "message": "This is required." },
+        { "key": "pep", "message": "This is required." },
+        { "key": "owners", "message": "Add at least 1 row." },
+        { "key": "checks", "message": "This is required." },
+        { "key": "sign", "message": "Type your name and tick the box to sign." },
+        { "key": "risk", "message": "This is required." } ] },
+    { "name": "group rows are validated, capped, and an error carries its row and field", "mode": "submit",
+      "input": { "full_name": "A", "kind": "ind", "pep": true, "checks": { "q1": true, "q2": true }, "sign": { "name": "A", "consent": true }, "risk": "low",
+        "owners": [{ "name": "X", "pct": 50, "role": "dir" }, { "pct": 120 }] },
+      "values": { "full_name": "A", "kind": "ind", "pep": true, "checks": { "q1": true, "q2": true }, "sign": { "name": "A", "consent": true }, "risk": "low", "owners": [{ "name": "X", "pct": 50, "role": "dir" }, {}] },
+      "errors": [ { "key": "owners", "row": 1, "field": "pct", "message": "At most 100." }, { "key": "owners", "row": 1, "field": "name", "message": "This is required." } ] },
+    { "name": "public audience can't write or be required to fill internal fields, and keeps what staff entered", "mode": "submit", "audience": "public",
+      "existing": { "risk": "high" },
+      "input": { "full_name": "A", "kind": "ind", "pep": false, "owners": [{ "name": "O" }], "checks": { "q1": true, "q2": true }, "sign": { "name": "A", "consent": true }, "risk": "low" },
+      "values": { "full_name": "A", "kind": "ind", "pep": false, "owners": [{ "name": "O" }], "checks": { "q1": true, "q2": true }, "sign": { "name": "A", "consent": true }, "risk": "high" }, "errors": [] }
+  ],
+  "validate": [
+    { "name": "the sample schema is valid", "errors": [] },
+    { "name": "duplicate keys are refused", "mutate": "dupKey", "contains": "used twice" },
+    { "name": "visibleIf must point at an earlier field", "mutate": "forwardRef", "contains": "must be an earlier field" },
+    { "name": "a customer-visible field can't depend on an internal one", "mutate": "internalDep", "contains": "internal field" },
+    { "name": "selects need options", "mutate": "noOptions", "contains": "needs 1 to" },
+    { "name": "groups can't nest", "mutate": "nestedGroup", "contains": "can't contain a group" }
+  ],
+  "flatten": { "values": { "kind": "co", "owners": [{ "name": "X", "role": "sh" }], "services": ["a", "b"], "sign": { "name": "A", "consent": true } },
+    "data": { "kind": "Company", "owners": [{ "name": "X", "role": "Shareholder" }], "services": ["Alpha", "Beta"], "sign": "A" } }
+}

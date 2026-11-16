@@ -65,6 +65,8 @@ export class ActivityJoiSchema {
 // Add one entry per record type you want a filter chip for.
 export const CATEGORIES = {
   templates: (r) => r.recordType === "Template",
+  forms: (r) => r.recordType === "Form",
+  submissions: (r) => r.recordType === "Submission",
   labels: (r) => r.recordType === "Label",
   account: (r) => r.recordType === "Account",
 };

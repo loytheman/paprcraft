@@ -16,6 +16,8 @@ import { ApiError, errorType } from "../middlewares/error.js";
 import { customJoi as Joi } from "../models/customJoi.js";
 import labelModel from "../models/model.label.js";
 import templateModel from "../models/model.template.js";
+import formModel from "../models/model.form.js";
+import submissionModel from "../models/model.submission.js";
 import { tokenType } from "../models/model.token.js";
 import { removeForClosedAccount } from "./service.team.js";
 import { deleteFolder, accountFolder } from "./service.attachment.js";
@@ -37,7 +39,7 @@ const getAccount = async (accountId) => {
 // What closing this account would remove: the confirmation dialog shows it.
 export const getClosurePreview = async (accountId) => {
   const account = await getAccount(accountId);
-  const [labels, templates] = await Promise.all([labelModel.getAllForAccount(accountId), templateModel.getAllForAccount(accountId)]);
+  const [labels, templates, forms, submissions] = await Promise.all([labelModel.getAllForAccount(accountId), templateModel.getAllForAccount(accountId), formModel.getAllForAccount(accountId), submissionModel.getAllForAccount(accountId)]);
   const hasPlan = !!account.stripeSubscriptionId && LIVE.includes(account.billingStatus) && !account.billingExempt;
   return {
     email: account.email,
@@ -47,6 +49,8 @@ export const getClosurePreview = async (accountId) => {
     counts: {
       labels: labels.length,
       templates: templates.length,
+      forms: forms.length,
+      submissions: submissions.length,
     },
   };
 };
@@ -70,6 +74,8 @@ export const closeAccount = async (accountId, { confirmEmail, byStaff = false, r
   await deleteFolder(accountFolder(accountId)); // uploaded files
   for (const l of await labelModel.getAllForAccount(accountId)) await labelModel.remove(l.id, blameable);
   for (const t of await templateModel.getAllForAccount(accountId)) await templateModel.remove(t.id, blameable); // exports are under the account folder, deleted above
+  for (const x of await submissionModel.getAllForAccount(accountId)) await submissionModel.remove(x.id, blameable); // their files are under the account folder too
+  for (const f of await formModel.getAllForAccount(accountId)) await formModel.remove(f.id, blameable);
 
   // Its team is removed (and told), and it leaves any team it was on.
   await removeForClosedAccount(accountId);

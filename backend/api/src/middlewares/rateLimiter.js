@@ -25,3 +25,29 @@ export const otpLimiter = rateLimit({
   legacyHeaders: false,
   store: new RateLimitDynamoDbStore("otp"),
 });
+
+// Customer form links (no login): per IP. Reading and saving a form is chatty (autosave), submitting
+// is rare. The key is the client IP the app already works out (middlewares/behaviour.js).
+const byIp = (req) => req.clientInfo?.ip || "unknown";
+
+export const publicFormLimiter = rateLimit({
+  windowMs,
+  limit: 120,
+  keyGenerator: byIp,
+  validate: false,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  store: new RateLimitDynamoDbStore("form-link"),
+  message: { status: "fail", message: "Too many requests. Please wait a minute and try again." },
+});
+
+export const publicSubmitLimiter = rateLimit({
+  windowMs,
+  limit: 10,
+  keyGenerator: byIp,
+  validate: false,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  store: new RateLimitDynamoDbStore("form-submit"),
+  message: { status: "fail", message: "Too many attempts. Please wait a minute and try again." },
+});

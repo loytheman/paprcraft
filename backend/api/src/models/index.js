@@ -7,6 +7,8 @@ import { accountMemberSchema } from "./model.accountMember.js";
 import { labelSchema } from "./model.label.js";
 import { apiKeySchema } from "./model.apiKey.js";
 import { templateSchema } from "./model.template.js";
+import { formSchema } from "./model.form.js";
+import { submissionSchema } from "./model.submission.js";
 
 // export const statusTypes = ["enabled", "disabled"];
 
@@ -30,6 +32,8 @@ export const OneTableSchema = {
     Label: labelSchema,
     ApiKey: apiKeySchema,
     Template: templateSchema,
+    Form: formSchema,
+    Submission: submissionSchema,
   },
   params: {
     partial: true,

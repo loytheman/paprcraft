@@ -19,7 +19,7 @@ LAMBDA_SRC_DIR="$(cd "$(dirname "$0")/../lambda" && pwd)"
 AWS=(--profile "$PROFILE" --region "$REGION")
 
 # Keep in step with AUDITED in backend/lambda/auditRow.js.
-AUDITED_TYPES='["Account","Label","Template","AccountMember"]'
+AUDITED_TYPES='["Account","Label","Form","Submission","Template","AccountMember"]'
 
 echo "=== 1. DynamoDB Stream on $TABLE ==="
 STREAM_ARN=$(aws dynamodb describe-table --table-name "$TABLE" "${AWS[@]}" --query "Table.LatestStreamArn" --output text)

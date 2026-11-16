@@ -7,6 +7,8 @@
 const AUDITED = {
   Account: { label: (r) => r.email, accountId: (r) => r.id },
   Label: { label: (r) => r.name, accountId: (r) => r.accountId },
+  Form: { label: (r) => r.name, accountId: (r) => (r.accountId === 'MASTER' ? null : r.accountId) },
+  Submission: { label: (r) => r.title || r.formName, accountId: (r) => r.accountId },
   Template: { label: (r) => r.name, accountId: (r) => (r.accountId === 'MASTER' ? null : r.accountId) }, // masters (staff-managed) have no customer trail
   AccountMember: { label: (r) => r.invitedEmail, accountId: (r) => r.accountId }, // team (service.team.js)
 };
@@ -16,6 +18,7 @@ const AUDITED_TYPES = Object.keys(AUDITED);
 const SECRET_FIELDS = new Set([
   'passwordHash', 'verificationToken', // account
   'secretHash', // api key
+  'tokenHash', // a customer form link
 ]);
 // Not "what changed" from a person's point of view: keys, stamps, counters, and the fields the
 // background jobs write all day long. A change made only of these isn't recorded.
@@ -35,13 +38,42 @@ const clean = (v) => {
   return s.length > MAX_VALUE_LENGTH ? `${s.slice(0, MAX_VALUE_LENGTH)}…` : v;
 };
 
+// A submission's answers and a form's definition are audited field by field, so a change shows as
+// "values.full_name: Ann -> Anne" or "schema.field.risk: {...}" rather than one big blob. (A
+// submission's own copy of the schema is a snapshot, never audited.)
+function flattenSchema(schema) {
+  const out = {};
+  for (const sec of schema?.sections ?? []) {
+    out[`schema.section.${sec.id}`] = { title: sec.title, description: sec.description ?? null, visibleIf: sec.visibleIf ?? null };
+    for (const f of sec.fields ?? []) {
+      const { id, ...def } = f; // eslint-disable-line no-unused-vars
+      out[`schema.field.${f.key}`] = { section: sec.id, ...def };
+    }
+  }
+  return out;
+}
+
+function flat(img = {}, type) {
+  const out = {};
+  for (const [k, v] of Object.entries(img)) {
+    if (k === 'values' && v && typeof v === 'object') {
+      for (const [vk, vv] of Object.entries(v)) out[`values.${vk}`] = vv;
+    } else if (k === 'schema') {
+      if (type === 'Form') Object.assign(out, flattenSchema(v));
+    } else out[k] = v;
+  }
+  return out;
+}
+
 // [{ field, from, to }] for every meaningful field that differs.
-function diff(oldImg = {}, newImg = {}) {
+function diff(oldImg = {}, newImg = {}, type) {
   const changes = [];
-  for (const k of new Set([...Object.keys(oldImg), ...Object.keys(newImg)])) {
+  const o = flat(oldImg, type);
+  const n = flat(newImg, type);
+  for (const k of new Set([...Object.keys(o), ...Object.keys(n)])) {
     if (skip(k)) continue;
-    if (JSON.stringify(oldImg[k] ?? null) === JSON.stringify(newImg[k] ?? null)) continue;
-    changes.push({ field: k, from: clean(oldImg[k]), to: clean(newImg[k]) });
+    if (JSON.stringify(o[k] ?? null) === JSON.stringify(n[k] ?? null)) continue;
+    changes.push({ field: k, from: clean(o[k]), to: clean(n[k]) });
   }
   return changes;
 }
@@ -73,6 +105,8 @@ function updateAction(type, changes) {
   // Add friendlier verbs for your own record types here, e.g.
   // if (type === 'Order' && only('status') && changes[0].to === 'shipped') return 'shipped';
   if (type === 'Account' && fields.includes('plan')) return 'plan_changed';
+  if (type === 'Submission' && fields.includes('status')) return { submitted: 'submitted', approved: 'approved', rejected: 'rejected', draft: 'reopened' }[changes.find((c) => c.field === 'status').to] || 'updated';
+  if (type === 'Form' && fields.includes('status')) return changes.find((c) => c.field === 'status').to === 'published' ? 'published' : 'unpublished';
   return 'updated';
 }
 
@@ -99,18 +133,18 @@ function toAuditRow({ eventName, eventID, oldImg, newImg, approximateCreationDat
   let stamp;
   if (eventName === 'INSERT') {
     action = 'created';
-    changes = diff({}, newImg);
+    changes = diff({}, newImg, type);
     human = !!newImg.auditStreamId;
     stamp = newImg.createdBy || newImg.updatedBy;
   } else if (eventName === 'REMOVE') {
     action = 'deleted';
-    changes = diff(oldImg, {});
+    changes = diff(oldImg, {}, type);
     // Deletes are stamped (updatedBy + new auditStreamId) just before removal, so the old image's
     // stamp is the deleter's, but only if it's that fresh, not left over from an earlier edit.
     human = !!oldImg.auditStreamId && now - Date.parse(oldImg.updatedAt || 0) < 5 * 60 * 1000;
     stamp = oldImg.updatedBy;
   } else {
-    changes = diff(oldImg, newImg);
+    changes = diff(oldImg, newImg, type);
     if (!changes.length) return null; // only housekeeping fields changed
     action = updateAction(type, changes);
     if (action === 'signed_in') changes = [];

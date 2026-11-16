@@ -22,6 +22,8 @@ import { customJoi as Joi } from "../models/customJoi.js";
 export const MAX_ATTACHMENTS = 5;
 export const MAX_BYTES = 10 * 1024 * 1024;
 export const IMAGE_TYPES = { "image/webp": "webp", "image/jpeg": "jpg", "image/png": "png" };
+// What uploads accept: images, plus PDF (documents attached to a form submission).
+export const FILE_TYPES = { ...IMAGE_TYPES, "application/pdf": "pdf" };
 const UPLOAD_URL_SECONDS = 600;
 const VIEW_URL_SECONDS = 900;
 
@@ -32,15 +34,15 @@ const badRequest = (msg) => new ApiError(httpStatus.BAD_REQUEST, errorType.BAD_R
 const tmpPrefix = (accountId) => `tmp/${accountId}/`;
 export const recordFolder = (accountId, recordId) => `accounts/${accountId}/records/${recordId}/`;
 export const accountFolder = (accountId) => `accounts/${accountId}/`;
-const TMP_KEY = /^tmp\/[^/]+\/[0-9A-Z]{26}\.(webp|jpg|png)$/;
+const TMP_KEY = /^tmp\/[^/]+\/[0-9A-Z]{26}\.(webp|jpg|png|pdf)$/;
 
 // A display name for the image (the user's file name, tidied); never used in a key.
 const cleanName = (name) => String(name ?? "").replace(/[\u0000-\u001f]/g, "").trim().slice(0, 120) || "image";
 
 // Step 1: where the browser uploads one image.
 export const createUploadUrl = async (accountId, { contentType }) => {
-  const ext = IMAGE_TYPES[contentType];
-  if (!ext) throw badRequest("Images must be PNG, JPEG or WebP.");
+  const ext = FILE_TYPES[contentType];
+  if (!ext) throw badRequest("Files must be PNG, JPEG, WebP or PDF.");
   const key = `${tmpPrefix(accountId)}${Utils.ulid()}.${ext}`;
   // signableHeaders: S3 then refuses an upload whose Content-Type differs from the one signed here.
   const uploadUrl = await getSignedUrl(s3(), new PutObjectCommand({ Bucket: bucket(), Key: key, ContentType: contentType }), { expiresIn: UPLOAD_URL_SECONDS, signableHeaders: new Set(["content-type"]) });
@@ -71,9 +73,9 @@ export const commitAttachments = async (accountId, recordId, current = [], incom
       if (err?.$metadata?.httpStatusCode === 404 || err?.name === "NotFound") throw badRequest("An image upload didn't finish or has expired. Add it again.");
       throw err;
     }
-    const ext = IMAGE_TYPES[head.ContentType];
-    if (!ext) throw badRequest("Images must be PNG, JPEG or WebP.");
-    if (head.ContentLength > MAX_BYTES) throw badRequest(`Each image can be up to ${MAX_BYTES / 1024 / 1024} MB.`);
+    const ext = FILE_TYPES[head.ContentType];
+    if (!ext) throw badRequest("Files must be PNG, JPEG, WebP or PDF.");
+    if (head.ContentLength > MAX_BYTES) throw badRequest(`Each file can be up to ${MAX_BYTES / 1024 / 1024} MB.`);
     const id = Utils.ulid();
     const path = `${recordFolder(accountId, recordId)}${id}.${ext}`;
     await s3().send(new CopyObjectCommand({ Bucket: bucket(), CopySource: `${bucket()}/${key}`, Key: path }));
@@ -125,6 +127,6 @@ export const withUrls = async (record) => {
 
 export class AttachmentJoiSchema {
   get uploadUrl() {
-    return { contentType: Joi.string().valid(...Object.keys(IMAGE_TYPES)).required() };
+    return { contentType: Joi.string().valid(...Object.keys(FILE_TYPES)).required() };
   }
 }

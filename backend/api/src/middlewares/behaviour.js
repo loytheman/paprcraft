@@ -40,6 +40,15 @@ export const staffBehaviour = (req, res, next) =>
     next();
   });
 
+// A customer filling a form through a link: no user, so the audit trail says "Customer (link)"
+// with the IP and device of the request.
+export const publicLinkBehaviour = (req, res, next) => {
+  const actionBy = _.omitBy({ userId: null, name: "Customer (link)", ...req.clientInfo }, _.isUndefined);
+  req.actionBy = actionBy;
+  req.blameable = { actionBy, auditStreamId: Utils.ulid() };
+  next();
+};
+
 export const prepareBlameable = async (req, res, next) => {
   const { sub, firstName, lastName, email } = req.userData || {};
   const userId = sub ?? null;

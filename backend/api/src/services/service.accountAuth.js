@@ -22,6 +22,12 @@ const getRedirectUri = () => {
   return `https://${host}/v1/auth/google/callback`;
 };
 
+// Where customers open a form link (frontend/public-form).
+export const getFormsUrl = () => {
+  if (config.stageEnv === "local") return "https://localhost:6300";
+  return `https://${config.stageEnv === "prod" ? "forms.paprcraft.com" : "forms-stg.paprcraft.com"}`;
+};
+
 // Where to send the browser once sign-in completes.
 export const getFrontendUrl = () => {
   // frontend/dashboard's local dev server — HTTPS, matching this server (see its vite.config.js).
