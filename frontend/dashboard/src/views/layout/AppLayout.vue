@@ -42,6 +42,8 @@ const onSignOut = async () => {
           <nav class="order-last flex w-full items-center gap-4 text-body md:order-none md:w-auto" aria-label="Main">
             <RouterLink :to="{ name: 'home' }" class="text-ink-muted hover:text-ink" exact-active-class="!text-ink">Home</RouterLink>
             <RouterLink :to="{ name: 'templates' }" class="text-ink-muted hover:text-ink" active-class="!text-ink">Templates</RouterLink>
+            <RouterLink :to="{ name: 'forms' }" class="text-ink-muted hover:text-ink" active-class="!text-ink">Forms</RouterLink>
+            <RouterLink :to="{ name: 'submissions' }" class="text-ink-muted hover:text-ink" active-class="!text-ink">Submissions</RouterLink>
             <!-- Add your main nav links here. -->
           </nav>
         </div>
@@ -117,6 +119,9 @@ const onSignOut = async () => {
               </RouterLink>
               <RouterLink v-if="staff" :to="{ name: 'staff-templates' }" role="menuitem" class="flex items-center gap-2.5 px-4 py-2.5 text-body text-violet-soft hover:bg-white/4 hover:text-ink">
                 <OpIcon name="layout" :size="16" /> Staff: master templates
+              </RouterLink>
+              <RouterLink v-if="staff" :to="{ name: 'staff-forms' }" role="menuitem" class="flex items-center gap-2.5 px-4 py-2.5 text-body text-violet-soft hover:bg-white/4 hover:text-ink">
+                <OpIcon name="layout" :size="16" /> Staff: master forms
               </RouterLink>
               <button type="button" role="menuitem" class="flex w-full items-center gap-2.5 border-t border-line-soft px-4 py-2.5 text-left text-body text-ink-muted hover:bg-white/4 hover:text-ink disabled:opacity-50" :disabled="signingOut" @click="onSignOut">
                 <OpIcon name="log-out" :size="16" /> {{ signingOut ? 'Signing out…' : 'Sign out' }}

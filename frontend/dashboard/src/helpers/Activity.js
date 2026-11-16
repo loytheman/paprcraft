@@ -6,6 +6,8 @@ const NOUN = {
   // Add one entry per record type of your own, e.g. Order: () => 'order',
   Label: () => 'label',
   Template: () => 'template',
+  Form: () => 'form',
+  Submission: () => 'form submission',
   Account: () => 'account',
   AccountMember: () => 'team member',
 };
@@ -16,6 +18,12 @@ const VERB = {
   updated: 'changed',
   deleted: 'deleted',
   plan_changed: 'changed the plan',
+  submitted: 'submitted',
+  approved: 'approved',
+  rejected: 'rejected',
+  reopened: 'reopened',
+  published: 'published',
+  unpublished: 'unpublished',
 };
 
 // actor.staff: Paprcraft staff. Customers see "Paprcraft support" (the API hides who); staff see
@@ -55,6 +63,8 @@ const planName = (p) => ({ free: 'Free', pro: 'Pro' })[p] ?? p ?? 'none';
 
 // Plain-language field names. Anything not listed shows its raw name.
 export const FIELD_LABEL = {
+  title: 'Title', description: 'Description', version: 'Version', templateId: 'Output template', settings: 'Settings', formName: 'Form', formVersion: 'Form version',
+  submittedAt: 'Submitted', decidedAt: 'Decided', decisionComment: 'Decision comment', signature: 'Signature', publicExpiresAt: 'Link expires', publicLockedAt: 'Link locked', attachments: 'Files',
   name: 'Name', section: 'Sections', placeholders: 'Placeholders', exportHistory: 'Exports', status: 'Status', labelIds: 'Labels', notes: 'Notes', color: 'Colour', plan: 'Plan', billingStatus: 'Billing status',
   cancelAt: 'Cancels on', billingExempt: 'Billing exempt', firstName: 'First name', lastName: 'Last name', fullName: 'Name', email: 'Email',
   mobile: 'Mobile', mobileFull: 'Mobile', role: 'Role', accountStatus: 'Account status', signedInAt: 'Last sign-in',
@@ -62,7 +72,15 @@ export const FIELD_LABEL = {
   id: 'ID', accountId: 'Account', limitOverrides: 'Custom limits', compPlan: 'Complimentary plan',
   internalNotes: 'Staff notes', lastStaffAction: 'Staff action', billingAdminNote: 'Staff billing note',
 };
-export const fieldLabel = (f) => FIELD_LABEL[f] ?? f;
+// Form answers and form definitions are audited per key: "values.<key>" is one answer, and
+// "schema.field.<key>" / "schema.section.<id>" one field or section of a form.
+export const fieldLabel = (f) => {
+  if (FIELD_LABEL[f]) return FIELD_LABEL[f];
+  if (f.startsWith('values.')) return `Answer: ${f.slice(7)}`;
+  if (f.startsWith('schema.field.')) return `Field: ${f.slice(13)}`;
+  if (f.startsWith('schema.section.')) return `Section: ${f.slice(15)}`;
+  return f;
+};
 
 // Fields that only make sense as part of a list of settings, not as changes (create/delete).
 const HIDE_ON_SNAPSHOT = new Set(['id', 'accountId']);
@@ -90,7 +108,7 @@ export const formatValue = (field, v, lookups = {}) => {
 };
 
 export const LIMIT_LABEL = {
-  labelLimit: 'Labels', templateLimit: 'Templates', teamLimit: 'Team (people)',
+  labelLimit: 'Labels', templateLimit: 'Templates', formLimit: 'Forms', submissionLimit: 'Form submissions', teamLimit: 'Team (people)',
 };
 const limitsText = (o) =>
   o && typeof o === 'object' && Object.keys(o).length

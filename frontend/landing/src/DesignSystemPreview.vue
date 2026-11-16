@@ -4,6 +4,24 @@ import OpButton from '@ds/components/OpButton.vue';
 import OpIcon from '@ds/components/OpIcon.vue';
 import OpLogo from '@ds/components/OpLogo.vue';
 import OpStatusBadge from '@ds/components/OpStatusBadge.vue';
+import OpCheckbox from '@ds/components/OpCheckbox.vue';
+import OpRadio from '@ds/components/OpRadio.vue';
+import FormRenderer from '@ds/components/FormRenderer.vue';
+import { ref } from 'vue';
+
+// FormRenderer demo
+const formSchema = {
+  sections: [{ id: 's1', title: 'Customer', description: 'A dynamic form: answer "Company" to reveal a field.', fields: [
+    { id: '1', key: 'full_name', type: 'text', label: 'Full name', required: true },
+    { id: '2', key: 'kind', type: 'select', label: 'Kind', options: [{ value: 'ind', label: 'Individual' }, { value: 'co', label: 'Company' }] },
+    { id: '3', key: 'company', type: 'text', label: 'Company name', visibleIf: { key: 'kind', op: 'eq', value: 'co' } },
+    { id: '4', key: 'pep', type: 'yesno', label: 'Is a PEP?' },
+    { id: '5', key: 'owners', type: 'group', label: 'Owner', group: { fields: [{ id: 'g1', key: 'name', type: 'text', label: 'Name' }, { id: 'g2', key: 'pct', type: 'number', label: 'Percent' }] } },
+  ] }],
+};
+const formValues = ref({});
+const checked = ref(true);
+const radio = ref('b');
 
 const surfaces = [
   ['canvas', 'bg-canvas', '#090d16'],
@@ -174,6 +192,19 @@ const icons = ['activity', 'arrow-right', 'bell', 'braces', 'check', 'clock', 'g
             <span class="font-mono text-[10px] text-ink-faint">{{ n }}</span>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="mt-10">
+      <p class="eyebrow">OpCheckbox · OpRadio · FormRenderer</p>
+      <div class="mt-4 flex flex-col gap-6 rounded-card border border-line bg-surface-1 p-5">
+        <div class="flex flex-wrap items-center gap-6">
+          <OpCheckbox v-model="checked" label="I agree" />
+          <OpRadio v-model="radio" value="a" label="Option A" name="demo" />
+          <OpRadio v-model="radio" value="b" label="Option B" name="demo" />
+        </div>
+        <FormRenderer v-model="formValues" :schema="formSchema" />
+        <pre class="overflow-x-auto font-mono text-small text-ink-faint">{{ formValues }}</pre>
       </div>
     </section>
 

@@ -308,7 +308,8 @@ const flatValue = (f, v) => {
   return v;
 };
 
-// -> { data, raw }: data has select values as their labels (for the document); raw is values as stored.
+// -> { data, raw, keys }: data has select values as their labels (for the document); raw is values as stored;
+// keys lists every field key of the form, so a document can tell an unanswered field from a typo.
 export const flatten = (schema, values) => {
   const data = {};
   for (const f of allFields(schema)) {
@@ -316,5 +317,5 @@ export const flatten = (schema, values) => {
     const v = values?.[f.key];
     if (v !== undefined) data[f.key] = flatValue(f, v);
   }
-  return { data, raw: values ?? {} };
+  return { data, raw: values ?? {}, keys: allFields(schema).map((f) => f.key) };
 };

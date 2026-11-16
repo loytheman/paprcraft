@@ -89,6 +89,10 @@ export class SubmissionJoiSchema {
     return { id: Joi.string().required() };
   }
 
+  get exportById() {
+    return { id: Joi.string().required(), cbId: Joi.string().required() };
+  }
+
   get decide() {
     return { id: Joi.string().required(), comment: Joi.string().trim().allow("").max(2000) };
   }

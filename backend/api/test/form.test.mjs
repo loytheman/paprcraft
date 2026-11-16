@@ -10,6 +10,9 @@ const V = JSON.parse(readFileSync(new URL('./formEngine.vectors.json', import.me
 const forms = {};
 const subs = {};
 const emails = [];
+const invokes = [];
+let invokeFails = false;
+const config = { aws: { s3Bucket: 'bkt' }, docx: { lambdaName: 'fn' } };
 const cloned = [];
 let seq = 0;
 let limits = { formLimit: 2, submissionLimit: 3 };
@@ -37,10 +40,11 @@ mock.module(u('models/model.submission.js'), {
     update: async (d) => { subs[d.id] = sparse({ ...subs[d.id], ...d }); return subs[d.id]; },
     removeLink: async (id) => { const { tokenHash, publicExpiresAt, publicEmail, ...rest } = subs[id]; subs[id] = rest; },
     remove: async (id) => { delete subs[id]; },
+    addExport: async (id, entry) => { subs[id] = { ...subs[id], exportHistory: [...(subs[id].exportHistory ?? []), entry] }; return subs[id]; },
   },
 });
 mock.module(u('models/model.template.js'), { namedExports: { MASTER_ACCOUNT_ID: 'MASTER' } });
-mock.module(u('services/service.template.js'), { namedExports: { cloneTemplate: async (id, from, to) => { cloned.push({ id, from, to }); return { id: `T-${to}` }; } } });
+mock.module(u('services/service.template.js'), { namedExports: { cloneTemplate: async (id, from, to) => { cloned.push({ id, from, to }); return { id: `T-${to}` }; }, updateTemplate: async (d) => { cloned.push({ bind: d }); return d; } } });
 mock.module(u('services/service.plan.js'), { namedExports: {
   getAccountPlan: async () => ({ ...limits, name: 'Free', key: 'free' }),
   planLimitError: (m) => Object.assign(new Error(m), { statusCode: 402 }),
@@ -54,13 +58,21 @@ mock.module(u('services/service.attachment.js'), { namedExports: {
 mock.module(u('services/service.email.js'), { namedExports: { sendEmail: async (e) => emails.push(e) } });
 mock.module(u('services/service.accountAuth.js'), { namedExports: { getFormsUrl: () => 'https://forms.test', getFrontendUrl: () => 'https://dash.test' } });
 mock.module(u('services/service.accountLookup.js'), { namedExports: { getAccountModel: () => ({ get: async () => ({ firstName: 'Loy', email: 'loy@acme.test' }) }) } });
-mock.module(u('config/config.js'), { defaultExport: {} });
+mock.module(u('config/config.js'), { defaultExport: config });
+mock.module(u('helpers/utils.js'), { defaultExport: { ulid: () => `CB${++seq}` } });
+mock.module(u('services/index.js'), { namedExports: {
+  getLambdaClient: () => ({ send: async (c) => { if (invokeFails) throw new Error('boom'); invokes.push(JSON.parse(c.input.Payload.toString())); } }),
+  getS3Client: () => ({}),
+} });
+mock.module('@aws-sdk/client-lambda', { namedExports: { InvokeCommand: class { constructor(input) { this.input = input; } } } });
+mock.module('@aws-sdk/client-s3', { namedExports: { GetObjectCommand: class { constructor(input) { this.input = input; } } } });
+mock.module('@aws-sdk/s3-request-presigner', { namedExports: { getSignedUrl: async (c, cmd) => `https://s3.test/${cmd.input.Key}?${cmd.input.ResponseContentDisposition}` } });
 mock.module(u('middlewares/error.js'), { namedExports: { errorType: {}, errorMessage: { NOT_FOUND: 'not found' }, ApiError } });
 
 const forms_ = await import(u('services/service.form.js'));
 const subm = await import(u('services/service.submission.js'));
 const bl = { actionBy: { name: 'Alice' }, auditStreamId: 'x' };
-const reset = () => { for (const k of Object.keys(forms)) delete forms[k]; for (const k of Object.keys(subs)) delete subs[k]; emails.length = 0; cloned.length = 0; limits = { formLimit: 2, submissionLimit: 3 }; };
+const reset = () => { for (const k of Object.keys(forms)) delete forms[k]; for (const k of Object.keys(subs)) delete subs[k]; emails.length = 0; cloned.length = 0; invokes.length = 0; invokeFails = false; config.docx.lambdaName = 'fn'; limits = { formLimit: 2, submissionLimit: 3 }; };
 const schema = () => JSON.parse(JSON.stringify(V.schema));
 const publishedForm = async (settings = { publicEnabled: true }, acct = 'A1') => {
   const f = await forms_.createForm({ name: 'CDD', schema: schema(), settings }, acct, bl);
@@ -161,7 +173,7 @@ test('cloning a master copies it as a draft and brings its output template along
   assert.equal(copy.status, 'draft');
   assert.equal(copy.version, 0);
   assert.equal(copy.templateId, 'T-A1');
-  assert.deepEqual(cloned, [{ id: 'T-master', from: 'MASTER', to: 'A1' }]);
+  assert.deepEqual(cloned, [{ id: 'T-master', from: 'MASTER', to: 'A1' }, { bind: { id: 'T-A1', formId: copy.id } }]);
   await assert.rejects(forms_.getForm(m.id, 'A1'), /not found/);
 });
 
@@ -237,4 +249,78 @@ test('file fields: attachments are committed per field and the field value is th
   assert.equal(saved.attachments[0].fieldKey, 'id_copy');
   assert.deepEqual(saved.values.id_copy, [saved.attachments[0].id]);
   assert.equal((await subm.submit({ id: s.id }, 'A1', bl)).status, 'submitted');
+});
+
+// ---- documents from a submission ------------------------------------------------------------------
+
+const withTemplate = async (settings = { publicEnabled: true }) => {
+  const f = await publishedForm(settings);
+  await forms_.updateForm({ id: f.id, templateId: 'T-bound' }, 'A1', bl);
+  return f;
+};
+
+test('generate: adds a processing entry and invokes the Lambda with just the submission and export ids', async () => {
+  reset();
+  const f = await withTemplate();
+  const s = await subm.createSubmission({ formId: f.id, title: 'Acme' }, 'A1', bl);
+  const out = await subm.generateExport({ id: s.id }, 'A1', bl);
+  assert.equal(out.exportHistory.length, 1);
+  assert.equal(out.exportHistory[0].processStatus, 'processing');
+  assert.equal(out.exportHistory[0].createdBy.name, 'Alice');
+  assert.deepEqual(invokes, [{ submissionId: s.id, cbId: out.exportHistory[0].cbId }]);
+  assert.equal(out.exportHistory[0].url, undefined); // nothing to download yet
+});
+
+test('generate: a form without a template, a form needing approval, a missing Lambda and a full history are all refused', async () => {
+  reset();
+  limits.formLimit = 10;
+  const bare = await publishedForm();
+  const s0 = await subm.createSubmission({ formId: bare.id }, 'A1', bl);
+  await assert.rejects(subm.generateExport({ id: s0.id }, 'A1', bl), /no document template yet/);
+
+  const strict = await withTemplate({ publicEnabled: true, requireApprovedToExport: true });
+  const s1 = await subm.createSubmission({ formId: strict.id }, 'A1', bl);
+  await assert.rejects(subm.generateExport({ id: s1.id }, 'A1', bl), /Approve the submission before exporting/);
+  await subm.submit({ id: s1.id, values: goodAnswers }, 'A1', bl);
+  await subm.approve({ id: s1.id }, 'A1', bl);
+  assert.equal((await subm.generateExport({ id: s1.id }, 'A1', bl)).exportHistory.length, 1); // approved: allowed
+
+  const ok = await withTemplate();
+  const s2 = await subm.createSubmission({ formId: ok.id }, 'A1', bl);
+  config.docx.lambdaName = undefined;
+  await assert.rejects(subm.generateExport({ id: s2.id }, 'A1', bl), /isn't set up/);
+  config.docx.lambdaName = 'fn';
+  subs[s2.id].exportHistory = Array.from({ length: 50 }, (_, i) => ({ cbId: `E${i}`, processStatus: 'completed' }));
+  await assert.rejects(subm.generateExport({ id: s2.id }, 'A1', bl), /up to 50 exports/);
+  await assert.rejects(subm.generateExport({ id: s2.id }, 'A2', bl), /not found/); // someone else's
+});
+
+test('generate: a failed invoke marks the entry failed and errors', async () => {
+  reset();
+  const f = await withTemplate();
+  const s = await subm.createSubmission({ formId: f.id }, 'A1', bl);
+  invokeFails = true;
+  await assert.rejects(subm.generateExport({ id: s.id }, 'A1', bl), /Could not start/);
+  assert.equal(subs[s.id].exportHistory[0].processStatus, 'failed');
+  assert.match(subs[s.id].exportHistory[0].error, /Could not start/);
+});
+
+test('exports: only completed ones get a download link (and no storage path); deleting one removes its file', async () => {
+  reset();
+  const f = await withTemplate();
+  const s = await subm.createSubmission({ formId: f.id, title: 'Acme: CDD' }, 'A1', bl);
+  subs[s.id].exportHistory = [
+    { cbId: 'C1', processStatus: 'completed', path: 'accounts/A1/records/x/exports/C1.docx' },
+    { cbId: 'C2', processStatus: 'processing' },
+    { cbId: 'C3', processStatus: 'failed', error: 'x', path: 'accounts/A1/records/x/exports/C3.docx' },
+  ];
+  const got = await subm.getSubmission(s.id, 'A1');
+  assert.match(got.exportHistory[0].url, /accounts\/A1\/records\/x\/exports\/C1\.docx\?attachment; filename="Acme_ CDD\.docx"/);
+  assert.equal(got.exportHistory[0].path, undefined);
+  assert.equal(got.exportHistory[1].url, undefined);
+  assert.equal(got.exportHistory[2].url, undefined);
+  assert.equal(got.exportHistory[2].path, undefined);
+  const after = await subm.deleteExport(s.id, 'C1', 'A1', bl);
+  assert.deepEqual(after.exportHistory.map((h) => h.cbId), ['C2', 'C3']);
+  await assert.rejects(subm.deleteExport(s.id, 'nope', 'A1', bl), /not found/);
 });

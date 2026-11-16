@@ -12,6 +12,8 @@ export class SubmissionController {
   reject = catchAsync(async (req, res) => res.json(await submissionService.reject(req.joiData, req.accountId, req.blameable)));
   reopen = catchAsync(async (req, res) => res.json(await submissionService.reopen(req.joiData.id, req.accountId, req.blameable)));
   attachmentUrl = catchAsync(async (req, res) => res.json(await submissionService.attachmentUploadUrl(req.joiData, req.accountId)));
+  generate = catchAsync(async (req, res) => res.json(await submissionService.generateExport(req.joiData, req.accountId, req.blameable)));
+  deleteExport = catchAsync(async (req, res) => res.json(await submissionService.deleteExport(req.joiData.id, req.joiData.cbId, req.accountId, req.blameable)));
   createLink = catchAsync(async (req, res) => res.json(await submissionService.createLink(req.joiData, req.accountId, req.blameable)));
   revokeLink = catchAsync(async (req, res) => res.json(await submissionService.revokeLink(req.joiData.id, req.accountId, req.blameable)));
   remove = catchAsync(async (req, res) => {

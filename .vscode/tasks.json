@@ -1,6 +1,6 @@
 {
-  // Local dev: Cmd+Shift+P -> "Tasks: Run Task" -> "Dev: all" starts the API, dashboard and
-  // landing site, each in its own terminal (side by side in one split group). Stop them with
+  // Local dev: Cmd+Shift+P -> "Tasks: Run Task" -> "Dev: all" starts the API, dashboard,
+  // landing site and customer form app, each in its own terminal (side by side in one split group). Stop them with
   // "Tasks: Terminate Task" (or the trash icon on each terminal). Each can also be run on its own.
   // "Shell: all" opens a plain terminal in each of the three folders (nothing started) for running
   // your own commands there — same split layout, separate from the dev servers.
@@ -8,7 +8,7 @@
   "tasks": [
     {
       "label": "Dev: all",
-      "dependsOn": ["Dev: api", "Dev: dashboard", "Dev: landing"],
+      "dependsOn": ["Dev: api", "Dev: dashboard", "Dev: landing", "Dev: forms"],
       "dependsOrder": "parallel",
       "problemMatcher": []
     },
@@ -40,8 +40,17 @@
       "presentation": { "group": "dev", "panel": "dedicated", "reveal": "always", "showReuseMessage": false, "clear": true }
     },
     {
+      "label": "Dev: forms",
+      "type": "shell",
+      "command": "yarn dev",
+      "options": { "cwd": "${workspaceFolder}/frontend/public-form" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "group": "dev", "panel": "dedicated", "reveal": "always", "showReuseMessage": false, "clear": true }
+    },
+    {
       "label": "Shell: all",
-      "dependsOn": ["Shell: api", "Shell: dashboard", "Shell: landing"],
+      "dependsOn": ["Shell: api", "Shell: dashboard", "Shell: landing", "Shell: forms"],
       "dependsOrder": "parallel",
       "problemMatcher": []
     },
@@ -71,6 +80,16 @@
       "command": "${env:SHELL}",
       "args": ["-l"],
       "options": { "cwd": "${workspaceFolder}/frontend/landing" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "group": "shell", "panel": "dedicated", "reveal": "always", "focus": true, "showReuseMessage": false, "clear": true }
+    },
+    {
+      "label": "Shell: forms",
+      "type": "process",
+      "command": "${env:SHELL}",
+      "args": ["-l"],
+      "options": { "cwd": "${workspaceFolder}/frontend/public-form" },
       "isBackground": true,
       "problemMatcher": [],
       "presentation": { "group": "shell", "panel": "dedicated", "reveal": "always", "focus": true, "showReuseMessage": false, "clear": true }

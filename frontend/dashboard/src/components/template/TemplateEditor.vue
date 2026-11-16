@@ -14,11 +14,13 @@ import PageSkeleton from '@/components/PageSkeleton.vue';
 import { askConfirm } from '@/helpers/Confirm';
 import { canEdit } from '@/team';
 import { ownApi, masterApi } from '@/services/service.template';
+import { listSourceForms, getSourceForm } from '@/services/service.templateForm';
 import { TPL_KEY } from '@/helpers/template/context';
 import { SIZES, refreshChips, setPlaceholderResolver } from '@/helpers/template/quill';
 import {
   blankSection, cloneBlock, countPlaceholders, ensureIds, ensureTableCols, forEachBlock, indexAfterMove, insertAfterFocus,
-  moveItem, newBlock, normalizeKey, placeholderUsage, placeholdersForSave, renamePlaceholderKey, saveSignature, sectionsForSave, TABLE_TYPES,
+  moveItem, newBlock, newContainer, normalizeKey, placeholderUsage, placeholdersForSave, renamePlaceholderKey, saveSignature, sectionsForSave, TABLE_TYPES,
+  defaultCond, formGroups, formFields, formKeySet, insideRepeat, parseChip, repeatGroupAt,
 } from '@/helpers/template/blocks';
 import BlockList from './BlockList.vue';
 import TplMenu from './TplMenu.vue';
@@ -28,6 +30,7 @@ import DialogLayout from './DialogLayout.vue';
 import SectionManager from './SectionManager.vue';
 import PlaceholderPanel from './PlaceholderPanel.vue';
 import PlaceholderPicker from './PlaceholderPicker.vue';
+import FieldPicker from './FieldPicker.vue';
 import PlaceholderChipPopover from './PlaceholderChipPopover.vue';
 import ExportPanel from './ExportPanel.vue';
 
@@ -56,6 +59,11 @@ const showExport = ref(false);
 const showPicker = ref(false);
 const pickerError = ref('');
 const pickerText = ref('');
+const showFields = ref(false);
+const fieldError = ref('');
+const forms = ref([]); // the data sources to choose from
+const formSchema = ref(null); // the selected form's schema (null = none, or it could not be loaded)
+const formError = ref('');
 const rootEl = ref(null);
 const dialogs = { sign: ref(null), table: ref(null), layout: ref(null) };
 
@@ -63,7 +71,12 @@ const readonly = computed(() => !isMaster && !canEdit.value);
 const dirty = computed(() => !readonly.value && savedSig.value !== liveSig.value);
 const section = computed(() => template.value?.section[current.value] ?? null);
 const keys = computed(() => Object.keys(template.value?.placeholders ?? {}));
-const counts = computed(() => (section.value ? countPlaceholders(section.value.list, template.value.placeholders) : { total: 0, replaced: 0 }));
+const formKeys = computed(() => formKeySet(formSchema.value));
+const counts = computed(() => (section.value ? countPlaceholders(section.value.list, template.value.placeholders, formKeys.value) : { total: 0, replaced: 0 }));
+const groups = computed(() => formGroups(formSchema.value));
+const hasFields = computed(() => formFields(formSchema.value).length > 0);
+// The repeating group at the caret (inside a Repeat block, or a table that repeats a row).
+const caretGroup = computed(() => (section.value && ctx.focusId ? repeatGroupAt(section.value.list, ctx.focusId) : ''));
 
 // ---- editor context (read by every block) ------------------------------------------------
 const editors = new Map(); // editorId -> { quill, blockId }
@@ -74,6 +87,8 @@ const ctx = reactive({
   readonly,
   focusId: '',
   dragState: null,
+  formSchema: null, // the template's data source (read by repeat / if blocks and the table dialog)
+  groupAt: (id) => (section.value ? repeatGroupAt(section.value.list, id) : ''),
   setFocus: (id) => { ctx.focusId = id; },
   registerEditor: (editorId, blockId, quill) => { editors.set(editorId, { quill, blockId }); },
   unregisterEditor: (editorId, quill) => {
@@ -92,6 +107,7 @@ const ctx = reactive({
   openDialog: (kind, block) => dialogs[kind]?.value?.open(block),
 });
 provide(TPL_KEY, ctx);
+watch(formSchema, (f) => { ctx.formSchema = f; }, { immediate: true });
 
 const findEditor = (root) => {
   for (const { quill } of editors.values()) if (quill.root === root) return quill;
@@ -102,6 +118,8 @@ const findEditor = (root) => {
 const lookupValue = (key) => {
   const map = template.value?.placeholders;
   if (!map) return '';
+  if (map[key]) return map[key];
+  key = parseChip(key).base; // "dob|date" looks up "dob"
   if (map[key]) return map[key];
   const n = normalizeKey(key);
   for (const [k, v] of Object.entries(map)) if (v && normalizeKey(k) === n) return v;
@@ -143,7 +161,26 @@ const toggleFormat = (name) => applyFormat(name, !rangeFormat.value[name]);
 const sizeItems = computed(() => SIZES.map((s) => ({ label: s.label, action: () => applyFormat('size', s.value) })));
 const sizeLabel = computed(() => SIZES.find((s) => s.value === rangeFormat.value.size)?.label ?? 'normal');
 
+const toggleFields = () => {
+  fieldError.value = '';
+  showPicker.value = false;
+  showFields.value = !showFields.value;
+};
+// A chip for a field of the form: the key (and formatter) as it is, no entry in the placeholder map.
+const insertField = (text) => {
+  const s = selected.value;
+  if (!s) { fieldError.value = 'Click in the text where the field should go first.'; return; }
+  fieldError.value = '';
+  const { quill, range } = s;
+  quill.focus();
+  if (range.length) quill.deleteText(range.index, range.length, 'user');
+  quill.insertEmbed(range.index, 'placeholder', { text, value: '' }, 'user');
+  quill.setSelection(range.index + 1, 0, 'silent');
+  selected.value = { ...s, range: { index: range.index + 1, length: 0 } };
+};
+
 const togglePicker = () => {
+  showFields.value = false;
   pickerError.value = '';
   pickerText.value = '';
   const s = selected.value;
@@ -173,7 +210,27 @@ const addBlock = (type) => {
   insertAfterFocus(section.value.list, ctx.focusId, block);
   ctx.focusId = block.id;
 };
-const addItems = [
+const addContainer = (type) => {
+  if (!section.value || readonly.value) return;
+  const g = groups.value[0]?.key ?? '';
+  const block = newContainer(type, { group: g, cond: defaultCond(formSchema.value) });
+  insertAfterFocus(section.value.list, ctx.focusId, block);
+  ctx.focusId = block.id;
+};
+const containerItems = () => {
+  const noForm = !formSchema.value;
+  const inRepeat = !!section.value && !!ctx.focusId && insideRepeat(section.value.list, ctx.focusId);
+  return [
+    noForm || !groups.value.length || inRepeat
+      ? { label: noForm ? 'Repeat for each row (choose a data source first)' : inRepeat ? 'Repeat for each row (not inside another repeat)' : 'Repeat for each row (the form has no repeating group)', disabled: true }
+      : { label: 'Repeat for each row of a group', icon: 'refresh', action: () => addContainer('repeat') },
+    !hasFields.value
+      ? { label: 'Only if... (choose a data source first)', disabled: true }
+      : { label: 'Only if a condition holds', icon: 'layout', action: () => addContainer('if') },
+  ];
+};
+
+const addItems = computed(() => [
   { label: 'Paragraph', action: () => addBlock('paragraph') },
   { label: 'Numbered list', action: () => addBlock('list') },
   { label: 'List item', action: () => addBlock('list-item-paragraph') },
@@ -186,7 +243,9 @@ const addItems = [
   { label: 'Act heading', action: () => addBlock('layout-company-act') },
   { label: 'Form 45B heading', action: () => addBlock('layout-form-45b') },
   { label: 'Signature area', action: () => addBlock('sign-area-01') },
-];
+  { label: 'Form data', heading: true },
+  ...containerItems(),
+]);
 
 // ---- sections ------------------------------------------------------------------------------
 const selectSection = (i) => {
@@ -294,11 +353,31 @@ const normalize = (t) => {
   return t;
 };
 
+// The data source: the forms to choose from, and the schema of the selected one.
+const loadForms = async () => {
+  try { forms.value = await listSourceForms(isMaster); } catch { forms.value = []; }
+};
+const loadSchema = async (id) => {
+  formError.value = '';
+  formSchema.value = null;
+  if (!id) return;
+  try {
+    formSchema.value = (await getSourceForm(isMaster, id))?.schema ?? null;
+  } catch (e) {
+    formError.value = e.httpStatus === 404 ? 'The selected form no longer exists. Choose another data source or none.' : 'Could not load the form.';
+  }
+};
+const onSource = async (id) => {
+  template.value.formId = id;
+  await loadSchema(id);
+};
+
 const load = async () => {
   loading.value = true;
   loadError.value = '';
   try {
     const { exportHistory: history, ...t } = await api.get(props.id);
+    t.formId = t.formId ?? '';
     template.value = normalize(t);
     exportHistory.value = history ?? [];
     savedSig.value = liveSig.value = saveSignature(t);
@@ -306,6 +385,8 @@ const load = async () => {
     selected.value = null;
     ctx.focusId = '';
     editKey.value++;
+    loadForms();
+    await loadSchema(template.value.formId);
   } catch (e) {
     loadError.value = e.httpStatus === 404 ? 'This template does not exist.' : e.message || 'Could not load the template.';
   }
@@ -320,7 +401,7 @@ const save = async () => {
   saveError.value = '';
   const sig = saveSignature(t);
   try {
-    const res = await api.update(props.id, { name: t.name.trim(), section: sectionsForSave(t.section), placeholders: placeholdersForSave(t.placeholders) });
+    const res = await api.update(props.id, { name: t.name.trim(), section: sectionsForSave(t.section), placeholders: placeholdersForSave(t.placeholders), formId: t.formId || null });
     if (res?.exportHistory) exportHistory.value = res.exportHistory;
     savedSig.value = sig;
     saving.value = false;
@@ -385,6 +466,19 @@ onBeforeRouteLeave(async () => {
     </div>
     <p v-if="saveError" role="alert" class="status-down mt-3 rounded-control border px-3 py-2 text-small">{{ saveError }}</p>
 
+    <!-- Data source: the form whose fields this template can use -->
+    <div class="mt-3 flex flex-wrap items-center gap-2 text-small text-ink-muted">
+      <label for="tpl-source" class="font-medium">Data source</label>
+      <select id="tpl-source" :value="template.formId" :disabled="readonly" class="h-9 max-w-64 rounded-control border border-line bg-sunken px-2 text-body text-ink focus:border-cyan focus:outline-none disabled:opacity-60" @change="onSource($event.target.value)">
+        <option value="">None: type placeholders by hand</option>
+        <option v-if="template.formId && !forms.some((f) => f.id === template.formId)" :value="template.formId">Selected form (not in your list)</option>
+        <option v-for="f in forms" :key="f.id" :value="f.id">{{ f.name }}</option>
+      </select>
+      <span v-if="formSchema" class="text-ink-faint">Use <strong class="font-medium text-ink-muted">Insert field</strong> to put its answers in the text.</span>
+      <span v-else-if="!formError" class="text-ink-faint">Pick a form to insert its fields; a submission of it fills this template.</span>
+      <span v-if="formError" role="alert" class="text-down">{{ formError }}</span>
+    </div>
+
     <!-- Section bar -->
     <div class="mt-4 flex flex-wrap items-center gap-1">
       <OpButton variant="ghost" size="sm" :disabled="current === 0" aria-label="Previous section" @click="selectSection(current - 1)"><OpIcon name="arrow-left" :size="14" /></OpButton>
@@ -404,6 +498,7 @@ onBeforeRouteLeave(async () => {
         <button type="button" title="Italic" :class="['size-8 rounded-control text-body italic hover:bg-white/4', rangeFormat.italic ? 'bg-white/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('italic')">I</button>
         <button type="button" title="Underline" :class="['size-8 rounded-control text-body underline hover:bg-white/4', rangeFormat.underline ? 'bg-white/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('underline')">U</button>
         <button type="button" title="Strikethrough" :class="['size-8 rounded-control text-body line-through hover:bg-white/4', rangeFormat.strike ? 'bg-white/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('strike')">S</button>
+        <button type="button" title="Insert a field of the form" :disabled="!formSchema" :class="['h-8 rounded-control px-2 text-small hover:bg-white/4 disabled:opacity-40', showFields ? 'bg-warn/15 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFields">Insert field</button>
         <button type="button" title="Insert a placeholder" :class="['h-8 rounded-control px-2 font-mono text-small hover:bg-white/4', showPicker ? 'bg-warn/15 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="togglePicker"><span v-pre>{{x}}</span></button>
         <span class="mx-1 h-5 w-px bg-line" aria-hidden="true" />
         <button type="button" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo" class="size-8 rounded-control text-ink-muted hover:bg-white/4 disabled:opacity-30" :disabled="!canUndo" @mousedown.prevent @click="undo"><OpIcon name="arrow-left" :size="15" class="mx-auto" /></button>
@@ -412,6 +507,9 @@ onBeforeRouteLeave(async () => {
         <span class="ml-auto" />
         <TplMenu label="Add item" icon="plus" :items="addItems" align="right" />
         <button type="button" :class="['h-8 rounded-control px-2 text-small hover:bg-white/4', showPlaceholders ? 'text-ink' : 'text-ink-muted']" @click="showPlaceholders = !showPlaceholders">Placeholders</button>
+      </div>
+      <div v-if="showFields && !readonly" class="mt-2 max-w-xl">
+        <FieldPicker :open="showFields" :schema="formSchema" :repeat-group="caretGroup" :error="fieldError" @insert="insertField" @close="showFields = false" />
       </div>
       <div v-if="showPicker && !readonly" class="mt-2 max-w-xl">
         <PlaceholderPicker :open="showPicker" :keys="keys" :selected-text="pickerText" :error="pickerError" @insert="insertPlaceholder" @close="showPicker = false" />
@@ -423,7 +521,7 @@ onBeforeRouteLeave(async () => {
         <BlockList :key="`${current}:${editKey}`" :model-value="section.list" />
         <p v-if="!section.list.length" class="py-8 text-center text-body text-ink-muted">This section is empty. Use <strong class="font-medium text-ink">Add item</strong> to add a paragraph, list, table or layout block.</p>
       </div>
-      <PlaceholderPanel v-if="showPlaceholders" :placeholders="template.placeholders" :sections="template.section" :readonly="readonly" @add="addKey" @rename="renameKey" @remove="removeKey" />
+      <PlaceholderPanel v-if="showPlaceholders" :placeholders="template.placeholders" :sections="template.section" :form-keys="formKeys" :readonly="readonly" @add="addKey" @rename="renameKey" @remove="removeKey" />
     </div>
 
     <DialogSign :ref="dialogs.sign" />

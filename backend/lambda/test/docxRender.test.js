@@ -160,6 +160,96 @@ test('{{KEY}} typed in header and signature data resolves from values and saved 
   assert.ok(!text.includes('{{'));
 });
 
+// ---- form data: precedence, pipes, repeat / if / repeating tables ---------------------------------
+const FD = {
+  data: { full_name: 'Ann Lee', kind: 'Company', pep: false, joined: '2024-08-08', services: ['Alpha', 'Beta'], country: 'SG', checks: { q1: true, q2: false },
+    owners: [{ name: 'Xavier', pct: 60, role: 'Director' }, { name: 'Yin', pct: 40 }] },
+  raw: { full_name: 'Ann Lee', kind: 'co', pep: false, owners: [{ name: 'Xavier', pct: 60, role: 'dir' }, { name: 'Yin', pct: 40 }] },
+};
+const textFor = async (list, extra = {}, values = {}, fd = FD) => textOf((await unzip(render(tpl(list, extra), values, fd))).doc);
+const line = (...ops) => rich([...ops, { insert: '\n' }]);
+
+test('form data: precedence is this export\'s values, then the form, then the saved placeholders, then the chip\'s own value', async () => {
+  const list = [line(ph('FULL_NAME'), { insert: ' / ' }, ph('CITY', 'Embed'), { insert: ' / ' }, ph('PLAN'), { insert: ' / ' }, ph('NOPE'))];
+  assert.match(await textFor(list, { placeholders: { FULL_NAME: 'Saved', PLAN: 'Saved plan', CITY: 'Saved city' } }), /Ann Lee\| \/ \|Saved city\| \/ \|Saved plan\| \/ \|\{\{NOPE\}\}/);
+  assert.match(await textFor(list, {}, { full_name: 'Override' }), /Override/);
+  assert.match(await textFor([line(ph('CITY', 'Embed'))]), /Embed/);
+});
+
+test('pipes: yesno, check, date, upper, lower, list, country, chaining, unknown ignored', async () => {
+  const t = await textFor([line(ph('pep|yesno'), { insert: ';' }, ph('pep|check'), { insert: ';' }, ph('joined|date'), { insert: ';' }, ph('full_name|upper'), { insert: ';' },
+    ph('kind|lower'), { insert: ';' }, ph('services|list'), { insert: ';' }, ph('country|country'), { insert: ';' }, ph('full_name|nonsense|upper'), { insert: ';' }, ph('checks.q1|yesno'), { insert: ';' }, ph('checks.q2|check'))]);
+  assert.ok(t.includes('☐ YES   ☒ NO'));
+  assert.ok(t.includes('☐|;')); // pep false -> ☐
+  assert.ok(t.includes('08 AUG 2024'));
+  assert.ok(t.includes('ANN LEE'));
+  assert.ok(t.includes('company'));
+  assert.ok(t.includes('Alpha, Beta'));
+  assert.ok(t.includes('Singapore'));
+  assert.ok(t.includes('☒ YES   ☐ NO')); // checks.q1
+  assert.ok(!t.includes('{{'));
+});
+
+test('pipes work in typed {{key|pipe}} text too, and an unresolved chip keeps its pipe visible', async () => {
+  const t = await textFor([para('Born {{joined|date}}, PEP: {{pep|check}}, {{missing|yesno}}')]);
+  assert.match(t, /Born 08 AUG 2024, PEP: ☐, \{\{missing\|yesno\}\}/);
+  assert.match(await textFor([line(ph('missing|yesno'))]), /\{\{MISSING\|yesno\}\}/);
+});
+
+test('repeat: once per row, group.field and group.# read the row, zero rows renders nothing', async () => {
+  const block = { id: 'r', type: 'repeat', item: { group: 'owners', list: [line(ph('owners.#'), { insert: '. ' }, ph('owners.name'), { insert: ' ' }, ph('owners.pct'), { insert: '% ' }, ph('owners.role'), { insert: ' for ' }, ph('full_name'))] } };
+  assert.match(await textFor([para('Start'), block, para('End')]), /Start\|1\|\. \|Xavier\| \|60\|% \|Director\| for \|Ann Lee\|2\|\. \|Yin\| \|40\|% \| for \|Ann Lee\|End/); // Yin has no role: empty, not highlighted
+  assert.ok(!(await textFor([block], {}, {}, { data: { owners: [] }, raw: {} })).includes('Xavier'));
+  assert.equal(await textFor([block], {}, {}, { data: {}, raw: {} }), '');
+  assert.ok(!(await textFor([block])).includes('{{'));
+});
+
+test('repeat: a numbered list inside restarts for each row; a one-item list still numbers every row', async () => {
+  const li = (txt) => ({ id: 'li', type: 'list-item-paragraph', item: { delta: { ops: [{ insert: `${txt}\n` }] } } });
+  const block = { id: 'r', type: 'repeat', item: { group: 'owners', list: [{ id: 'l', type: 'list', item: [li('Only')] }] } };
+  const xml = (await unzip(render(tpl([block]), {}, FD))).doc;
+  assert.equal((xml.match(/<w:numPr>/g) || []).length, 2); // both rows are numbered list items, not continuations
+  const insts = [...xml.matchAll(/<w:numId w:val="(\d+)"/g)].map((m) => m[1]);
+  assert.notEqual(insts[0], insts[1]); // each row is its own list instance, so numbering restarts
+});
+
+test('if: shows its blocks only when the condition holds; inside a repeat it sees the row first', async () => {
+  const yes = { id: 'a', type: 'if', item: { cond: { key: 'kind', op: 'eq', value: 'co' }, list: [para('IS COMPANY')] } };
+  const no = { id: 'b', type: 'if', item: { cond: { key: 'kind', op: 'eq', value: 'ind' }, list: [para('IS INDIVIDUAL')] } };
+  const t = await textFor([yes, no]);
+  assert.ok(t.includes('IS COMPANY') && !t.includes('IS INDIVIDUAL'));
+  const inRepeat = { id: 'r', type: 'repeat', item: { group: 'owners', list: [{ id: 'c', type: 'if', item: { cond: { key: 'role', op: 'eq', value: 'dir' }, list: [line(ph('owners.name'), { insert: ' is a director' })] } }] } };
+  const t2 = await textFor([inRepeat]);
+  assert.ok(t2.includes('Xavier') && t2.includes('is a director') && !t2.includes('Yin'));
+});
+
+test('tables with repeatGroup repeat the first data row per group row; other rows stay; table-02 numbers them', async () => {
+  const c = (...ops) => ({ text: '', delta: { ops: [...ops, { insert: '\n' }] } });
+  const t03 = { id: 't', type: 'table-03', item: { repeatGroup: 'owners', data: [{ col1: c(ph('owners.name')), col2: c(ph('owners.pct')), col3: c({ insert: 'row' }) }, { col1: c({ insert: 'TOTAL' }), col2: c({ insert: '100' }), col3: c({ insert: '' }) }] } };
+  assert.match(await textFor([t03]), /Xavier\|60\|row\|Yin\|40\|row\|TOTAL\|100/);
+  const t02 = { id: 'u', type: 'table-02', item: { repeatGroup: 'owners', data: [{ col1: c(ph('owners.name')), col2: c(ph('owners.pct|upper')) }] } };
+  assert.match(await textFor([t02]), /1\.\|Xavier\|:\|60\|2\.\|Yin\|:\|40/);
+  const none = await textFor([t03], {}, {}, { data: { owners: [] }, raw: {} });
+  assert.ok(none.includes('TOTAL') && !none.includes('Xavier'));
+  const plain = { id: 'p', type: 'table-01', item: { data: [{ col1: c({ insert: 'A' }), col2: c(ph('full_name')) }] } };
+  assert.match(await textFor([plain]), /A\|:\|Ann Lee/); // without repeatGroup: as before
+});
+
+test('header and signature blocks resolve form fields and repeat rows too; unknown containers are skipped', async () => {
+  const sign = { id: 's', type: 'repeat', item: { group: 'owners', list: [{ id: 'h', type: 'sign-area-02', item: { data: { name: '{{owners.name|upper}}', desc: 'Owner {{owners.#}}' } } }] } };
+  const t = await textFor([{ id: 'h', type: 'layout-company-header-01', item: { data: { companyName: '{{full_name}}', companyRegNo: '{{kind}}', subHeader: 'X' } } }, sign, { id: 'z', type: 'mystery', item: { list: [para('NO')] } }, { id: 'y', type: 'repeat', item: {} }]);
+  assert.ok(t.includes('Ann Lee') && t.includes('Company') && t.includes('XAVIER') && t.includes('Owner 1') && t.includes('Owner 2') && t.includes('YIN'));
+  assert.ok(!t.includes('NO'));
+});
+
+test('an unanswered field of the bound form prints "-", a chip pointing at nothing stays highlighted', async () => {
+  const doc = render(tpl([para('x'), rich([{ insert: 'A: ' }, ph('remarks'), { insert: ' B: ' }, ph('checks.q1|yesno'), { insert: ' C: ' }, ph('typo_key'), { insert: '\n' }])]), {}, { data: { full_name: 'Ann' }, raw: {}, keys: ['full_name', 'remarks', 'checks'] });
+  const text = textOf((await unzip(doc)).doc);
+  assert.ok(text.includes('A: |-| B: |-| C: '), text);
+  assert.ok(text.includes('{{TYPO_KEY}}'));
+  assert.ok(!text.includes('{{REMARKS}}') && !text.includes('{{CHECKS'));
+});
+
 const fakes = (item, { putFails = false, conflicts = 0, updateFails = false } = {}) => {
   const db = { item: item && JSON.parse(JSON.stringify(item)) };
   const log = { puts: [], updates: [], conflictsLeft: conflicts };
@@ -227,4 +317,82 @@ test('handler: bad input, a missing template, a deleted export entry and a faili
   assert.equal(gone.log.updates.length, 0);
   const bad = fakes(saved(), { updateFails: true });
   assert.deepEqual(await makeHandler(bad.deps)({ templateId: 'T1', cbId: 'CB1' }), { ok: false }); // update failed -> marked failed attempt also fails -> still no throw
+});
+
+// ---- handler: submissions ----------------------------------------------------------------------
+const multiFakes = (items, { putFails = false } = {}) => {
+  const db = JSON.parse(JSON.stringify(items));
+  const log = { puts: [], updates: [], gets: [] };
+  const deps = {
+    getItem: async (t, Key) => { log.gets.push(Key.pk); return db[Key.pk] ? JSON.parse(JSON.stringify(db[Key.pk])) : null; },
+    putObject: async (p) => { if (putFails) throw new Error('S3 down: secret'); log.puts.push(p); },
+    updateItem: async (p) => {
+      log.updates.push(p);
+      const idx = Number(/#h\[(\d+)\]/.exec(p.ConditionExpression)[1]);
+      const item = db[p.Key.pk];
+      assert.equal(item.exportHistory[idx].cbId, p.ExpressionAttributeValues[':cb']);
+      for (const [k, name] of Object.entries(p.ExpressionAttributeNames)) if (k !== '#h') item.exportHistory[idx][name] = p.ExpressionAttributeValues[k.replace('#f', ':v')];
+    },
+  };
+  return { db, log, deps };
+};
+const FORM_SCHEMA = { sections: [{ id: 's1', title: 'C', fields: [
+  { id: 'a', key: 'full_name', type: 'text', label: 'Name' },
+  { id: 'b', key: 'kind', type: 'select', label: 'Kind', options: [{ value: 'ind', label: 'Individual' }, { value: 'co', label: 'Company' }] },
+  { id: 'c', key: 'owners', type: 'group', label: 'Owners', group: { fields: [{ id: 'd', key: 'name', type: 'text', label: 'Name' }] } },
+] }] };
+const subItems = (over = {}) => ({
+  '#SUBMISSION:S1': { pk: '#SUBMISSION:S1', id: 'S1', accountId: 'A1', formId: 'F1', schema: FORM_SCHEMA, values: { full_name: 'Ann', kind: 'co', owners: [{ name: 'Xavier' }, { name: 'Yin' }] },
+    exportHistory: [{ cbId: 'CB1', processStatus: 'processing' }], ...over.sub },
+  '#FORM:F1': { pk: '#FORM:F1', id: 'F1', accountId: 'A1', templateId: 'T1', ...over.form },
+  '#TEMPLATE:T1': { pk: '#TEMPLATE:T1', id: 'T1', accountId: 'A1', name: 'CDD', placeholders: {},
+    section: [{ name: 's', list: [rich([{ insert: 'Customer ' }, ph('full_name'), { insert: ' (' }, ph('kind'), { insert: ')\n' }]), { id: 'r', type: 'repeat', item: { group: 'owners', list: [rich([ph('owners.#'), { insert: ' ' }, ph('owners.name'), { insert: '\n' }])] } }] }], ...over.template },
+});
+
+test('handler (submission): renders the form\'s template with the answers, stores under records/, completes the submission\'s entry', async () => {
+  process.env.TABLE = 'tbl'; process.env.BUCKET = 'bkt';
+  const f = multiFakes(subItems());
+  const out = await makeHandler(f.deps)({ submissionId: 'S1', cbId: 'CB1' });
+  assert.deepEqual(out, { ok: true, path: 'accounts/A1/records/S1/exports/CB1.docx' });
+  assert.equal(f.log.puts[0].Key, 'accounts/A1/records/S1/exports/CB1.docx');
+  const z = await JSZip.loadAsync(f.log.puts[0].Body);
+  const text = textOf(await z.files['word/document.xml'].async('string'));
+  assert.match(text, /Customer \|Ann\| \(\|Company\|\)/); // select shown as its label
+  assert.match(text, /1\| \|Xavier\|2\| \|Yin/);
+  assert.equal(f.db['#SUBMISSION:S1'].exportHistory[0].processStatus, 'completed');
+  assert.equal(f.db['#SUBMISSION:S1'].exportHistory[0].path, 'accounts/A1/records/S1/exports/CB1.docx');
+  assert.equal(f.log.updates[0].Key.pk, '#SUBMISSION:S1');
+});
+
+test('handler (submission): this export\'s values override the answers', async () => {
+  const f = multiFakes(subItems());
+  await makeHandler(f.deps)({ submissionId: 'S1', cbId: 'CB1', values: { FULL_NAME: 'Override' } });
+  const z = await JSZip.loadAsync(f.log.puts[0].Body);
+  assert.match(textOf(await z.files['word/document.xml'].async('string')), /Customer \|Override/);
+});
+
+test('handler (submission): no template, a missing or another account\'s template, or a failing upload mark the entry failed with a safe message', async () => {
+  const none = multiFakes(subItems({ form: { templateId: undefined } }));
+  assert.deepEqual(await makeHandler(none.deps)({ submissionId: 'S1', cbId: 'CB1' }), { ok: false });
+  assert.equal(none.db['#SUBMISSION:S1'].exportHistory[0].processStatus, 'failed');
+  assert.match(none.db['#SUBMISSION:S1'].exportHistory[0].error, /no document template/);
+  assert.equal(none.log.puts.length, 0);
+
+  const gone = multiFakes(subItems({ form: { templateId: 'MISSING' } }));
+  await makeHandler(gone.deps)({ submissionId: 'S1', cbId: 'CB1' });
+  assert.match(gone.db['#SUBMISSION:S1'].exportHistory[0].error, /isn't available/);
+
+  const other = multiFakes(subItems({ template: { accountId: 'SOMEONE_ELSE' } }));
+  await makeHandler(other.deps)({ submissionId: 'S1', cbId: 'CB1' });
+  assert.equal(other.db['#SUBMISSION:S1'].exportHistory[0].processStatus, 'failed');
+  assert.equal(other.log.puts.length, 0);
+
+  const down = multiFakes(subItems(), { putFails: true });
+  assert.deepEqual(await makeHandler(down.deps)({ submissionId: 'S1', cbId: 'CB1' }), { ok: false });
+  assert.match(down.db['#SUBMISSION:S1'].exportHistory[0].error, /Could not render/);
+  assert.doesNotMatch(down.db['#SUBMISSION:S1'].exportHistory[0].error, /S3 down|secret/);
+});
+
+test('handler (submission): a missing submission does not throw', async () => {
+  assert.deepEqual(await makeHandler(multiFakes({}).deps)({ submissionId: 'NOPE', cbId: 'x' }), { ok: false });
 });

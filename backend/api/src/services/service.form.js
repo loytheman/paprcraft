@@ -10,7 +10,7 @@ import formModel, { formStatus } from "../models/model.form.js";
 import submissionModel from "../models/model.submission.js";
 import { MASTER_ACCOUNT_ID } from "../models/model.template.js";
 import { getAccountPlan, planLimitError, isTopPlan, includesText, assertNotSuspended } from "./service.plan.js";
-import { cloneTemplate } from "./service.template.js";
+import { cloneTemplate, updateTemplate } from "./service.template.js";
 import { validateSchema } from "../helpers/formEngine.js";
 
 const notFound = () => new ApiError(httpStatus.NOT_FOUND, errorType.NOT_FOUND, errorMessage.NOT_FOUND);
@@ -97,6 +97,7 @@ export const cloneForm = async (id, sourceOwnerId, ownerId, blameable) => {
   if (src.templateId) {
     try {
       const t = await cloneTemplate(src.templateId, sourceOwnerId, ownerId, blameable);
+      await updateTemplate({ id: t.id, formId: copy.id }, ownerId, blameable); // the template now renders the copy's fields
       return await updateForm({ id: copy.id, templateId: t.id }, ownerId, blameable);
     } catch (err) {
       await formModel.remove(copy.id, blameable); // don't leave a half-cloned form behind

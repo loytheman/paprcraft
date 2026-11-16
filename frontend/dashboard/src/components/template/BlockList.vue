@@ -5,10 +5,11 @@
 import { computed, inject, toRaw } from 'vue';
 import OpIcon from '@ds/components/OpIcon.vue';
 import { TPL_KEY } from '@/helpers/template/context';
-import { cloneBlock, moveItem, TABLE_TYPES, SIGN_TYPES, TEXT_TYPES } from '@/helpers/template/blocks';
+import { cloneBlock, moveItem, newBlock, isContainer, TABLE_TYPES, SIGN_TYPES, TEXT_TYPES } from '@/helpers/template/blocks';
 import BlockText from './BlockText.vue';
 import BlockTable from './BlockTable.vue';
 import BlockLayout from './BlockLayout.vue';
+import BlockContainer from './BlockContainer.vue';
 import BlockSign from './BlockSign.vue';
 import TplMenu from './TplMenu.vue';
 
@@ -24,6 +25,8 @@ const markerStyle = computed(() => ({ 1: 'decimal', 2: 'lower-roman' })[props.de
 
 const menuItems = (idx) => [
   { label: 'Clone', icon: 'copy', action: () => props.modelValue.splice(idx + 1, 0, cloneBlock(props.modelValue[idx])) },
+  // A repeat / if takes new blocks inside while it has the focus; this adds one after it instead.
+  ...(isContainer(props.modelValue[idx]) ? [{ label: 'Add paragraph below', icon: 'plus', action: () => props.modelValue.splice(idx + 1, 0, newBlock('paragraph')) }] : []),
   { label: 'Move up', disabled: idx === 0, action: () => moveItem(props.modelValue, idx, idx - 1) },
   { label: 'Move down', disabled: idx === props.modelValue.length - 1, action: () => moveItem(props.modelValue, idx, idx + 1) },
   { label: 'Delete', icon: 'trash', action: () => props.modelValue.splice(idx, 1) },
@@ -69,6 +72,7 @@ const onDrop = (e, idx) => {
         </div>
         <div class="min-w-0 flex-1">
           <BlockList v-if="block.type === 'list' && Array.isArray(block.item)" :model-value="block.item" :depth="depth + 1" />
+          <BlockContainer v-else-if="isContainer(block)" :block="block" />
           <BlockText v-else-if="TEXT_TYPES.includes(block.type)" :block="block" />
           <BlockTable v-else-if="TABLE_TYPES.includes(block.type)" :block="block" />
           <BlockSign v-else-if="SIGN_TYPES.includes(block.type)" :block="block" />

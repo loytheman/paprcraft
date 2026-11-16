@@ -67,9 +67,15 @@ Load the fonts in `index.html`: Geist (400, 500, 600) and JetBrains Mono (400, 5
 | `OpTextarea` | `v-model`, `label`, `hint`, `error`, `placeholder`, `rows`, `maxlength`. Multi-line `OpInput` |
 | `OpSkeleton` | None. A pulsing placeholder block sized by the caller's classes; respects reduced motion |
 | `OpGoogleButton` | `href` (the API's `/auth/google/start`), `label`, `size` sm/md/lg, `block`. Google's own white button style — the one allowed off-palette colour. Spinner + "Redirecting…" after click |
+| `OpCheckbox` | `v-model` Boolean, `label` (or the default slot for longer text), `error`, `disabled` |
+| `OpRadio` | `v-model` (the selected `value`), `value`, `label`, `name`. One radio; use several with the same `name` |
+| `FormRenderer` | A dynamic form from its schema (`lib/forms.js` documents the schema). Props: `schema`, `v-model` (values), `errors` (the API's `[{ key, message, row?, field? }]`), `readonly`, `audience` account/public (public hides `internal` fields), `v-model:attachments` (`[{ id?, key?, name, size?, fieldKey }]`), `uploader(file, fieldKey) -> { key, name }`, `consentText`. Every field type, groups of rows, live `visibleIf`. `scrollToFirstError()` is exposed. `FormField` is its per-field part |
 
 ## Helpers (`lib/`)
 
+- `forms.js`: the form engine (schema checks, `evalCond`, `normalizeValues`, `flatten`), a byte-for-byte copy of `backend/api/src/helpers/formEngine.js`. Don't edit it here: change the API file, copy it over, and run `yarn test` in `frontend/dashboard` (it checks the copy and runs the shared vectors).
+- `forms-ui.js`: helpers for `FormRenderer` (file rules, error lookup, readonly text).
+- `countries.js`: `COUNTRIES` (ISO 3166-1 alpha-2 code + name) and `countryName(code)`.
 - `labels.js`: `LABEL_COLORS`, `labelColorNames`, `labelStyle(color)`. Eight label colours, none of them a status colour.
 
 ## Dashboard (later)

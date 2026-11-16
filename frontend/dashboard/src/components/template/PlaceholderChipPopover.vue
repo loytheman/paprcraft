@@ -18,8 +18,10 @@ const onClick = async (e) => {
   const { blot, text, event } = e.detail ?? {};
   if (!blot) return;
   const key = text;
-  if (!props.readonly && key && !(key in props.placeholders)) props.placeholders[key] = '';
-  state.value = { key, blot, x: Math.min(event.clientX, window.innerWidth - 280), y: Math.min(event.clientY + 12, window.innerHeight - 180) };
+  // A field of the template's form ("full_name", "dob|date", "owners.name") gets its value from a submission, not from this list.
+  const bound = /[a-z|.#]/.test(key ?? '');
+  if (!props.readonly && key && !bound && !(key in props.placeholders)) props.placeholders[key] = '';
+  state.value = { key, bound, blot, x: Math.min(event.clientX, window.innerWidth - 280), y: Math.min(event.clientY + 12, window.innerHeight - 180) };
   await nextTick();
   input.value?.focus();
 };
@@ -45,7 +47,9 @@ const toText = () => {
 <template>
   <div v-if="state" data-chip-popover class="fixed z-50 w-64 rounded-card border border-line bg-surface-3 p-3 shadow-rim" :style="{ left: `${state.x}px`, top: `${state.y}px` }" role="dialog" aria-label="Placeholder value">
     <p class="font-mono text-small text-ink">{{ chip(state.key) }}</p>
+    <p v-if="state.bound" class="mt-2 text-small text-ink-muted">A field of the form: it is filled in from a submission when the document is generated.</p>
     <input
+      v-else
       ref="input"
       v-model="placeholders[state.key]"
       :readonly="readonly"

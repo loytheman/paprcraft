@@ -19,6 +19,12 @@ import TemplateList from '@/views/Template.List.vue';
 import TemplateEdit from '@/views/Template.Edit.vue';
 import StaffTemplates from '@/views/Staff.Templates.vue';
 import StaffTemplate from '@/views/Staff.Template.vue';
+import FormsList from '@/views/Forms.List.vue';
+import FormEdit from '@/views/Form.Edit.vue';
+import StaffForms from '@/views/Staff.Forms.vue';
+import StaffForm from '@/views/Staff.Form.vue';
+import SubmissionList from '@/views/Submission.List.vue';
+import SubmissionDetail from '@/views/Submission.Detail.vue';
 
 // Back/forward restores the old position; a #anchor waits briefly for its element (pages load their
 // data first, e.g. an #anchor); any other new page starts at the top.
@@ -52,6 +58,12 @@ const router = createRouter({
         // Document templates: the editor is read-only for viewers (TemplateEditor.vue).
         { path: 'templates', name: 'templates', component: TemplateList },
         { path: 'templates/:id', name: 'template', component: TemplateEdit },
+        // Dynamic forms: the builder is read-only for viewers (FormBuilder.vue).
+        { path: 'forms', name: 'forms', component: FormsList },
+        { path: 'forms/:id', name: 'form', component: FormEdit },
+        // Form submissions: filled-in forms, reviewed, shared with customers, turned into documents.
+        { path: 'submissions', name: 'submissions', component: SubmissionList },
+        { path: 'submissions/:id', name: 'submission', component: SubmissionDetail },
         { path: 'settings/labels', name: 'labels', component: SettingsLabels },
         { path: 'settings/team', name: 'team', component: SettingsTeam },
         { path: 'settings/activity', name: 'activity', component: SettingsActivity },
@@ -60,6 +72,8 @@ const router = createRouter({
         // Paprcraft staff console: hidden from everyone else (the API also refuses them).
         { path: 'staff/templates', name: 'staff-templates', component: StaffTemplates, meta: { requireStaff: true } },
         { path: 'staff/templates/:id', name: 'staff-template', component: StaffTemplate, meta: { requireStaff: true } },
+        { path: 'staff/forms', name: 'staff-forms', component: StaffForms, meta: { requireStaff: true } },
+        { path: 'staff/forms/:id', name: 'staff-form', component: StaffForm, meta: { requireStaff: true } },
         { path: 'staff/customers', name: 'staff-customers', component: StaffCustomers, meta: { requireStaff: true } },
         { path: 'staff/customers/:id', name: 'staff-customer', component: StaffCustomer, meta: { requireStaff: true } },
       ],

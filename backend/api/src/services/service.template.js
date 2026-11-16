@@ -76,9 +76,9 @@ const assertUnderLimit = async (accountId) => {
   }
 };
 
-export const createTemplate = async ({ name, section, placeholders }, ownerId, blameable) => {
+export const createTemplate = async ({ name, section, placeholders, formId }, ownerId, blameable) => {
   if (ownerId !== MASTER_ACCOUNT_ID) await assertUnderLimit(ownerId);
-  const data = { accountId: ownerId, name, section: section ?? blankSections(), placeholders: placeholders ?? {}, exportHistory: [] };
+  const data = { accountId: ownerId, name, section: section ?? blankSections(), placeholders: placeholders ?? {}, exportHistory: [], ...(formId && { formId }) };
   return templateModel.create({ ...data, keywordSearch: keywordsOf(data) }, blameable);
 };
 
@@ -99,7 +99,7 @@ export const deleteTemplate = async (id, ownerId, blameable) => {
 export const cloneTemplate = async (id, sourceOwnerId, ownerId, blameable) => {
   const src = await getTemplateFor(id, sourceOwnerId);
   const name = sourceOwnerId === ownerId ? `${src.name} (copy)` : src.name;
-  return createTemplate({ name, section: src.section, placeholders: src.placeholders }, ownerId, blameable);
+  return createTemplate({ name, section: src.section, placeholders: src.placeholders, formId: sourceOwnerId === ownerId ? src.formId : undefined }, ownerId, blameable); // a clone from a master is rebound by service.form.js cloneForm
 };
 
 // Starts a .docx export. Returns the template with the new "processing" entry.

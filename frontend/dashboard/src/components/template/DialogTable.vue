@@ -1,11 +1,12 @@
 <script setup>
 // Table type (01 label : value, 02 numbered, 03 three columns), its rows, and the optional
 // layout options JSON. The cell text itself is edited in the table.
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import OpButton from '@ds/components/OpButton.vue';
 import OpIcon from '@ds/components/OpIcon.vue';
 import TplDialog from './TplDialog.vue';
-import { emptyRow, ensureTableCols } from '@/helpers/template/blocks';
+import { TPL_KEY } from '@/helpers/template/context';
+import { emptyRow, ensureTableCols, formGroups } from '@/helpers/template/blocks';
 
 const TYPES = [
   { value: 'table-01', label: 'Type 01: label and value' },
@@ -13,6 +14,9 @@ const TYPES = [
   { value: 'table-03', label: 'Type 03: three bordered columns' },
 ];
 
+const ctx = inject(TPL_KEY, null);
+const groups = computed(() => formGroups(ctx?.formSchema));
+const repeatGroup = ref('');
 const visible = ref(false);
 const target = ref(null);
 const type = ref('table-01');
@@ -28,6 +32,7 @@ const open = (block) => {
   target.value = block;
   type.value = block.type;
   rows.value = [...(block.item?.data ?? [])];
+  repeatGroup.value = block.item?.repeatGroup ?? '';
   options.value = block.item?.options ?? '';
   useOptions.value = !!options.value;
   optionsError.value = '';
@@ -41,8 +46,9 @@ const save = () => {
   }
   const data = ensureTableCols(rows.value.length ? rows.value : [emptyRow(type.value)], type.value);
   target.value.type = type.value;
-  target.value.item = { ...target.value.item, data, ...(opts && { options: opts }) };
+  target.value.item = { ...target.value.item, data, ...(opts && { options: opts }), ...(repeatGroup.value && { repeatGroup: repeatGroup.value }) };
   if (!opts) delete target.value.item.options;
+  if (!repeatGroup.value) delete target.value.item.repeatGroup;
   visible.value = false;
 };
 
@@ -69,6 +75,16 @@ defineExpose({ open });
           <button type="button" class="text-ink-faint hover:text-down disabled:opacity-40" :disabled="rows.length <= 1" aria-label="Remove row" @click="rows.splice(i, 1)"><OpIcon name="trash" :size="14" /></button>
         </li>
       </ul>
+    </div>
+
+    <div class="mt-5">
+      <label class="text-small font-medium text-ink-muted" for="tbl-repeat">Repeat the first row for each row of</label>
+      <select id="tbl-repeat" v-model="repeatGroup" class="mt-1 h-10 w-full rounded-control border border-line bg-sunken px-3 text-body text-ink focus:border-cyan focus:outline-none">
+        <option value="">Don't repeat</option>
+        <option v-if="repeatGroup && !groups.some((g) => g.key === repeatGroup)" :value="repeatGroup">{{ repeatGroup }} (not in the form)</option>
+        <option v-for="g in groups" :key="g.key" :value="g.key">{{ g.label || g.key }}</option>
+      </select>
+      <p class="mt-1 text-small text-ink-faint">{{ groups.length ? 'Put chips like owners.name in that first row. The other rows stay as they are.' : 'Pick a data source with a repeating group first.' }}</p>
     </div>
 
     <div v-if="type !== 'table-02'" class="mt-5">

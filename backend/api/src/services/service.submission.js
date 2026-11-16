@@ -9,10 +9,15 @@
 //     (PNG, JPEG, WebP or PDF); a file field's value is the list of its attachment ids.
 import crypto from "crypto";
 import httpStatus from "http-status";
+import { InvokeCommand } from "@aws-sdk/client-lambda";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ApiError, errorType, errorMessage } from "../middlewares/error.js";
 import config from "../config/config.js";
 import submissionModel, { submissionStatus } from "../models/model.submission.js";
 import { MASTER_ACCOUNT_ID } from "../models/model.template.js";
+import Utils from "../helpers/utils.js";
+import { getLambdaClient, getS3Client } from "./index.js";
 import { getAccountModel } from "./service.accountLookup.js";
 import { getFormFor } from "./service.form.js";
 import { formStatus } from "../models/model.form.js";
@@ -30,6 +35,8 @@ const invalidLink = () => new ApiError(httpStatus.NOT_FOUND, errorType.NOT_FOUND
 const hashToken = (token) => crypto.createHash("sha256").update(token).digest("hex");
 const DEFAULT_CONSENT = "I confirm the information I provided is accurate and complete. Typing my name here is my signature on this form.";
 const MAX_EXPORT_HISTORY = 50;
+const DOWNLOAD_URL_SECONDS = 900;
+const EXPORT = { PROCESSING: "processing", COMPLETED: "completed", FAILED: "failed" }; // same as model.template.js exportStatus
 
 // 422 with the per-field list the form shows.
 const answersError = (errors) => {
@@ -45,8 +52,22 @@ export const getSubmissionFor = async (id, accountId) => {
 };
 
 // What the dashboard sees: no hash, storage paths turned into links, link state summarised.
+// Download links for completed exports (storage paths stay server-side), as for templates.
+const withExportUrls = async (sub) => {
+  const filename = `${(sub.title || sub.formName || "document").replace(/[^\w.\- ]+/g, "_")}.docx`;
+  const exportHistory = await Promise.all(
+    (sub.exportHistory ?? []).map(async ({ path, ...h }) => ({
+      ...h,
+      ...(path && h.processStatus === EXPORT.COMPLETED && {
+        url: await getSignedUrl(getS3Client(), new GetObjectCommand({ Bucket: config.aws.s3Bucket, Key: path, ResponseContentDisposition: `attachment; filename="${filename}"` }), { expiresIn: DOWNLOAD_URL_SECONDS }),
+      }),
+    }))
+  );
+  return { ...sub, exportHistory };
+};
+
 const present = async (s) => {
-  const { tokenHash, publicEmail, publicExpiresAt, publicLockedAt, ...rest } = await withUrls(s);
+  const { tokenHash, publicEmail, publicExpiresAt, publicLockedAt, ...rest } = await withExportUrls(await withUrls(s));
   return {
     ...rest,
     link: tokenHash ? { active: !publicLockedAt && Date.parse(publicExpiresAt) > Date.now(), expiresAt: publicExpiresAt, locked: !!publicLockedAt, email: publicEmail ?? null } : { active: false },
@@ -261,6 +282,56 @@ export const submitPublic = async ({ token, ...body }, client, blameable) => {
     blameable
   );
   return { submitted: true, submittedAt: now };
+};
+
+// ---- documents ---------------------------------------------------------------------------------------
+
+const markExportFailed = async (id, cbId, error) => {
+  const s = await submissionModel.getById(id);
+  const idx = (s?.exportHistory ?? []).findIndex((h) => h.cbId === cbId);
+  if (idx < 0) return;
+  await submissionModel.update({ id, exportHistory: s.exportHistory.map((h, i) => (i === idx ? { ...h, processStatus: EXPORT.FAILED, error } : h)) }, null);
+};
+
+// Starts a .docx export of the submission through its form's document template. Returns the
+// submission with the new "processing" entry; the docx Lambda (backend/lambda/docxTemplate.js)
+// completes it. A draft can be exported too (to review the layout) unless the form requires approval.
+export const generateExport = async ({ id }, accountId, blameable) => {
+  const sub = await getSubmissionFor(id, accountId);
+  const form = await formModel.getById(sub.formId);
+  if (!form?.templateId) throw badRequest("This form has no document template yet.");
+  if (!exportsAllowed(sub, form)) throw badRequest("Approve the submission before exporting.");
+  assertNotSuspended(await getAccountPlan(accountId));
+  if (!config.docx?.lambdaName) throw new ApiError(httpStatus.SERVICE_UNAVAILABLE, errorType.BAD_REQUEST, "Document export isn't set up yet.");
+  if ((sub.exportHistory?.length ?? 0) >= MAX_EXPORT_HISTORY) throw badRequest(`A submission keeps up to ${MAX_EXPORT_HISTORY} exports. Delete some old ones first.`);
+
+  const cbId = Utils.ulid();
+  const entry = { cbId, processStatus: EXPORT.PROCESSING, createdAt: new Date().toISOString(), createdBy: blameable?.actionBy ?? null, fileName: `${cbId}.docx` };
+  await submissionModel.addExport(id, entry, blameable);
+  try {
+    await getLambdaClient().send(
+      new InvokeCommand({
+        FunctionName: config.docx.lambdaName,
+        InvocationType: "Event", // async: the Lambda updates exportHistory when done
+        Payload: Buffer.from(JSON.stringify({ submissionId: id, cbId })),
+      })
+    );
+  } catch (err) {
+    console.error(JSON.stringify({ msg: "docx invoke failed", submissionId: id, error: String(err?.message || err) }));
+    await markExportFailed(id, cbId, "Could not start the export.");
+    throw new ApiError(httpStatus.BAD_GATEWAY, errorType.BAD_REQUEST, "Could not start the export. Try again.");
+  }
+  return getSubmission(id, accountId);
+};
+
+// Removes one export entry and its file.
+export const deleteExport = async (id, cbId, accountId, blameable) => {
+  const sub = await getSubmissionFor(id, accountId);
+  const hit = (sub.exportHistory ?? []).find((h) => h.cbId === cbId);
+  if (!hit) throw notFound();
+  await submissionModel.update({ id, exportHistory: sub.exportHistory.filter((h) => h.cbId !== cbId) }, blameable);
+  if (hit.path) await deleteFolder(hit.path); // a single key, used as a prefix
+  return getSubmission(id, accountId);
 };
 
 export const exportsAllowed = (sub, form) => !(form?.settings?.requireApprovedToExport && sub.status !== submissionStatus.APPROVED);

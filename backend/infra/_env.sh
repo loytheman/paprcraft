@@ -19,6 +19,8 @@ case "$ENV" in
     # alias here vs. MX/TXT there), which DNS allows.
     LANDING_DOMAINS="stg.${BASE_DOMAIN}"
     DASHBOARD_DOMAINS="dashboard-stg.${BASE_DOMAIN}"
+    # Customer form links (frontend/public-form): https://forms[-stg].<domain>/f/<token>
+    FORMS_DOMAINS="forms-stg.${BASE_DOMAIN}"
     ;;
   prod)
     NAME_PREFIX="prod"
@@ -26,6 +28,7 @@ case "$ENV" in
     API_DOMAIN="api.${BASE_DOMAIN}"
     LANDING_DOMAINS="${BASE_DOMAIN} www.${BASE_DOMAIN}"
     DASHBOARD_DOMAINS="dashboard.${BASE_DOMAIN}"
+    FORMS_DOMAINS="forms.${BASE_DOMAIN}"
     ;;
   *)
     echo "Unknown env '$ENV' — expected 'stg' or 'prod'" >&2
@@ -41,7 +44,7 @@ ACCOUNT_ID="696718015220"
 # Public hosted zone for the domain in this account (the registrar's NS records point at it), so
 # scripts write their own DNS records instead of printing them for a human to add.
 HOSTED_ZONE_NAME="${BASE_DOMAIN}"
-# Frontend hosting (21-site-hosting.sh <env> <landing|dashboard>): one private bucket per env,
+# Frontend hosting (21-site-hosting.sh <env> <landing|dashboard|forms>): one private bucket per env,
 # one folder per site, each served by its own CloudFront distribution (found by its Comment).
 # Folders must match the upload-stg/upload-prod paths in frontend/*/package.json.
 SITE_BUCKET="${NAME_PREFIX}.site.paprcraft"
@@ -50,6 +53,8 @@ LANDING_PREFIX="site-landing"
 LANDING_DIST_COMMENT="paprcraft-${ENV}-landing"
 DASHBOARD_PREFIX="site-dashboard"
 DASHBOARD_DIST_COMMENT="paprcraft-${ENV}-dashboard"
+FORMS_PREFIX="site-forms"
+FORMS_DIST_COMMENT="paprcraft-${ENV}-forms"
 TABLE="${NAME_PREFIX}-paprcraft-dynamo-db"
 # Uploaded images (28-attachments.sh; backend/api service.attachment.js). Private; uploads land in
 # tmp/ (expires after a day) and move to accounts/<id>/... when the record is saved. Matches

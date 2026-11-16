@@ -59,7 +59,8 @@ class PlaceholderBlot extends Embed {
     const shown = value || resolveValue(text) || '';
     node.classList.toggle('has-value', !!shown);
     node.setAttribute('contenteditable', 'false');
-    node.textContent = shown || `{{${text.toUpperCase()}}}`;
+    // A manual key is shown upper case; a form field ("full_name", "dob|date", "owners.name") as typed.
+    node.textContent = shown || `{{${/[a-z|.#]/.test(text) ? text : text.toUpperCase()}}}`;
   }
 
   constructor(scroll, node) {

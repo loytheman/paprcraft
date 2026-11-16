@@ -128,3 +128,31 @@ Entities named in the "for the use of" line become form fields / account setting
   before anything depends on them.
 - **Out of v1**: sanctions screening, cross-record lookups, PDF output (LibreOffice container Lambda, see the
   corpsec `func-libreoffice` notes), multi-step approval, analytics, e-sign.
+
+## Contracts (decided while building; the source of truth for the parallel work)
+
+**Audit (owner decision): every change on save is tracked.** `Submission.values` is audited per key
+(`values.<key>`) and `Form.schema` per section/field (`schema.section.<id>`, `schema.field.<key>`),
+including customer saves through a link ("Customer (link)" actor with IP/device). Submission `schema`
+snapshots and `tokenHash` are never audited. Consequence: ID numbers and addresses appear in audit
+rows; the Activity page is account-visible, so treat it as sensitive data.
+
+**FormRenderer (frontend/design-system/components/FormRenderer.vue)**: props `schema`, `modelValue`
+(values), `errors` (API list `[{key,message,row?,field?}]`), `readonly`, `audience` (account|public),
+`attachments` (`[{id?,key?,name,size?,fieldKey}]`), `uploader(file, fieldKey) -> Promise<{key,name}>`,
+`consentText`; emits `update:modelValue`, `update:attachments`; exposes `scrollToFirstError()`.
+`frontend/design-system/lib/forms.js` is a copy of `backend/api/src/helpers/formEngine.js`
+(`backend/lambda/formEngine.js` is the CommonJS copy); all three run `backend/api/test/formEngine.vectors.json`.
+
+**Template data binding** (docxRender):
+- chip text `key` -> the form value; `key|pipe` formats it. Pipes: `yesno` (checkbox glyphs, ☒ / ☐), `date` (`08 AUG 2024`),
+  `upper`, `lower`, `list` (comma separated), `country` (ISO-2 -> name via Intl.DisplayNames).
+- `{ type: 'repeat', item: { group: 'owners', list: [blocks] } }` renders `list` once per row; inside, chips `owners.name`
+  (`<groupKey>.<fieldKey>`) read the row, and `owners.#` is the 1-based row number.
+- `{ type: 'if', item: { cond: <visibleIf>, list: [blocks] } }` renders `list` only when the condition holds (evaluated on form values; inside a repeat it sees the row, then the form).
+- A table block with `item.repeatGroup: 'owners'` repeats its first data row once per group row.
+- A template's `formId` says which form's fields the editor offers; a form's `templateId` says which template renders it.
+- Export history of a submission lives on the Submission (`exportHistory`, same shape as templates'): files at
+  `accounts/<accountId>/records/<submissionId>/exports/<cbId>.docx`. Lambda payload: `{ submissionId, cbId }`.
+- Customer link URL: `https://forms[-stg].paprcraft.com/f/<token>`; API `GET/PUT /v1/form-link/:token`,
+  `POST /v1/form-link/:token/attachment-url`, `POST /v1/form-link/:token/submit`.

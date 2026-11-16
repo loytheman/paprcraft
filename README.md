@@ -27,6 +27,7 @@ backend/
 frontend/
   design-system/       Shared Tailwind v4 theme + Op* Vue components (imported as @ds/...)
   dashboard/           Signed-in Vue 3 + Vite app (https :6100)
+  public-form/         Customer-facing form page opened from a form link (https :6300, /f/<token>)
   landing/             Marketing site (https :6200); design-system.html previews the DS in dev
 ```
 
@@ -71,13 +72,13 @@ aws sts get-caller-identity --profile paprcraft-dev-loy --query Account --output
 | sweep | `27-staff-sweep.sh` (daily limit-override cleanup) | no |
 | docx | `29-docx-template.sh` (document-template renderer; needs 01 + 28, node/npm/zip; then re-run `09` and `10` so the API may invoke it and gets `DOCX_LAMBDA_NAME`) | no |
 | DNS | `05-acm-cert.sh`, `07-api-custom-domain.sh`, `04-ses-identity.sh` | yes (Route 53 zone) |
-| sites | `21-site-hosting.sh <env> landing` and `... dashboard` | yes |
+| sites | `21-site-hosting.sh <env> landing`, `... dashboard` and `... forms` | yes |
 
 3. Create `backend/api/src/.env.stage` / `.env.prod` / `.env.local` from `.env.example` and
    `.env.secret` from `.env.example.secret`. Secrets (`JWT_USER_SECRET`, `GOOGLE_CLIENT_SECRET`)
    are Lambda env vars when deployed; `10-api-lambda-function.sh` never prints or sets them.
 4. Put the CloudFront distribution IDs printed by `21-site-hosting.sh` into the `invalidate-*`
-   scripts of `frontend/dashboard/package.json` and `frontend/landing/package.json`.
+   scripts of `frontend/dashboard`, `frontend/landing` and `frontend/public-form` (`package.json`).
 5. Google sign-in: create an OAuth client in Google Cloud Console, set `GOOGLE_CLIENT_ID` in the
    `.env.*` files and `GOOGLE_CLIENT_SECRET` as a secret.
 
@@ -87,6 +88,7 @@ aws sts get-caller-identity --profile paprcraft-dev-loy --query Account --output
 cd backend/api && yarn install && yarn dev      # https://localhost:3006 (accept the self-signed cert once)
 cd frontend/dashboard && yarn install && yarn dev   # https://localhost:6100
 cd frontend/landing && yarn install && yarn dev     # https://localhost:6200
+cd frontend/public-form && yarn install && yarn dev # https://localhost:6300 (open /f/<token> from a form link)
 ```
 Or in VS Code: Tasks: Run Task -> "Dev: all". The API needs AWS credentials for DynamoDB
 (`yarn sso-login` in `backend/api`).
@@ -96,7 +98,7 @@ Or in VS Code: Tasks: Run Task -> "Dev: all". The API needs AWS credentials for 
 - API: `cd backend/api && yarn deploy` (stg) / `yarn deploy-prod`. Dependencies live in a Lambda layer: `yarn prepare-layer` then `infra/08-api-lambda-layer.sh <env>` when `package.json` deps change.
 - Audit Lambda: `cd backend/lambda && yarn deploy-audit-trail-stg` / `-prod`.
 - Docx renderer Lambda: `cd backend/lambda && yarn deploy-docx-template-stg` / `-prod` (builds a zip with the `docx` library).
-- Frontends: `yarn deploy` / `yarn deploy-prod` in `frontend/dashboard` or `frontend/landing`.
+- Frontends: `yarn deploy` / `yarn deploy-prod` in `frontend/dashboard`, `frontend/landing` or `frontend/public-form`.
 
 ## Still placeholders (search for `TODO`)
 

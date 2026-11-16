@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Storage for images attached to reminders (backend/api/src/services/service.attachment.js).
 #   1. $STORAGE_BUCKET: private (all public access blocked, BucketOwnerEnforced), SSE-S3.
-#   2. CORS: the dashboard may PUT to the presigned upload links (and GET the presigned view links)
-#      from its own origins only. stg also allows the local dev dashboard.
+#   2. CORS: the dashboard and the customer form app (frontend/public-form) may PUT to the presigned
+#      upload links (and GET the presigned view links) from their own origins only. stg also allows
+#      the local dev apps.
 #   3. Lifecycle: tmp/ (uploads not yet saved on a reminder) expires after 1 day; unfinished
 #      multipart uploads are cleaned up after 1 day.
 # The API role's access to this bucket is in 09-api-lambda-role.sh. Safe to re-run: every step
@@ -27,8 +28,8 @@ aws s3api put-bucket-encryption --bucket "$STORAGE_BUCKET" --profile "$PROFILE" 
 
 echo "=== 2. CORS ==="
 ORIGINS=""
-for d in $DASHBOARD_DOMAINS; do ORIGINS="${ORIGINS:+$ORIGINS,}\"https://$d\""; done
-[ "$ENV" = "stg" ] && ORIGINS="$ORIGINS,\"https://localhost:6199\",\"https://localhost:6100\""
+for d in $DASHBOARD_DOMAINS $FORMS_DOMAINS; do ORIGINS="${ORIGINS:+$ORIGINS,}\"https://$d\""; done
+[ "$ENV" = "stg" ] && ORIGINS="$ORIGINS,\"https://localhost:6199\",\"https://localhost:6100\",\"https://localhost:6300\""
 aws s3api put-bucket-cors --bucket "$STORAGE_BUCKET" --profile "$PROFILE" --region "$REGION" --cors-configuration "{
   \"CORSRules\": [{
     \"AllowedOrigins\": [$ORIGINS],

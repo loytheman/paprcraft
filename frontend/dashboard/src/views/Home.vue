@@ -15,6 +15,8 @@ const name = computed(() => session.user?.firstName || session.user?.email || ''
     <p class="mt-2 text-body text-ink-muted">This is the starter dashboard. Sign-in, teams, labels, document templates, activity and API keys are wired up; add your own pages in <span class="font-mono">src/views</span> and routes in <span class="font-mono">src/router.js</span>.</p>
     <div class="mt-6 flex flex-wrap gap-3">
       <RouterLink :to="{ name: 'templates' }"><OpButton>Templates</OpButton></RouterLink>
+      <RouterLink :to="{ name: 'forms' }"><OpButton>Forms</OpButton></RouterLink>
+      <RouterLink :to="{ name: 'submissions' }"><OpButton>Submissions</OpButton></RouterLink>
       <RouterLink :to="{ name: 'labels' }"><OpButton variant="secondary">Labels</OpButton></RouterLink>
       <RouterLink :to="{ name: 'team' }"><OpButton variant="secondary">Team</OpButton></RouterLink>
       <RouterLink :to="{ name: 'activity' }"><OpButton variant="secondary">Activity</OpButton></RouterLink>

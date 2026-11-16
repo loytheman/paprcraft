@@ -33,6 +33,7 @@ export const templateSchema = {
   // appended by the API, completed by the docx Lambda (matched by cbId).
   exportHistory: { type: Array },
   keywordSearch: { type: String },
+  formId: { type: String }, // the form whose fields this template renders (the editor offers its keys); see service.form.js
 
   createdBy: { type: Object },
   updatedBy: { type: Object },
@@ -48,6 +49,7 @@ const fields = () => ({
   name: Joi.string().trim().max(150).label("Name"),
   section: Joi.array().items(sectionSchema).min(1).max(30).label("Sections"),
   placeholders: Joi.object().pattern(Joi.string().max(100), Joi.string().allow("").max(2000)).label("Placeholders"),
+  formId: Joi.string().allow(null, ""),
 });
 
 export class TemplateJoiSchema {

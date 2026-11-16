@@ -40,7 +40,7 @@ const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 const losing = computed(() => {
   const c = preview.value?.counts;
   if (!c) return [];
-  return [c.labels && plural(c.labels, 'label'), c.templates && plural(c.templates, 'document template')].filter(Boolean);
+  return [c.labels && plural(c.labels, 'label'), c.templates && plural(c.templates, 'document template'), c.forms && plural(c.forms, 'form'), c.submissions && plural(c.submissions, 'form submission')].filter(Boolean);
 });
 
 const confirmClose = async () => {
@@ -81,7 +81,7 @@ const confirmClose = async () => {
         <div class="max-w-xl">
           <h2 class="text-h3 text-ink">Close account</h2>
           <p class="mt-1 text-small text-ink-muted">
-            Permanently deletes your account and its data (labels, document templates, team, uploaded files). This can't be undone.
+            Permanently deletes your account and its data (labels, document templates, forms and submissions, team, uploaded files). This can't be undone.
           </p>
         </div>
         <OpButton variant="destructive" size="sm" icon="trash" :disabled="opening" @click="startClose">{{ opening ? 'Loading…' : 'Close account' }}</OpButton>

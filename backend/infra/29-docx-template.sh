@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Document template renderer: turns a template (sections of editor blocks) into a .docx.
-#   1. Role $DOCX_ROLE_NAME: logs, dynamodb GetItem/UpdateItem on $TABLE (reads the template, updates
+#   1. Role $DOCX_ROLE_NAME: logs, dynamodb GetItem/UpdateItem on $TABLE (reads the template, or the submission + form + template, updates
 #      its export entry), s3:PutObject on $STORAGE_BUCKET accounts/* (the finished file). Nothing else.
 #   2. Lambda $DOCX_LAMBDA_NAME (backend/lambda/docxTemplate.js + docxRender.js + docxStyles.js and the
 #      `docx` library, zipped by backend/lambda/compile-docx-template.sh): nodejs22.x, arm64, 512 MB, 60 s,

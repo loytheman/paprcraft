@@ -5,12 +5,14 @@
 #               index.html with a 404 status.
 #   dashboard - frontend/dashboard at $DASHBOARD_DOMAINS, folder $DASHBOARD_PREFIX/. Single-page
 #               app: unknown paths serve index.html with 200 so the client router handles them.
+#   forms     - frontend/public-form at $FORMS_DOMAINS, folder $FORMS_PREFIX/. The page customers open
+#               from a form link (/f/<token>): single-page like the dashboard, noindex on every env.
 #
 #   1. $SITE_BUCKET: private (all public access blocked, BucketOwnerEnforced), SSE-S3. Shared by
 #      every frontend of this env, one folder each — what `yarn upload-<env>` syncs to.
 #   2. Origin Access Control $SITE_OAC_NAME (shared), so only CloudFront can read the bucket.
 #   3. Response headers policy paprcraft-<env>-<site>-headers: HSTS, nosniff, frame DENY, referrer
-#      policy, plus X-Robots-Tag: noindex on stg (both sites) and on the prod dashboard.
+#      policy, plus X-Robots-Tag: noindex on stg (every site) and on the prod dashboard and forms.
 #   4. The distribution (found by Comment): origin path /<folder>, us-east-1 wildcard cert from
 #      05-acm-cert.sh, HTTPS redirect, managed CachingOptimized, HTTP/2+3, IPv6, PriceClass_200
 #      (includes Asia edges). Missing keys come back from S3 as 403 (CloudFront has no ListBucket),
@@ -27,8 +29,8 @@
 # laid over its current config (update-distribution), everything else kept as is.
 set -euo pipefail
 
-ENV="${1:?Usage: $0 <stg|prod> <landing|dashboard>}"
-SITE="${2:?Usage: $0 <stg|prod> <landing|dashboard>}"
+ENV="${1:?Usage: $0 <stg|prod> <landing|dashboard|forms>}"
+SITE="${2:?Usage: $0 <stg|prod> <landing|dashboard|forms>}"
 source "$(dirname "$0")/_env.sh" "$ENV"
 set -f # $DOMAINS may hold a literal "*" that must not glob
 CERT_DOMAIN="$BASE_DOMAIN"
@@ -44,8 +46,13 @@ case "$SITE" in
     FALLBACK_STATUS="200"; POLICY_SID="DashboardCloudFrontRead"
     NOINDEX=true # a signed-in app has nothing for search engines on any env
     ;;
+  forms)
+    DOMAINS="$FORMS_DOMAINS"; PREFIX="$FORMS_PREFIX"; DIST_COMMENT="$FORMS_DIST_COMMENT"
+    FALLBACK_STATUS="200"; POLICY_SID="FormsCloudFrontRead"
+    NOINDEX=true # links are private; nothing here is for search engines on any env
+    ;;
   *)
-    echo "Unknown site '$SITE' — expected 'landing' or 'dashboard'" >&2
+    echo "Unknown site '$SITE' — expected 'landing', 'dashboard' or 'forms'" >&2
     exit 1
     ;;
 esac

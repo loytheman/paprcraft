@@ -14,6 +14,8 @@ import { downloadCsv, toCsv } from '@/helpers/Csv';
 const FILTERS = [
   { key: '', label: 'All' },
   { key: 'templates', label: 'Templates' },
+  { key: 'forms', label: 'Forms' },
+  { key: 'submissions', label: 'Submissions' },
   { key: 'labels', label: 'Labels' },
   { key: 'account', label: 'Account' },
 ];
