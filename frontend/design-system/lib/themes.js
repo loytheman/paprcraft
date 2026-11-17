@@ -23,6 +23,8 @@ export const THEMES = [
   { id: 'tropical-patio', name: 'Tropical Patio', colors: ['#2F4F2F', '#6BAF4E', '#BFE35A', '#FFE66D', '#FFF5D6'] },
   { id: 'harvest-lime', name: 'Harvest Lime', colors: ['#4A5D23', '#7C8F2B', '#B9C23F', '#F0D54E', '#F7F1D5'] },
   { id: 'electric-tennis-court', name: 'Electric Tennis Court', colors: ['#0B1F0E', '#1E7F2D', '#B7FF3C', '#FFE600', '#F3F3F3'] },
+  { id: 'custom-fern', name: 'Custom Fern', colors: ['#1F4D2E', '#2E7D32', '#9ACD32', '#FDD835', '#FFF8E1'] },
+  { id: 'custom-tennis-court', name: 'Custom Tennis Court', colors: ['#1F4D2E', '#1E7F2D', '#B7FF3C', '#FFE600', '#F3F3F3'] },
 ];
 
 const KEY = 'paprcraft-theme';
