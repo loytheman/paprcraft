@@ -7,6 +7,7 @@ import { RouterLink, useRouter } from 'vue-router';
 import OpButton from '@ds/components/OpButton.vue';
 import OpIcon from '@ds/components/OpIcon.vue';
 import DocPreview from '@/components/DocPreview.vue';
+import ExportActions from '@/components/ExportActions.vue';
 import * as SubmissionService from '@/services/service.submission';
 import { generateBlock } from '@/helpers/forms/submission';
 import { formatDateTime } from '@/helpers/Format';
@@ -21,11 +22,12 @@ const props = defineProps({
 const emit = defineEmits(['history']);
 const router = useRouter();
 
-const previewUrl = ref('');
+const preview = ref({ url: '', pdf: false });
+const wantPdf = ref(true);
 const busy = ref(false);
 const error = ref('');
 const entries = computed(() => (props.submission.exportHistory ?? []).slice().reverse());
-const processing = computed(() => entries.value.some((h) => h.processStatus === 'processing'));
+const processing = computed(() => entries.value.some((h) => h.processStatus === 'processing' || h.pdfStatus === 'processing'));
 const blocked = computed(() => generateBlock(props.submission, props.form, props.role));
 const noTemplate = computed(() => props.form && !props.form.templateId);
 const builderLink = computed(() => (props.form && router.hasRoute('form') ? { name: 'form', params: { id: props.form.id } } : null));
@@ -52,7 +54,7 @@ const generate = async () => {
   busy.value = true;
   try {
     if (props.flush) await props.flush(); // the document is made from the saved answers
-    const s = await SubmissionService.generateDocument(props.submission.id);
+    const s = await SubmissionService.generateDocument(props.submission.id, wantPdf.value);
     emit('history', s.exportHistory ?? []);
   } catch (e) {
     error.value = e.fieldErrors?.[0]?.message || e.message || 'Could not start the document.';
@@ -69,7 +71,7 @@ const STATUS = { processing: 'Processing…', completed: 'Ready', failed: 'Faile
       <h2 class="text-h3 text-ink">Documents</h2>
       <OpButton v-if="role !== 'viewer'" size="sm" variant="ghost" aria-label="Refresh documents" @click="refresh"><OpIcon name="refresh" :size="14" /></OpButton>
     </div>
-    <p class="mt-1 text-body text-ink-muted">Fill the form's document template with these answers and download it as a Word file.</p>
+    <p class="mt-1 text-body text-ink-muted">Fill the form's document template with these answers and download it as a Word file or a PDF.</p>
 
     <p v-if="noTemplate" class="status-warn mt-3 rounded-control border px-3 py-2 text-small">
       This form has no document template yet.
@@ -78,6 +80,7 @@ const STATUS = { processing: 'Processing…', completed: 'Ready', failed: 'Faile
     <p v-else-if="blocked" class="mt-3 text-small text-ink-faint">{{ blocked }}</p>
 
     <div class="mt-4">
+      <label v-if="role !== 'viewer'" class="mb-3 flex items-center gap-2 text-body text-ink"><input v-model="wantPdf" type="checkbox" class="size-4 accent-primary" /> Also create a PDF</label>
       <OpButton v-if="role !== 'viewer'" icon="send" :disabled="busy || !!blocked" @click="generate">{{ busy ? 'Starting…' : 'Generate document' }}</OpButton>
       <p v-if="dirty && !blocked" class="mt-2 text-small text-ink-faint">Your latest answers are saved first.</p>
     </div>
@@ -91,11 +94,9 @@ const STATUS = { processing: 'Processing…', completed: 'Ready', failed: 'Faile
           <span class="ml-2 text-small text-ink-faint">{{ formatDateTime(h.createdAt) }}<template v-if="h.createdBy"> · {{ h.createdBy.name || h.createdBy.email }}</template></span>
           <p v-if="h.error" class="text-small text-down">{{ h.error }}</p>
         </div>
-        <OpButton v-if="h.url" size="sm" variant="secondary" icon="play" @click="previewUrl = h.url">Preview</OpButton>
-        <a v-if="h.url" :href="h.url" download class="inline-flex h-8 items-center gap-1.5 rounded-control border border-line-strong px-3 text-small text-ink hover:bg-ink/4"><OpIcon name="download" :size="14" /> Download</a>
-        <span v-else-if="h.processStatus === 'processing'" class="text-small text-ink-faint">Checking again in a few seconds…</span>
+        <ExportActions :entry="h" @preview="(p) => (preview = p)" />
       </li>
     </ul>
-    <DocPreview :url="previewUrl" title="Document preview" @close="previewUrl = ''" />
+    <DocPreview :url="preview.url" :pdf="preview.pdf" title="Document preview" @close="preview = { url: '', pdf: false }" />
   </section>
 </template>

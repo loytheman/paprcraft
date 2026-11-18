@@ -18,6 +18,7 @@ import { ApiError, errorType, errorMessage } from "../middlewares/error.js";
 import templateModel, { MASTER_ACCOUNT_ID, exportStatus } from "../models/model.template.js";
 import { getAccountPlan, planLimitError, isTopPlan, includesText, assertNotSuspended } from "./service.plan.js";
 import { deleteFolder } from "./service.attachment.js";
+import { pdfUrls } from "./service.exportUrls.js";
 
 const DOWNLOAD_URL_SECONDS = 900;
 const MAX_EXPORT_HISTORY = 50;
@@ -44,7 +45,7 @@ export const getTemplateFor = async (id, ownerId) => {
 const withDownloadUrls = async (template) => {
   const history = template.exportHistory ?? [];
   const exportHistory = await Promise.all(
-    history.map(async ({ path, ...h }) => ({
+    history.map(async ({ path, pdfPath, ...h }) => ({
       ...h,
       ...(path && h.processStatus === exportStatus.COMPLETED && {
         url: await getSignedUrl(
@@ -53,6 +54,7 @@ const withDownloadUrls = async (template) => {
           { expiresIn: DOWNLOAD_URL_SECONDS }
         ),
       }),
+      ...(pdfPath && h.pdfStatus === exportStatus.COMPLETED && (await pdfUrls(pdfPath, template.name || "template"))),
     }))
   );
   return { ...template, exportHistory };
@@ -103,7 +105,7 @@ export const cloneTemplate = async (id, sourceOwnerId, ownerId, blameable) => {
 };
 
 // Starts a .docx export. Returns the template with the new "processing" entry.
-export const generateExport = async ({ id, values }, accountId, blameable) => {
+export const generateExport = async ({ id, values, pdf }, accountId, blameable) => {
   if (accountId === MASTER_ACCOUNT_ID) throw badRequest("Master templates can't be exported. Clone one first.");
   const t = await getTemplateFor(id, accountId);
   assertNotSuspended(await getAccountPlan(accountId));
@@ -111,14 +113,14 @@ export const generateExport = async ({ id, values }, accountId, blameable) => {
   if ((t.exportHistory?.length ?? 0) >= MAX_EXPORT_HISTORY) throw badRequest(`A template keeps up to ${MAX_EXPORT_HISTORY} exports. Delete the template's old ones first.`);
 
   const cbId = Utils.ulid();
-  const entry = { cbId, processStatus: exportStatus.PROCESSING, createdAt: new Date().toISOString(), createdBy: blameable?.actionBy ?? null, fileName: `${cbId}.docx` };
+  const entry = { cbId, processStatus: exportStatus.PROCESSING, createdAt: new Date().toISOString(), createdBy: blameable?.actionBy ?? null, fileName: `${cbId}.docx`, ...(pdf && { pdf: true }) };
   await templateModel.addExport(id, entry, blameable);
   try {
     await getLambdaClient().send(
       new InvokeCommand({
         FunctionName: config.docx.lambdaName,
         InvocationType: "Event", // async: the Lambda updates exportHistory when done
-        Payload: Buffer.from(JSON.stringify({ templateId: id, cbId, values: values ?? {} })),
+        Payload: Buffer.from(JSON.stringify({ templateId: id, cbId, values: values ?? {}, pdf: !!pdf })),
       })
     );
   } catch (err) {
@@ -144,6 +146,7 @@ export const deleteExport = async (id, cbId, accountId, blameable) => {
   if (!hit) throw notFound();
   await templateModel.update({ id, exportHistory: t.exportHistory.filter((h) => h.cbId !== cbId) }, blameable);
   if (hit.path) await deleteFolder(hit.path); // a single key, used as a prefix
+  if (hit.pdfPath) await deleteFolder(hit.pdfPath);
   return getTemplate(id, accountId);
 };
 

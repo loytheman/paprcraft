@@ -76,6 +76,11 @@ AUDIT_ROLE_NAME="paprcraft-${ENV}-audit-trail-role"
 # asynchronously (service.template.js); its name reaches the API as the DOCX_LAMBDA_NAME env var.
 DOCX_LAMBDA_NAME="paprcraft-${ENV}-docx-template"
 DOCX_ROLE_NAME="paprcraft-${ENV}-docx-template-role"
+# The PDF converter (container-image Lambda running LibreOffice; infra/30-pdf-convert.sh). The docx Lambda
+# invokes it asynchronously when an export asks for a PDF; the name reaches it as PDF_LAMBDA_NAME.
+PDF_LAMBDA_NAME="paprcraft-${ENV}-pdf-convert"
+PDF_ROLE_NAME="paprcraft-${ENV}-pdf-convert-role"
+PDF_REPO_NAME="paprcraft-${ENV}-pdf-convert"
 DASHBOARD_URL="https://${DASHBOARD_DOMAINS%% *}"
 # Sender of system emails, on the env's verified SES domain (04-ses-identity.sh). Matches
 # SES_FROM_EMAIL in backend/api/src/.env.<stage>.

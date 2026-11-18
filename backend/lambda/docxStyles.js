@@ -137,15 +137,21 @@ const createStyles = (gc = defaultConfig()) => {
     ]);
   const frameHeader = ({ headerLeft = '', headerRight = '' } = {}) =>
     new Header({ children: [frameTable(headerLeft, [p([span_sm(headerRight)], { alignment: AlignmentType.RIGHT })]), p(span(''))] });
-  const frameFooter = ({ footerLeft = '' } = {}) =>
+  // `wholeDocument`: count pages of the whole file (NUMPAGES). LibreOffice (the PDF converter) doesn't
+  // support the per-section total, so single-section documents use this; several Word sections keep
+  // "pages in this section" (Word).
+  const frameFooter = ({ footerLeft = '' } = {}, { wholeDocument = false } = {}) =>
     new Footer({
       children: [
         p(br()),
         frameTable(footerLeft, [
-          p([span_sm('', { children: ['Page ', PageNumber.CURRENT] }), span_sm('', { children: ['/', PageNumber.TOTAL_PAGES_IN_SECTION] })], { alignment: AlignmentType.RIGHT }),
+          p([span_sm('', { children: ['Page ', PageNumber.CURRENT] }), span_sm('', { children: ['/', wholeDocument ? PageNumber.TOTAL_PAGES : PageNumber.TOTAL_PAGES_IN_SECTION] })], { alignment: AlignmentType.RIGHT, style: 'FrameFooter' }),
         ]),
       ],
     });
+
+  // Page-number fields take their look from the paragraph style (LibreOffice ignores the run's own).
+  const paragraphStyles = () => [{ id: 'FrameFooter', name: 'Frame footer', run: { font: gc.font, size: gc.fontSize.span_sm } }];
 
   const levelStyle = (indentMultiple, size) => ({
     paragraph: {
@@ -184,7 +190,7 @@ const createStyles = (gc = defaultConfig()) => {
 
   return {
     gc, span, span_xl, span_lg, span_md, span_sm, span_xs, b, b_xl, b_md, b_sm, br, t, p, table, tr, td, td2, td_noBorder, th, tr2, tr_showHeader, tr_empty, td_empty,
-    checkbox, li, frameHeader, frameFooter, numberingConfig, pageStyle, NO_BORDERS,
+    checkbox, li, frameHeader, frameFooter, paragraphStyles, numberingConfig, pageStyle, NO_BORDERS,
   };
 };
 

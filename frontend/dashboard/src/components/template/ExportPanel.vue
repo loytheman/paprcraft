@@ -6,6 +6,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import OpButton from '@ds/components/OpButton.vue';
 import OpIcon from '@ds/components/OpIcon.vue';
 import DocPreview from '@/components/DocPreview.vue';
+import ExportActions from '@/components/ExportActions.vue';
 import { formatDateTime } from '@/helpers/Format';
 import * as TemplateService from '@/services/service.template';
 import { askConfirm } from '@/helpers/Confirm';
@@ -23,10 +24,11 @@ const props = defineProps({
 });
 const emit = defineEmits(['close', 'history']);
 
-const previewUrl = ref('');
+const preview = ref({ url: '', pdf: false });
+const wantPdf = ref(true);
 const busy = ref(false);
 const error = ref('');
-const processing = computed(() => props.history.some((h) => h.processStatus === 'processing'));
+const processing = computed(() => props.history.some((h) => h.processStatus === 'processing' || h.pdfStatus === 'processing'));
 const entries = computed(() => props.history.slice().reverse());
 
 const refresh = async () => {
@@ -61,7 +63,7 @@ const generate = async () => {
   busy.value = true;
   try {
     if (props.dirty) await props.save();
-    const t = await TemplateService.generateDocument(props.templateId, props.values());
+    const t = await TemplateService.generateDocument(props.templateId, props.values(), wantPdf.value);
     emit('history', t.exportHistory ?? []);
   } catch (e) {
     error.value = e.fieldErrors?.[0]?.message || e.message || 'Could not start the export.';
@@ -98,6 +100,7 @@ const STATUS = { processing: 'Processing…', completed: 'Ready', failed: 'Faile
 
     <div class="flex-1 overflow-y-auto px-4 py-4">
       <OpButton v-if="!readonly" icon="send" block :disabled="busy" @click="generate">{{ busy ? 'Starting…' : 'Generate .docx' }}</OpButton>
+      <label v-if="!readonly" class="mt-3 flex items-center gap-2 text-body text-ink"><input v-model="wantPdf" type="checkbox" class="size-4 accent-primary" /> Also create a PDF</label>
       <p class="mt-2 text-small text-ink-faint">Uses the placeholder values shown in the editor. Word files appear below when they are ready.</p>
       <p v-if="error" role="alert" class="status-down mt-3 rounded-control border px-3 py-2 text-small">{{ error }}</p>
 
@@ -111,14 +114,12 @@ const STATUS = { processing: 'Processing…', completed: 'Ready', failed: 'Faile
           <p v-if="h.createdBy" class="mt-0.5 text-small text-ink-faint">{{ h.createdBy.name || h.createdBy.email }}</p>
           <p v-if="h.error" class="mt-1 text-small text-down">{{ h.error }}</p>
           <div class="mt-2 flex items-center gap-2">
-            <OpButton v-if="h.url" size="sm" variant="secondary" icon="play" @click="previewUrl = h.url">Preview</OpButton>
-            <a v-if="h.url" :href="h.url" download class="inline-flex h-8 items-center gap-1.5 rounded-control border border-line-strong px-3 text-small text-ink hover:bg-ink/4"><OpIcon name="download" :size="14" /> Download</a>
-            <span v-else-if="h.processStatus === 'processing'" class="text-small text-ink-faint">Checking again in a few seconds…</span>
+            <ExportActions :entry="h" @preview="(p) => (preview = p)" />
             <OpButton v-if="!readonly" size="sm" variant="ghost" aria-label="Delete export" class="ml-auto" @click="remove(h)"><OpIcon name="trash" :size="14" /></OpButton>
           </div>
         </li>
       </ul>
     </div>
   </aside>
-  <DocPreview :url="previewUrl" :title="`${templateName} (preview)`" @close="previewUrl = ''" />
+  <DocPreview :url="preview.url" :pdf="preview.pdf" :title="`${templateName} (preview)`" @close="preview = { url: '', pdf: false }" />
 </template>

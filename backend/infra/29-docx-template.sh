@@ -6,7 +6,8 @@
 #      `docx` library, zipped by backend/lambda/compile-docx-template.sh): nodejs22.x, arm64, 512 MB, 60 s,
 #      env TABLE and BUCKET. Invoked asynchronously by the API (service.template.js generateExport), which
 #      is allowed to by 09-api-lambda-role.sh; the API learns the name from DOCX_LAMBDA_NAME (10-api-lambda-function.sh).
-# Run order: 01 (table), 28 (bucket), then this, then 09 and 10 so the API may invoke it and knows its name.
+# When an export asks for a PDF it also invokes $PDF_LAMBDA_NAME (30-pdf-convert.sh; run that after this).
+# Run order: 01 (table), 28 (bucket), then this, then 30, then 09 and 10 so the API may invoke it and knows its name.
 # Later code changes: `yarn deploy-docx-template-stg|prod` in backend/lambda.
 # Safe to re-run: creates what's missing, updates the policy, code and configuration of what's there.
 # Needs: node, npm and zip on this machine (the build installs `docx` into the zip).
@@ -33,6 +34,12 @@ aws iam put-role-policy --role-name "$DOCX_ROLE_NAME" --policy-name "${DOCX_ROLE
       \"Resource\": \"arn:aws:dynamodb:${REGION}:${ACCOUNT_ID}:table/${TABLE}\"
     },
     {
+      \"Sid\": \"StartPdfConversion\",
+      \"Effect\": \"Allow\",
+      \"Action\": \"lambda:InvokeFunction\",
+      \"Resource\": \"arn:aws:lambda:${REGION}:${ACCOUNT_ID}:function:${PDF_LAMBDA_NAME}\"
+    },
+    {
       \"Sid\": \"WriteExportedDocuments\",
       \"Effect\": \"Allow\",
       \"Action\": \"s3:PutObject\",
@@ -46,7 +53,7 @@ sleep 10
 echo "=== 2. Lambda $DOCX_LAMBDA_NAME ==="
 "$LAMBDA_SRC_DIR/compile-docx-template.sh"
 ZIP="$LAMBDA_SRC_DIR/docx-template.zip"
-ENVIRONMENT="Variables={TABLE=${TABLE},BUCKET=${STORAGE_BUCKET}}"
+ENVIRONMENT="Variables={TABLE=${TABLE},BUCKET=${STORAGE_BUCKET},PDF_LAMBDA_NAME=${PDF_LAMBDA_NAME}}"
 if aws lambda get-function --function-name "$DOCX_LAMBDA_NAME" "${AWS[@]}" >/dev/null 2>&1; then
   aws lambda update-function-code --function-name "$DOCX_LAMBDA_NAME" --zip-file "fileb://$ZIP" --architectures arm64 "${AWS[@]}" >/dev/null
   aws lambda wait function-updated-v2 --function-name "$DOCX_LAMBDA_NAME" "${AWS[@]}"

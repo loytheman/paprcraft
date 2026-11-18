@@ -579,12 +579,14 @@ const render = (template, values = {}, formData = null) => {
   // Each template section starts on a new page. A page-break-02 block also ends the current Word
   // section (its footer gets ".../M") and starts one whose header shows "-N-". Word headers and
   // footers belong to a whole section, so they repeat on every page of it.
+  const wordSections = (template?.section ?? []).reduce((n, sec) => n + 1 + (sec?.list ?? []).filter((b) => b?.type === 'page-break-02').length, 0);
+  const footerOpts = { wholeDocument: wordSections <= 1 };
   const sections = [];
   for (const sec of template?.section ?? []) {
     state.trackItemId = [];
     let children = [];
     let header = frame ? S.frameHeader(frame) : null;
-    let footer = frame ? S.frameFooter(frame) : null;
+    let footer = frame ? S.frameFooter(frame, footerOpts) : null;
     const close = () => {
       sections.push({ ...S.pageStyle({ header, footer }), children: children.length ? children : [p([])] });
       children = [];
@@ -596,7 +598,7 @@ const render = (template, values = {}, formData = null) => {
         const next = block.item?.data?.headerPageNo || '2';
         close();
         header = frame ? S.frameHeader(frame) : pageNoHeader(next);
-        footer = frame ? S.frameFooter(frame) : null;
+        footer = frame ? S.frameFooter(frame, footerOpts) : null;
         continue;
       }
       children.push(...generateItem(block));
@@ -608,6 +610,7 @@ const render = (template, values = {}, formData = null) => {
     creator: 'paprcraft',
     title: template?.name || 'Document',
     numbering: { config: S.numberingConfig() },
+    styles: { paragraphStyles: S.paragraphStyles() },
     sections: sections.length ? sections : [{ ...S.pageStyle(), children: [p([])] }],
   });
 };

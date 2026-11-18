@@ -26,7 +26,7 @@ export const revokeLink = (id) => callApi('DELETE', `submission/${id}/link`).the
 
 // Starts a .docx export from the form's template; resolves with the submission, including the new
 // "processing" entry in exportHistory (the docx Lambda completes it).
-export const generateDocument = (id) => callApi('POST', `submission/${id}/generate`, {}).then((r) => r.data);
+export const generateDocument = (id, pdf = false) => callApi('POST', `submission/${id}/generate`, { pdf }).then((r) => r.data);
 
 // The forms the pages need: published ones to start from, one form's settings.
 export const listForms = () => callApi('GET', 'forms').then((r) => r.data);

@@ -29,7 +29,8 @@ export const templateSchema = {
   name: { type: String, required: true },
   section: { type: Array }, // [{ name, list: [block, ...] }]
   placeholders: { type: Object }, // { KEY: "value" }: defaults for {{KEY}} chips
-  // [{ cbId, processStatus: processing|completed|failed, createdAt, createdBy, path, fileName, error }]
+  // [{ cbId, processStatus: processing|completed|failed, createdAt, createdBy, path, fileName, error,
+  //    pdf (asked for), pdfStatus: processing|completed|failed, pdfPath, pdfError }]
   // appended by the API, completed by the docx Lambda (matched by cbId).
   exportHistory: { type: Array },
   keywordSearch: { type: String },
@@ -85,6 +86,7 @@ export class TemplateJoiSchema {
     return {
       id: Joi.string().required(),
       values: Joi.object().pattern(Joi.string().max(100), Joi.string().allow("").max(2000)),
+      pdf: Joi.boolean(), // also make a PDF from the finished Word file
     };
   }
 }

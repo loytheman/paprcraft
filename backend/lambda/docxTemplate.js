@@ -12,9 +12,11 @@
 //      cbId) to "completed", or to "failed" with a short, customer-safe message. It never throws
 //      after the item is found: an async Lambda error is retried by AWS, which would render the same
 //      bad document twice more.
+//   4. If the payload says `pdf: true`, hands the finished file to the PDF converter Lambda (pdfConvert.js).
 // Deploy: yarn deploy-docx-template-stg|prod (backend/lambda). First-time create: infra/29-docx-template.sh.
 const { render } = require('./docxRender');
 const { flatten } = require('./formEngine');
+const { keyOf, submissionKey, formKey, patchExport } = require('./exportEntry');
 
 const FAILED_MESSAGE = 'Could not render the document. Check the template and try again.';
 const NO_TEMPLATE_MESSAGE = 'This form has no document template yet.';
@@ -28,55 +30,36 @@ const defaultDeps = () => {
   const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
   const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
   const s3 = new S3Client({});
+  const { LambdaClient, InvokeCommand } = require('@aws-sdk/client-lambda');
+  const lambda = new LambdaClient({});
   return {
     getItem: async (table, Key) => (await ddb.send(new GetCommand({ TableName: table, Key }))).Item ?? null,
     updateItem: (params) => ddb.send(new UpdateCommand(params)),
     putObject: (params) => s3.send(new PutObjectCommand(params)),
+    invokeAsync: (FunctionName, payload) => lambda.send(new InvokeCommand({ FunctionName, InvocationType: 'Event', Payload: Buffer.from(JSON.stringify(payload)) })),
   };
 };
 
 const DOCX_TYPE = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-const keyOf = (templateId) => ({ pk: `#TEMPLATE:${templateId}`, sk: '#TEMPLATE#METADATA' });
-const submissionKey = (id) => ({ pk: `#SUBMISSION:${id}`, sk: '#SUBMISSION#METADATA' });
-const formKey = (id) => ({ pk: `#FORM:${id}`, sk: '#FORM#METADATA' });
-const isConflict = (err) => err?.name === 'ConditionalCheckFailedException';
-
-// Writes `fields` onto exportHistory[idx] where it is still the entry for cbId. The index is found
-// by re-reading the item, so entries appended or removed meanwhile don't matter; one retry covers
-// a concurrent change between the read and the write.
-const patchExport = async (deps, table, key, cbId, fields) => {
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    const item = await deps.getItem(table, key);
-    const idx = (item?.exportHistory ?? []).findIndex((h) => h.cbId === cbId);
-    if (idx < 0) return false; // the export was deleted meanwhile
-    const names = { '#h': 'exportHistory' };
-    const vals = { ':cb': cbId };
-    const sets = Object.entries(fields).map(([k, v], i) => {
-      names[`#f${i}`] = k;
-      vals[`:v${i}`] = v;
-      return `#h[${idx}].#f${i} = :v${i}`;
-    });
-    try {
-      await deps.updateItem({
-        TableName: table,
-        Key: key,
-        UpdateExpression: `SET ${sets.join(', ')}`,
-        ConditionExpression: `attribute_exists(pk) AND #h[${idx}].cbId = :cb`,
-        ExpressionAttributeNames: names,
-        ExpressionAttributeValues: vals,
-      });
-      return true;
-    } catch (err) {
-      if (!isConflict(err)) throw err;
-    }
-  }
-  return false;
-};
-
 const docxBuffer = (template, values, formData) => require('docx').Packer.toBuffer(render(template, values ?? {}, formData));
 
+// When the export asked for a PDF: marks it "processing" and hands the finished .docx to the PDF
+// converter Lambda (env PDF_LAMBDA_NAME). Never fails the export: the Word file is already done.
+const startPdf = async (deps, table, key, cbId, docxPath, wanted) => {
+  if (!wanted) return;
+  const fn = process.env.PDF_LAMBDA_NAME;
+  try {
+    if (!fn) throw new Error('PDF_LAMBDA_NAME is not set');
+    await patchExport(deps, table, key, cbId, { pdfStatus: 'processing' });
+    await deps.invokeAsync(fn, { recordKey: key, cbId, docxPath });
+  } catch (err) {
+    console.error(JSON.stringify({ msg: 'docx: could not start pdf', cbId, error: String(err?.message || err) }));
+    try { await patchExport(deps, table, key, cbId, { pdfStatus: 'failed', pdfError: 'Could not create the PDF. The Word file is still available.' }); } catch { /* nothing more to do */ }
+  }
+};
+
 // A template on its own.
-const handleTemplate = async (deps, { templateId, cbId, values }) => {
+const handleTemplate = async (deps, { templateId, cbId, values, pdf }) => {
   const table = process.env.TABLE;
   const bucket = process.env.BUCKET;
   let template;
@@ -97,6 +80,7 @@ const handleTemplate = async (deps, { templateId, cbId, values }) => {
     await deps.putObject({ Bucket: bucket, Key: path, Body: buffer, ContentType: DOCX_TYPE });
     const patched = await patchExport(deps, table, keyOf(templateId), cbId, { processStatus: 'completed', path, fileName: `${cbId}.docx` });
     console.log(JSON.stringify({ msg: 'docx: done', templateId, cbId, bytes: buffer.length, entryFound: patched }));
+    if (patched) await startPdf(deps, table, keyOf(templateId), cbId, path, pdf);
     return { ok: true, path };
   } catch (err) {
     console.error(JSON.stringify({ msg: 'docx: failed', templateId, cbId, error: String(err?.message || err) }));
@@ -110,7 +94,7 @@ const handleTemplate = async (deps, { templateId, cbId, values }) => {
 };
 
 // A form submission, through its form's template.
-const handleSubmission = async (deps, { submissionId, cbId, values }) => {
+const handleSubmission = async (deps, { submissionId, cbId, values, pdf }) => {
   const table = process.env.TABLE;
   const bucket = process.env.BUCKET;
   let sub;
@@ -154,6 +138,7 @@ const handleSubmission = async (deps, { submissionId, cbId, values }) => {
     await deps.putObject({ Bucket: bucket, Key: path, Body: buffer, ContentType: DOCX_TYPE });
     const patched = await patchExport(deps, table, submissionKey(submissionId), cbId, { processStatus: 'completed', path, fileName: `${cbId}.docx` });
     console.log(JSON.stringify({ msg: 'docx: done', submissionId, cbId, bytes: buffer.length, entryFound: patched }));
+    if (patched) await startPdf(deps, table, submissionKey(submissionId), cbId, path, pdf);
     return { ok: true, path };
   } catch (err) {
     return fail(FAILED_MESSAGE, err);

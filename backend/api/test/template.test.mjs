@@ -92,7 +92,15 @@ test('generate: adds a processing entry and invokes the Lambda with ids and valu
   assert.equal(out.exportHistory.length, 1);
   assert.equal(out.exportHistory[0].processStatus, 'processing');
   assert.equal(out.exportHistory[0].createdBy.name, 'Alice');
-  assert.deepEqual(invokes, [{ templateId: t.id, cbId: out.exportHistory[0].cbId, values: { COMPANY: 'Acme' } }]);
+  assert.deepEqual(invokes, [{ templateId: t.id, cbId: out.exportHistory[0].cbId, values: { COMPANY: 'Acme' }, pdf: false }]);
+});
+
+test('generate: pdf true is remembered on the entry and passed to the Lambda', async () => {
+  reset();
+  const t = await svc.createTemplate({ name: 'Doc' }, 'A1');
+  const out = await svc.generateExport({ id: t.id, values: {}, pdf: true }, 'A1', { actionBy: { name: 'Alice' } });
+  assert.equal(out.exportHistory[0].pdf, true);
+  assert.equal(invokes[0].pdf, true);
 });
 
 test('generate: a failed invoke marks the entry failed and errors; masters and missing setup are refused', async () => {

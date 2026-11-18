@@ -267,7 +267,7 @@ test('generate: adds a processing entry and invokes the Lambda with just the sub
   assert.equal(out.exportHistory.length, 1);
   assert.equal(out.exportHistory[0].processStatus, 'processing');
   assert.equal(out.exportHistory[0].createdBy.name, 'Alice');
-  assert.deepEqual(invokes, [{ submissionId: s.id, cbId: out.exportHistory[0].cbId }]);
+  assert.deepEqual(invokes, [{ submissionId: s.id, cbId: out.exportHistory[0].cbId, pdf: false }]);
   assert.equal(out.exportHistory[0].url, undefined); // nothing to download yet
 });
 

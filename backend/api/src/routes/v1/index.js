@@ -206,7 +206,7 @@ const r = router;
   r.post("/submission/:id/approve", auth(), joi(s.decide), blameableBehaviour, c.approve)
   r.post("/submission/:id/reject", auth(), joi(s.reject), blameableBehaviour, c.reject)
   r.post("/submission/:id/reopen", auth(), joi(s.byId), blameableBehaviour, c.reopen)
-  r.post("/submission/:id/generate", auth(), joi(s.byId), blameableBehaviour, c.generate)
+  r.post("/submission/:id/generate", auth(), joi(s.generate), blameableBehaviour, c.generate)
   r.delete("/submission/:id/export/:cbId", auth(), joi(s.exportById), blameableBehaviour, c.deleteExport)
   r.post("/submission/:id/link", auth(), joi(s.link), blameableBehaviour, c.createLink)
   r.delete("/submission/:id/link", auth(), joi(s.byId), blameableBehaviour, c.revokeLink)

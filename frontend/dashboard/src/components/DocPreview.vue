@@ -10,9 +10,11 @@ import OpIcon from '@ds/components/OpIcon.vue';
 const props = defineProps({
   url: { type: String, default: '' },
   title: { type: String, default: 'Preview' },
+  downloadUrl: { type: String, default: '' }, // when `url` is an inline link, the one that downloads
+  pdf: { type: Boolean, default: false }, // the link is a PDF: the browser shows it directly, no Office viewer
 });
 const emit = defineEmits(['close']);
-const src = computed(() => (props.url ? `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(props.url)}` : ''));
+const src = computed(() => (!props.url ? '' : props.pdf ? props.url : `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(props.url)}`));
 </script>
 
 <template>
@@ -22,10 +24,10 @@ const src = computed(() => (props.url ? `https://view.officeapps.live.com/op/emb
         <div class="flex items-center justify-between gap-3 border-b border-line-soft px-4 py-3">
           <div class="min-w-0">
             <h2 class="truncate text-h3 text-ink">{{ title }}</h2>
-            <p class="text-small text-ink-faint">Shown by Microsoft's Office viewer. It can take a few seconds to load.</p>
+            <p class="text-small text-ink-faint">{{ pdf ? 'The PDF, shown by your browser.' : "Shown by Microsoft's Office viewer. It can take a few seconds to load." }}</p>
           </div>
           <div class="flex shrink-0 items-center gap-2">
-            <a :href="url" download class="inline-flex h-8 items-center gap-1.5 rounded-control border border-line-strong px-3 text-small text-ink hover:bg-ink/4"><OpIcon name="download" :size="14" /> Download</a>
+            <a :href="downloadUrl || url" download class="inline-flex h-8 items-center gap-1.5 rounded-control border border-line-strong px-3 text-small text-ink hover:bg-ink/4"><OpIcon name="download" :size="14" /> Download</a>
             <OpButton size="sm" variant="ghost" aria-label="Close preview" @click="emit('close')"><OpIcon name="x" :size="14" /></OpButton>
           </div>
         </div>

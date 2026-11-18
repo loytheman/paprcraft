@@ -89,6 +89,10 @@ export class SubmissionJoiSchema {
     return { id: Joi.string().required() };
   }
 
+  get generate() {
+    return { id: Joi.string().required(), pdf: Joi.boolean() };
+  }
+
   get exportById() {
     return { id: Joi.string().required(), cbId: Joi.string().required() };
   }
