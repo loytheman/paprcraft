@@ -1,3 +1,11 @@
 @import "tailwindcss";
 @import "../../design-system/theme.css";
 @source "../../design-system";
+
+/* The dashboard is denser than the marketing pages, so its corners are tighter. Only the shape
+   constants change; the landing page and customer form keep the design system's rounder ones. */
+:root {
+  --radius-base: 0.25rem;   /* buttons, inputs, chips */
+  --radius-large: 0.375rem; /* cards */
+  --radius-xlarge: 0.5rem;  /* panels and dialogs */
+}
