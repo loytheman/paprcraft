@@ -37,7 +37,7 @@ const menuItems = (idx) => [
 
 // Drag and drop within one list.
 const onDragStart = (e, idx) => {
-  ctx.dragState = { list: toRaw(props.modelValue), from: idx };
+  ctx.dragState = { list: toRaw(props.modelValue), from: idx, over: -1 };
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('text/plain', 'template-block');
   const li = e.target.closest('li');
@@ -45,7 +45,19 @@ const onDragStart = (e, idx) => {
 };
 // ctx is reactive, so what was stored comes back wrapped: compare the raw arrays.
 const sameList = () => !!ctx.dragState && toRaw(ctx.dragState.list) === toRaw(props.modelValue);
-const onDragOver = (e) => { if (sameList()) e.preventDefault(); };
+const onDragOver = (e, idx) => {
+  if (!sameList()) return;
+  e.preventDefault();
+  if (ctx.dragState.over !== idx) ctx.dragState.over = idx;
+};
+const onDragEnd = () => { ctx.dragState = null; };
+// Where the dragged block will land: dropping on row N puts it at position N, so it sits below that
+// row when dragging down and above it when dragging up. Nothing is shown over the block itself.
+const dropHint = (idx) => {
+  if (!sameList() || ctx.dragState.over !== idx || ctx.dragState.from === idx) return '';
+  return ctx.dragState.from < idx ? 'below' : 'above';
+};
+const dragging = (idx) => sameList() && ctx.dragState.from === idx;
 const onDrop = (e, idx) => {
   if (!sameList()) return;
   e.preventDefault();
@@ -63,14 +75,15 @@ const onDrop = (e, idx) => {
       :style="block.type === 'list-item-paragraph' ? { display: 'list-item', listStyleType: markerStyle } : null"
       :value="block.type === 'list-item-paragraph' ? numberOf(idx) : undefined"
       class="relative my-0.5 rounded-control"
-      :class="ctx.focusId === block.id && 'ring-1 ring-primary/40'"
+      :class="[ctx.focusId === block.id && 'ring-1 ring-primary/40', dragging(idx) && 'opacity-40']"
       @click.stop="ctx.setFocus(block.id)"
-      @dragover="onDragOver"
+      @dragover="onDragOver($event, idx)"
       @drop="onDrop($event, idx)"
     >
+      <div v-if="dropHint(idx) === 'above'" class="tpl-drop tpl-drop-above" aria-hidden="true"><span>Drop here</span></div>
       <div class="flex items-start gap-1">
         <div v-if="!ctx.readonly" class="flex w-12 shrink-0 items-center justify-end pt-1 text-ink-faint">
-          <span class="cursor-grab px-0.5 hover:text-ink active:cursor-grabbing" draggable="true" title="Drag to reorder" @dragstart="onDragStart($event, idx)"><OpIcon name="menu" :size="14" /></span>
+          <span class="cursor-grab px-0.5 hover:text-ink active:cursor-grabbing" draggable="true" title="Drag to reorder" @dragstart="onDragStart($event, idx)" @dragend="onDragEnd"><OpIcon name="menu" :size="14" /></span>
           <TplMenu :items="menuItems(idx)" title="Block actions" button-class="!px-0.5" />
         </div>
         <div class="min-w-0 flex-1">
@@ -85,11 +98,17 @@ const onDrop = (e, idx) => {
           <BlockLayout v-else :block="block" />
         </div>
       </div>
+      <div v-if="dropHint(idx) === 'below'" class="tpl-drop tpl-drop-below" aria-hidden="true"><span>Drop here</span></div>
     </li>
   </ul>
 </template>
 
 <style>
+/* The drop hint: a primary line with a small label where the dragged block will land. */
+.tpl-drop { position: absolute; left: 3rem; right: 0; height: 0; border-top: 2px solid var(--color-primary); pointer-events: none; z-index: 5; }
+.tpl-drop-above { top: -2px; }
+.tpl-drop-below { bottom: -2px; }
+.tpl-drop span { position: absolute; right: 0; top: -0.65rem; padding: 0 0.4rem; border-radius: 3px; background: var(--color-primary); color: var(--color-on-primary); font-size: 0.65rem; line-height: 1.1rem; letter-spacing: 0.02em; }
 .tpl-list { min-height: 2rem; }
 .tpl-stripes {
   border: 1px dashed color-mix(in srgb, var(--color-secondary) 45%, transparent);

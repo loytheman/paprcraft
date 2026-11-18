@@ -16,10 +16,13 @@ const props = defineProps({
 const emit = defineEmits(['close', 'select', 'add', 'clone', 'delete', 'move']);
 
 const dragFrom = ref(-1);
+const dragOver = ref(-1);
+const hint = (i) => (dragFrom.value < 0 || dragOver.value !== i || dragFrom.value === i ? '' : dragFrom.value < i ? 'below' : 'above');
+const endDrag = () => { dragFrom.value = -1; dragOver.value = -1; };
 const counts = (s) => countPlaceholders(s.list, props.placeholders);
 const onDrop = (to) => {
   if (dragFrom.value >= 0 && dragFrom.value !== to) emit('move', dragFrom.value, to);
-  dragFrom.value = -1;
+  endDrag();
 };
 </script>
 
@@ -30,11 +33,11 @@ const onDrop = (to) => {
         v-for="(s, i) in sections"
         :key="i"
         class="flex flex-wrap items-center gap-2 rounded-card border bg-surface-2 px-3 py-2"
-        :class="i === current ? 'border-primary/60' : 'border-line'"
-        @dragover.prevent
+        :class="[i === current ? 'border-primary/60' : 'border-line', dragFrom === i && 'opacity-40', hint(i) === 'above' && '!border-t-4 !border-t-primary', hint(i) === 'below' && '!border-b-4 !border-b-primary']"
+        @dragover.prevent="dragOver = i"
         @drop.prevent="onDrop(i)"
       >
-        <span v-if="!readonly" class="cursor-grab text-ink-faint hover:text-ink" draggable="true" title="Drag to reorder" @dragstart="dragFrom = i"><OpIcon name="menu" :size="14" /></span>
+        <span v-if="!readonly" class="cursor-grab text-ink-faint hover:text-ink" draggable="true" title="Drag to reorder" @dragstart="dragFrom = i" @dragend="endDrag"><OpIcon name="menu" :size="14" /></span>
         <span class="w-6 text-small text-ink-faint">{{ i + 1 }}.</span>
         <input
           v-model="s.name"
