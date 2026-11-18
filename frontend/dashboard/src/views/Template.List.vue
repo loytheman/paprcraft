@@ -53,6 +53,8 @@ const create = async () => {
 };
 
 const duplicate = async (t) => {
+  const ok = await askConfirm({ title: `Duplicate "${t.name}"?`, message: 'A copy of the template is created and opened. The original stays as it is.', confirmLabel: 'Duplicate', icon: 'copy', tone: 'primary' });
+  if (!ok) return;
   error.value = '';
   try {
     const copy = await TemplateService.duplicateTemplate(t.id);

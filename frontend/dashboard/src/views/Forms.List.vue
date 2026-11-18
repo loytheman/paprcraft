@@ -54,6 +54,8 @@ const create = async () => {
 };
 
 const duplicate = async (f) => {
+  const ok = await askConfirm({ title: `Duplicate "${f.name}"?`, message: 'A copy of the form is created and opened. The original stays as it is.', confirmLabel: 'Duplicate', icon: 'copy', tone: 'primary' });
+  if (!ok) return;
   error.value = '';
   try {
     const copy = await FormService.duplicateForm(f.id);
