@@ -12,10 +12,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     fonts-crosextra-carlito fonts-crosextra-caladea fonts-liberation fonts-dejavu-core fonts-noto-core \
  && rm -rf /var/lib/apt/lists/*
 WORKDIR /var/task
-COPY --from=ric /ric/node_modules /var/task/node_modules
+COPY --from=ric /ric /opt/ric
 COPY pdf/package.json ./package.json
 RUN npm install --omit=dev --no-audit --no-fund
 COPY pdfConvert.js exportEntry.js ./
 ENV HOME=/tmp
-ENTRYPOINT ["/usr/local/bin/npx", "aws-lambda-ric"]
+ENV LAMBDA_TASK_ROOT=/var/task
+ENTRYPOINT ["/opt/ric/node_modules/.bin/aws-lambda-ric"]
 CMD ["pdfConvert.handler"]
