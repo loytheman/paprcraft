@@ -15,7 +15,7 @@ import StaffCustomer from '@/views/Staff.Customer.vue';
 import Home from '@/views/Home.vue';
 import SettingsApiKey from '@/views/Settings.ApiKey.vue';
 import SettingsLabels from '@/views/Settings.Labels.vue';
-import TemplateList from '@/views/Template.List.vue';
+import Converter from '@/views/Converter.vue';import TemplateList from '@/views/Template.List.vue';
 import TemplateEdit from '@/views/Template.Edit.vue';
 import StaffTemplates from '@/views/Staff.Templates.vue';
 import StaffTemplate from '@/views/Staff.Template.vue';
@@ -59,6 +59,7 @@ const router = createRouter({
         { path: 'templates', name: 'templates', component: TemplateList },
         { path: 'templates/:id', name: 'template', component: TemplateEdit },
         // Dynamic forms: the builder is read-only for viewers (FormBuilder.vue).
+        { path: 'tools/word-to-pdf', name: 'converter', component: Converter },
         { path: 'forms', name: 'forms', component: FormsList },
         { path: 'forms/:id', name: 'form', component: FormEdit },
         // Form submissions: filled-in forms, reviewed, shared with customers, turned into documents.

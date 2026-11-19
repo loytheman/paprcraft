@@ -38,6 +38,10 @@ const obj = {
   docx: {
     lambdaName: envVars.DOCX_LAMBDA_NAME,
   },
+  // The PDF converter (backend/lambda/pdfConvert.js, infra/30-pdf-convert.sh).
+  pdf: {
+    lambdaName: envVars.PDF_LAMBDA_NAME,
+  },
   ses: {
     fromEmail: envVars.SES_FROM_EMAIL,
   },

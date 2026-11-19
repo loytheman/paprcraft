@@ -96,3 +96,20 @@ test('forLibreOffice swaps the per-section page total for the whole-document one
   assert.equal(await out.file('word/footer1.xml').async('string'), '<w:instrText>NUMPAGES</w:instrText>');
   assert.equal(await out.file('word/document.xml').async('string'), '<w:t>SECTIONPAGES</w:t>');
 });
+
+test('direct mode (the converter page): writes out.pdf, or failed.txt, beside in.docx', async () => {
+  const path = 'converter/A1/01ARZ3NDEKTSV4RRFFQ69G5FAV/in.docx';
+  const mk = (docx, convert) => {
+    const puts = [];
+    return { puts, getObject: async () => docx, convert, putObject: async (p) => puts.push(p.Key) };
+  };
+  const ok = mk(Buffer.from('PK-zip'), async () => Buffer.from('%PDF'));
+  assert.equal((await makeHandler(ok)({ direct: true, docxPath: path })).ok, true);
+  assert.deepEqual(ok.puts, ['converter/A1/01ARZ3NDEKTSV4RRFFQ69G5FAV/out.pdf']);
+  const notDocx = mk(Buffer.from('hello'), async () => Buffer.from('%PDF'));
+  assert.equal((await makeHandler(notDocx)({ direct: true, docxPath: path })).ok, false);
+  assert.deepEqual(notDocx.puts, ['converter/A1/01ARZ3NDEKTSV4RRFFQ69G5FAV/failed.txt']);
+  const bad = mk(Buffer.from('PK'), async () => Buffer.from('%PDF'));
+  assert.equal((await makeHandler(bad)({ direct: true, docxPath: 'accounts/x/in.docx' })).ok, false);
+  assert.deepEqual(bad.puts, []);
+});

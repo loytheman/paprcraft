@@ -3,6 +3,7 @@
 # backend/api/src actually calls:
 #   - DynamoDB: the two tables for this env + their GSIs (services/index.js, dynamodb-onetable)
 #   - SES: SendEmail (service.email.js: team invites, closure)
+#   - Lambda: InvokeFunction on the PDF converter $PDF_LAMBDA_NAME (service.converter.js; 30-pdf-convert.sh)
 #   - Lambda: InvokeFunction on the docx template renderer $DOCX_LAMBDA_NAME (service.template.js generate; 29-docx-template.sh)
 #   - S3: uploaded images in $STORAGE_BUCKET (service.attachment.js): sign uploads, check and copy
 #     them out of tmp/, sign view links, delete (28-attachments.sh)
@@ -66,6 +67,12 @@ INLINE_POLICY=$(cat <<JSON
       "Effect": "Allow",
       "Action": "lambda:InvokeFunction",
       "Resource": "arn:aws:lambda:${REGION}:${ACCOUNT_ID}:function:${DOCX_LAMBDA_NAME}"
+    },
+    {
+      "Sid": "InvokePdfConverter",
+      "Effect": "Allow",
+      "Action": "lambda:InvokeFunction",
+      "Resource": "arn:aws:lambda:${REGION}:${ACCOUNT_ID}:function:${PDF_LAMBDA_NAME}"
     },
     {
       "Sid": "UploadedImages",

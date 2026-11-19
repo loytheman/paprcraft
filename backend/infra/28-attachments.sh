@@ -43,6 +43,7 @@ echo "origins: $ORIGINS"
 echo "=== 3. Lifecycle ==="
 aws s3api put-bucket-lifecycle-configuration --bucket "$STORAGE_BUCKET" --profile "$PROFILE" --region "$REGION" --lifecycle-configuration '{
   "Rules": [
+    {"ID": "expire-converter-files", "Status": "Enabled", "Filter": {"Prefix": "converter/"}, "Expiration": {"Days": 1}},
     {"ID": "expire-unsaved-uploads", "Status": "Enabled", "Filter": {"Prefix": "tmp/"}, "Expiration": {"Days": 1}},
     {"ID": "abort-incomplete-multipart", "Status": "Enabled", "Filter": {}, "AbortIncompleteMultipartUpload": {"DaysAfterInitiation": 1}}
   ]

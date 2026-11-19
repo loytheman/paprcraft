@@ -31,6 +31,7 @@ const nav = [
   { name: 'templates', label: 'Templates', icon: 'copy' },
   { name: 'forms', label: 'Forms', icon: 'braces' },
   { name: 'submissions', label: 'Submissions', icon: 'receipt' },
+  { name: 'converter', label: 'Word to PDF', icon: 'download' },
 ];
 const navMore = [
   { name: 'activity', label: 'Activity', icon: 'activity' },

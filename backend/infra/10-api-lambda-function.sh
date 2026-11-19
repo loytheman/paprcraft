@@ -82,6 +82,7 @@ ENV_JSON=$(node -e "
     NODE_ENV: 'production',
     STAGE_ENV: '${NAME_PREFIX}',
     DOCX_LAMBDA_NAME: '${DOCX_LAMBDA_NAME}', // the docx renderer the API invokes (29-docx-template.sh)
+    PDF_LAMBDA_NAME: '${PDF_LAMBDA_NAME}', // the PDF converter the Word to PDF page invokes (30-pdf-convert.sh)
     JWT_USER_SECRET: current.JWT_USER_SECRET || require('crypto').randomBytes(32).toString('hex'),
   };
   console.log(JSON.stringify({ ...current, ...managed }));

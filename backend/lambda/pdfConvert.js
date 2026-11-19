@@ -4,6 +4,8 @@
 //   { recordKey: { pk, sk }, cbId, docxPath }
 //   1. Reads the .docx from the storage bucket (env BUCKET), converts it, writes the PDF next to it
 //      (same key with .pdf).
+//   Or { direct: true, docxPath } for the dashboard's Word to PDF page: no database entry; the PDF is
+//   written as out.pdf next to in.docx, or failed.txt if the conversion fails (the API polls for them).
 //   2. Sets pdfStatus on the exportHistory entry (matched by cbId) to "completed" (+ pdfPath) or
 //      "failed" (+ a customer-safe pdfError). It never throws once it has the payload: the .docx is
 //      already usable, and a retry would only repeat a bad conversion.
@@ -65,7 +67,34 @@ async function libreOfficeConvert(docx) {
   }
 }
 
+const DIRECT_KEY = /^converter\/[^/]+\/[0-9A-Z]{26}\/in\.docx$/;
+const MAX_DIRECT_BYTES = 10 * 1024 * 1024;
+
+// The converter page: the file is the state. A real .docx is a zip (starts with "PK").
+const handleDirect = async (deps, { docxPath }) => {
+  const bucket = process.env.BUCKET;
+  if (!DIRECT_KEY.test(docxPath ?? '')) {
+    console.error(JSON.stringify({ msg: 'pdf: bad direct path' }));
+    return { ok: false };
+  }
+  const base = docxPath.replace(/in\.docx$/, '');
+  try {
+    const docx = await deps.getObject(bucket, docxPath);
+    if (docx.length > MAX_DIRECT_BYTES || docx.subarray(0, 2).toString() !== 'PK') throw new Error('not a .docx');
+    const pdf = await deps.convert(docx);
+    if (!pdf?.length) throw new Error('empty PDF');
+    await deps.putObject({ Bucket: bucket, Key: `${base}out.pdf`, Body: pdf, ContentType: PDF_TYPE });
+    console.log(JSON.stringify({ msg: 'pdf: direct done', bytes: pdf.length }));
+    return { ok: true };
+  } catch (err) {
+    console.error(JSON.stringify({ msg: 'pdf: direct failed', error: String(err?.message || err).slice(0, 500) }));
+    try { await deps.putObject({ Bucket: bucket, Key: `${base}failed.txt`, Body: 'failed', ContentType: 'text/plain' }); } catch (e2) { console.error(JSON.stringify({ msg: 'pdf: could not mark failed', error: String(e2?.message || e2) })); }
+    return { ok: false };
+  }
+};
+
 const makeHandler = (injected) => async (event) => {
+  if (event?.direct) return handleDirect(injected ?? defaultDeps(), event);
   const { recordKey, cbId, docxPath } = event ?? {};
   if (!recordKey?.pk || !recordKey?.sk || !cbId || !docxPath) {
     console.error(JSON.stringify({ msg: 'pdf: bad payload' }));

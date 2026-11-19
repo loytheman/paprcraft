@@ -23,6 +23,8 @@ import { publicFormLimiter, publicSubmitLimiter } from "../../middlewares/rateLi
 import { ApiKeyController } from "../../controllers/controller.apiKey.js";
 import { AttachmentController } from "../../controllers/controller.attachment.js";
 import { AttachmentJoiSchema } from "../../services/service.attachment.js";
+import { ConverterController } from "../../controllers/controller.converter.js";
+import { ConverterJoiSchema } from "../../services/service.converter.js";
 import { StaffController } from "../../controllers/controller.staff.js";
 import { AccountClosureController } from "../../controllers/controller.accountClosure.js";
 import { TeamController } from "../../controllers/controller.team.js";
@@ -141,6 +143,15 @@ const r = router;
   const s = new AttachmentJoiSchema();
   const c = new AttachmentController();
   r.post("/attachment/upload-url", auth(), joi(s.uploadUrl), c.createUploadUrl)
+}
+
+{
+  // Word -> PDF converter page (service.converter.js): upload URL, start, poll. Any role may convert.
+  const s = new ConverterJoiSchema();
+  const c = new ConverterController();
+  r.post("/converter/upload-url", auth(), joi(s.uploadUrl), c.uploadUrl)
+  r.post("/converter/:id/start", auth(), joi(s.byId), c.start)
+  r.get("/converter/:id", auth(), joi(s.status), c.status)
 }
 
 {

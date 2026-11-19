@@ -2,7 +2,7 @@
 # PDF converter: turns a finished .docx into a .pdf with LibreOffice.
 #   1. ECR repository $PDF_REPO_NAME holding the container image (backend/lambda/pdf/Dockerfile).
 #   2. Role $PDF_ROLE_NAME: logs, dynamodb GetItem/UpdateItem on $TABLE (sets pdfStatus on the export entry),
-#      s3 GetObject + PutObject on $STORAGE_BUCKET accounts/* (reads the .docx, writes the .pdf). Nothing else.
+#      s3 GetObject + PutObject on $STORAGE_BUCKET accounts/* and converter/* (reads the .docx, writes the .pdf). Nothing else.
 #   3. Lambda $PDF_LAMBDA_NAME (container image, x86_64, 2 GB, 3 GB scratch, 120 s, env TABLE and BUCKET), invoked
 #      asynchronously by the docx Lambda (29-docx-template.sh grants that and sets PDF_LAMBDA_NAME).
 # Run order: after 29. Later code changes: run this script again (it builds, pushes and points the Lambda at the new image).
@@ -42,7 +42,7 @@ aws iam put-role-policy --role-name "$PDF_ROLE_NAME" --policy-name "${PDF_ROLE_N
       \"Sid\": \"ReadDocxWritePdf\",
       \"Effect\": \"Allow\",
       \"Action\": [\"s3:GetObject\", \"s3:PutObject\"],
-      \"Resource\": \"arn:aws:s3:::${STORAGE_BUCKET}/accounts/*\"
+      \"Resource\": [\"arn:aws:s3:::${STORAGE_BUCKET}/accounts/*\", \"arn:aws:s3:::${STORAGE_BUCKET}/converter/*\"]
     }
   ]
 }"
