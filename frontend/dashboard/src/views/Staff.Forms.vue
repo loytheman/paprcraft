@@ -3,6 +3,8 @@
 import { onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import OpButton from '@ds/components/OpButton.vue';
+import RowMenu from '@/components/RowMenu.vue';
+import { ROW_CLICKABLE, onRow } from '@/helpers/rowClick';
 import OpInput from '@ds/components/OpInput.vue';
 import OpStatusBadge from '@ds/components/OpStatusBadge.vue';
 import PageSkeleton from '@/components/PageSkeleton.vue';
@@ -65,10 +67,10 @@ const remove = async (f) => {
 
     <p v-if="error" role="alert" class="status-down mt-6 rounded-control border px-3 py-2 text-small">{{ error }}</p>
     <PageSkeleton v-if="!loaded" kind="list" class="mt-8" />
-    <section v-else class="mt-6 overflow-hidden rounded-sheet border border-line bg-surface-2">
+    <section v-else class="mt-6 rounded-sheet border border-line bg-surface-2">
       <p v-if="!masters.length" class="px-6 py-10 text-center text-body text-ink-muted">No master forms yet.</p>
       <ul v-else>
-        <li v-for="f in masters" :key="f.id" class="flex flex-wrap items-center justify-between gap-3 border-b border-line-faint px-5 py-3 last:border-b-0">
+        <li v-for="f in masters" :key="f.id" :class="['flex flex-wrap items-center justify-between gap-3 border-b border-line-faint px-5 py-3 last:border-b-0', ROW_CLICKABLE]" @click="onRow($event, () => router.push({ name: 'staff-form', params: { id: f.id } }))">
           <div class="min-w-0">
             <div class="flex flex-wrap items-center gap-2">
               <RouterLink :to="{ name: 'staff-form', params: { id: f.id } }" class="text-body font-medium text-ink hover:text-primary-active">{{ f.name }}</RouterLink>
@@ -76,9 +78,9 @@ const remove = async (f) => {
             </div>
             <p class="text-small text-ink-faint">Edited {{ formatDateTime(f.updatedAt) }}</p>
           </div>
-          <div class="flex gap-2">
+          <div class="flex items-center gap-1">
             <RouterLink :to="{ name: 'staff-form', params: { id: f.id } }"><OpButton size="sm" variant="secondary">Open</OpButton></RouterLink>
-            <OpButton size="sm" variant="destructive" icon="trash" @click="remove(f)">Delete</OpButton>
+            <RowMenu :label="`More actions for ${f.name}`" :items="[{ label: 'Delete', icon: 'trash', danger: true, action: () => remove(f) }]" />
           </div>
         </li>
       </ul>

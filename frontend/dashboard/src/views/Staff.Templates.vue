@@ -3,6 +3,8 @@
 import { onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import OpButton from '@ds/components/OpButton.vue';
+import RowMenu from '@/components/RowMenu.vue';
+import { ROW_CLICKABLE, onRow } from '@/helpers/rowClick';
 import OpInput from '@ds/components/OpInput.vue';
 import PageSkeleton from '@/components/PageSkeleton.vue';
 import * as TemplateService from '@/services/service.template';
@@ -64,17 +66,17 @@ const remove = async (t) => {
 
     <p v-if="error" role="alert" class="status-down mt-6 rounded-control border px-3 py-2 text-small">{{ error }}</p>
     <PageSkeleton v-if="!loaded" kind="list" class="mt-8" />
-    <section v-else class="mt-6 overflow-hidden rounded-sheet border border-line bg-surface-2">
+    <section v-else class="mt-6 rounded-sheet border border-line bg-surface-2">
       <p v-if="!masters.length" class="px-6 py-10 text-center text-body text-ink-muted">No master templates yet.</p>
       <ul v-else>
-        <li v-for="t in masters" :key="t.id" class="flex flex-wrap items-center justify-between gap-3 border-b border-line-faint px-5 py-3 last:border-b-0">
+        <li v-for="t in masters" :key="t.id" :class="['flex flex-wrap items-center justify-between gap-3 border-b border-line-faint px-5 py-3 last:border-b-0', ROW_CLICKABLE]" @click="onRow($event, () => router.push({ name: 'staff-template', params: { id: t.id } }))">
           <div class="min-w-0">
             <RouterLink :to="{ name: 'staff-template', params: { id: t.id } }" class="text-body font-medium text-ink hover:text-primary-active">{{ t.name }}</RouterLink>
             <p class="text-small text-ink-faint">Edited {{ formatDateTime(t.updatedAt) }}</p>
           </div>
-          <div class="flex gap-2">
+          <div class="flex items-center gap-1">
             <RouterLink :to="{ name: 'staff-template', params: { id: t.id } }"><OpButton size="sm" variant="secondary">Open</OpButton></RouterLink>
-            <OpButton size="sm" variant="destructive" icon="trash" @click="remove(t)">Delete</OpButton>
+            <RowMenu :label="`More actions for ${t.name}`" :items="[{ label: 'Delete', icon: 'trash', danger: true, action: () => remove(t) }]" />
           </div>
         </li>
       </ul>

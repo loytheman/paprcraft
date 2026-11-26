@@ -25,7 +25,7 @@ const router = useRouter();
 
 const preview = ref({ url: '', pdf: false });
 const wantPdf = ref(true);
-// Which value set fills the template's {{KEY}} chips (the template's own unless another is picked).
+// Which data source fills the template's {{KEY}} chips (the template's own unless another is picked).
 const valueSets = ref([]);
 const valueSetId = ref('__template');
 onMounted(async () => {
@@ -90,9 +90,9 @@ const STATUS = { processing: 'Processing…', completed: 'Ready', failed: 'Faile
 
     <div class="mt-4">
       <div v-if="role !== 'viewer' && !noTemplate && valueSets.length" class="mb-3">
-        <label for="doc-value-set" class="text-small font-medium text-ink-muted">Placeholder values</label>
+        <label for="doc-value-set" class="text-small font-medium text-ink-muted">Data source</label>
         <select id="doc-value-set" v-model="valueSetId" class="mt-1 h-9 w-full max-w-xs rounded-control border border-line bg-surface-1 px-2 text-body text-ink focus:border-primary focus:outline-none">
-          <option value="__template">The template's value set</option>
+          <option value="__template">The template's data source</option>
           <option value="">None</option>
           <option v-for="s in valueSets" :key="s.id" :value="s.id">{{ s.name }}</option>
         </select>

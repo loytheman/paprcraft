@@ -4,6 +4,8 @@
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import OpButton from '@ds/components/OpButton.vue';
+import RowMenu from '@/components/RowMenu.vue';
+import { ROW_CLICKABLE, onRow } from '@/helpers/rowClick';
 import OpInput from '@ds/components/OpInput.vue';
 import OpStatusBadge from '@ds/components/OpStatusBadge.vue';
 import PageSkeleton from '@/components/PageSkeleton.vue';
@@ -127,11 +129,11 @@ const useMaster = async (m) => {
 
     <section v-else class="mt-6">
       <OpInput v-if="forms.length > 4" v-model="search" class="mb-3 max-w-xs" label="Search" placeholder="Form name" />
-      <div class="overflow-hidden rounded-sheet border border-line bg-surface-2">
+      <div class="rounded-sheet border border-line bg-surface-2">
         <p v-if="!forms.length" class="px-6 py-10 text-center text-body text-ink-muted">No forms yet. Create one, or start from a master form.</p>
         <p v-else-if="!shown.length" class="px-6 py-8 text-center text-body text-ink-muted">Nothing matches "{{ search }}".</p>
         <ul v-else>
-          <li v-for="f in shown" :key="f.id" class="flex flex-wrap items-center justify-between gap-3 border-b border-line-faint px-5 py-3 last:border-b-0">
+          <li v-for="f in shown" :key="f.id" :class="['flex flex-wrap items-center justify-between gap-3 border-b border-line-faint px-5 py-3 last:border-b-0', ROW_CLICKABLE]" @click="onRow($event, () => router.push({ name: 'form', params: { id: f.id } }))">
             <div class="min-w-0">
               <div class="flex flex-wrap items-center gap-2">
                 <RouterLink :to="{ name: 'form', params: { id: f.id } }" class="text-body font-medium text-ink hover:text-primary-active">{{ f.name }}</RouterLink>
@@ -139,10 +141,9 @@ const useMaster = async (m) => {
               </div>
               <p class="text-small text-ink-faint">Edited {{ formatDateTime(f.updatedAt) }}<template v-if="who(f)"> by {{ who(f) }}</template></p>
             </div>
-            <div class="flex gap-2">
+            <div class="flex items-center gap-1">
               <RouterLink :to="{ name: 'form', params: { id: f.id } }"><OpButton size="sm" variant="secondary">{{ canEdit ? 'Open' : 'View' }}</OpButton></RouterLink>
-              <OpButton v-if="canEdit" size="sm" variant="secondary" icon="copy" @click="duplicate(f)">Duplicate</OpButton>
-              <OpButton v-if="canEdit" size="sm" variant="destructive" icon="trash" @click="remove(f)">Delete</OpButton>
+              <RowMenu v-if="canEdit" :label="`More actions for ${f.name}`" :items="[{ label: 'Duplicate', icon: 'copy', action: () => duplicate(f) }, { label: 'Delete', icon: 'trash', danger: true, action: () => remove(f) }]" />
             </div>
           </li>
         </ul>

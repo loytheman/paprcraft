@@ -87,6 +87,16 @@ test('countPlaceholders: chips in paragraphs, nested lists and table cells; repl
   assert.deepEqual(B.placeholderUsage([{ name: 's', list }]), { NAME: 2, DATE: 1, ADDR: 1 });
 });
 
+test('templateKeys: the map\'s keys plus manual chips in the text and frame; never form fields or document info', () => {
+  const sections = [{ name: 's', list: [para([chip('NAME'), chip('COMPANY'), chip('full_name'), chip('dob|date'), chip('owners.name'), chip('generated_date')])] }];
+  const frame = { headerLeft: 'Ref {{CASE_REF}}', headerRight: '{{submission_ref}}', footerLeft: '' };
+  assert.deepEqual(B.templateKeys({ NAME: '', UNUSED: '' }, sections, frame).sort(), ['CASE_REF', 'COMPANY', 'NAME', 'UNUSED']);
+  assert.deepEqual(B.templateKeys({}, sections, null, new Set(['COMPANY'])).sort(), ['NAME']); // a form key is not a manual one
+  assert.equal(B.isManualKey('COMPANY'), true);
+  assert.equal(B.isManualKey('risk.q1'), false);
+  assert.equal(B.isManualKey('form_name'), false);
+});
+
 test('renamePlaceholderKey changes delta and html, and nothing else', () => {
   const html = '<p>Dear <span class="q-placeholder" data-text="NAME" data-value="" contenteditable="false">{{NAME}}</span> and NAME</p>';
   const sections = [{ name: 's', list: [para([chip('NAME'), chip('OTHER')], html)] }];

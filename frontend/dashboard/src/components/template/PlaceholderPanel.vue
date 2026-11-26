@@ -1,40 +1,47 @@
 <script setup>
-// The template's placeholders. The template only names its {{KEY}} chips; their values come from a
-// value set (Settings > Value sets) picked here, so switching the set switches every value. Edits
-// here change the selected set, and are saved with the template. Add, rename (updates every chip),
-// remove, and bulk Reset / Capitalise / Trim of the set's values.
+// The template's placeholders. The template only names its {{KEY}} chips; their values come from the
+// data source picked here (managed on the Data sources page), so switching it switches every value.
+// Values are read-only here. The data source's keys are listed even before the template uses them:
+// click one to put its chip at the caret. Add, rename (updates every chip) and remove keys.
 import { computed, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import OpButton from '@ds/components/OpButton.vue';
 import OpIcon from '@ds/components/OpIcon.vue';
-import { BUILTIN_KEYS, normalizeKey, placeholderUsage } from '@/helpers/template/blocks';
+import { BUILTIN_KEYS, normalizeKey, placeholderUsage, templateKeys } from '@/helpers/template/blocks';
 
 const props = defineProps({
   placeholders: { type: Object, required: true }, // the template's keys (KEY -> legacy value saved on the template, usually '')
-  values: { type: Object, default: null }, // the selected set's values, edited in place (null = no set chosen)
-  sets: { type: Array, default: null }, // the account's value sets (null = this editor has none: a master template)
+  values: { type: Object, default: null }, // the selected data source's values, read-only (null = none chosen)
+  sets: { type: Array, default: null }, // the account's data sources (null = this editor has none: a master template)
   setId: { type: String, default: '' },
   setsError: { type: String, default: '' },
-  legacyCount: { type: Number, default: 0 }, // values still saved on the template itself, from before value sets
+  legacyCount: { type: Number, default: 0 }, // values still saved on the template itself, from before data sources
   sections: { type: Array, required: true },
   frame: { type: Object, default: null }, // the page header / footer (their {{tokens}} count as used)
   formKeys: { type: Object, default: null }, // Set of the keys the template's form defines
   readonly: { type: Boolean, default: false },
+  insertError: { type: String, default: '' }, // why the last insert failed (e.g. no caret in the text)
 });
-const emit = defineEmits(['add', 'rename', 'remove', 'select-set', 'new-set', 'move-legacy']);
+const emit = defineEmits(['add', 'rename', 'remove', 'select-set', 'move-legacy', 'insert']);
 
 const chip = (k) => `{{${k}}}`;
-const keys = computed(() => Object.keys(props.placeholders));
+// Every manual key of the template: saved in its map, or used by a chip in the text (listed from the
+// start, not only once the chip is clicked).
+const keys = computed(() => templateKeys(props.placeholders, props.sections, props.frame, props.formKeys));
+const keySet = computed(() => new Set(keys.value));
 const usage = computed(() => placeholderUsage(props.sections, props.frame));
-// Keys used in the text that this list doesn't hold: fields of the form (filled from a submission), or leftovers.
-const others = computed(() => Object.entries(usage.value).filter(([k]) => !(k in props.placeholders)).map(([k, n]) => ({ key: k, n, form: !!props.formKeys?.has(k.split('.')[0]) || /[a-z.#]/.test(k), builtin: BUILTIN_KEYS.has(k) })));
+// Keys used in the text that this list doesn't hold: fields of the form (filled from a submission), document info, or leftovers.
+const others = computed(() => Object.entries(usage.value).filter(([k]) => !keySet.value.has(k)).map(([k, n]) => ({ key: k, n, form: !!props.formKeys?.has(k.split('.')[0]) || /[a-z.#]/.test(k), builtin: BUILTIN_KEYS.has(k) })));
+// The selected data source's keys this template doesn't have yet, ready to insert.
+const setName = computed(() => props.sets?.find((s) => s.id === props.setId)?.name ?? '');
+const available = computed(() => Object.keys(props.values ?? {}).filter((k) => !keySet.value.has(k)).sort());
 const draftKey = ref('');
 const error = ref('');
 
 const add = () => {
   const key = normalizeKey(draftKey.value);
   if (!key) { error.value = 'Use letters and numbers, e.g. COMPANY_NAME.'; return; }
-  if (key in props.placeholders) { error.value = `${key} already exists.`; return; }
+  if (keySet.value.has(key)) { error.value = `${key} already exists.`; return; }
   error.value = '';
   emit('add', key);
   draftKey.value = '';
@@ -48,27 +55,10 @@ const finishRename = () => {
   const from = renaming.value;
   renaming.value = null;
   if (!to || to === from) return;
-  if (to in props.placeholders) { error.value = `${to} already exists.`; return; }
+  if (keySet.value.has(to)) { error.value = `${to} already exists.`; return; }
   emit('rename', from, to);
 };
 
-const reset = () => { for (const k of keys.value) props.values[k] = ''; };
-const capitalise = () => { for (const k of keys.value) props.values[k] = String(props.values[k] ?? '').toUpperCase(); };
-const trim = () => { for (const k of keys.value) props.values[k] = String(props.values[k] ?? '').replace(/\s+/g, ' ').trim(); };
-
-// New set, named inline.
-const naming = ref(false);
-const newName = ref('');
-const startNew = () => { naming.value = true; newName.value = ''; };
-const finishNew = () => {
-  const name = newName.value.trim();
-  naming.value = false;
-  if (name) emit('new-set', name);
-};
-const onSelect = (v) => {
-  if (v === '__new') { startNew(); return; }
-  emit('select-set', v);
-};
 </script>
 
 <template>
@@ -76,42 +66,32 @@ const onSelect = (v) => {
     <div class="flex items-start justify-between gap-2">
       <div>
         <h2 class="text-h3 text-ink">Placeholders</h2>
-        <p class="mt-0.5 text-small text-ink-faint">Insert <span v-pre>{{KEY}}</span> chips in the text. Their values come from the value set you pick.</p>
+        <p class="mt-0.5 text-small text-ink-faint">Insert <span v-pre>{{KEY}}</span> chips in the text. Their values come from the data source you pick.</p>
       </div>
     </div>
 
-    <!-- Value set -->
+    <!-- Data source -->
     <div v-if="sets" class="mt-3">
-      <label for="tpl-value-set" class="text-small font-medium text-ink-muted">Value set</label>
-      <form v-if="naming" class="mt-1 flex gap-2" @submit.prevent="finishNew">
-        <input v-model="newName" placeholder="e.g. Acme Pte Ltd" aria-label="New value set name" class="h-9 min-w-0 flex-1 rounded-control border border-primary bg-surface-1 px-3 text-body text-ink focus:outline-none" @keydown.esc="naming = false" />
-        <OpButton type="submit" size="sm" :disabled="!newName.trim()">Create</OpButton>
-      </form>
-      <select v-else id="tpl-value-set" :value="setId" :disabled="readonly" class="mt-1 h-9 w-full rounded-control border border-line bg-surface-1 px-2 text-body text-ink focus:border-primary focus:outline-none disabled:opacity-60" @change="onSelect($event.target.value)">
+      <label for="tpl-value-set" class="text-small font-medium text-ink-muted">Data source</label>
+      <select id="tpl-value-set" :value="setId" :disabled="readonly" class="mt-1 h-9 w-full rounded-control border border-line bg-surface-1 px-2 text-body text-ink focus:border-primary focus:outline-none disabled:opacity-60" @change="emit('select-set', $event.target.value)">
         <option value="">None</option>
-        <option v-if="setId && !sets.some((s) => s.id === setId)" :value="setId">Deleted set (pick another)</option>
+        <option v-if="setId && !sets.some((s) => s.id === setId)" :value="setId">Deleted data source (pick another)</option>
         <option v-for="s in sets" :key="s.id" :value="s.id">{{ s.name }}</option>
-        <option v-if="!readonly" value="__new">+ New value set…</option>
       </select>
       <p v-if="setsError" role="alert" class="mt-1 text-small text-down">{{ setsError }}</p>
       <p class="mt-1 text-small text-ink-faint">
-        Changes to values here are saved to the set, so every template using it sees them.
-        <RouterLink :to="{ name: 'value-sets' }" class="underline">Manage sets</RouterLink>
+        <template v-if="!sets.length">You have no data sources yet. </template>
+        <RouterLink :to="{ name: 'data-sources' }" class="underline">{{ sets.length ? 'Manage data sources' : 'Create one' }}</RouterLink> to add or change values.
       </p>
     </div>
 
     <div v-if="legacyCount && sets && !readonly" class="status-warn mt-3 rounded-control border px-3 py-2 text-small">
       {{ legacyCount }} {{ legacyCount === 1 ? 'value is' : 'values are' }} still saved on this template.
-      <button type="button" class="underline" @click="emit('move-legacy')">Move them into a new value set</button>
+      <button type="button" class="underline" @click="emit('move-legacy')">Copy them into a new data source</button>
     </div>
 
-    <div v-if="values && !readonly" class="mt-3 flex flex-wrap gap-1.5">
-      <OpButton size="sm" variant="secondary" :disabled="!keys.length" @click="reset">Reset values</OpButton>
-      <OpButton size="sm" variant="secondary" :disabled="!keys.length" @click="capitalise">Capitalise</OpButton>
-      <OpButton size="sm" variant="secondary" :disabled="!keys.length" @click="trim">Trim spaces</OpButton>
-    </div>
-
-    <p v-if="!keys.length" class="mt-4 text-body text-ink-muted">No placeholders yet. Select text in the editor and press <span v-pre class="font-mono">{{x}}</span>, or add a key below.</p>
+    <p v-if="!keys.length && available.length" class="mt-4 text-body text-ink-muted">No placeholders yet. Pick one from the data source below, or add a key.</p>
+    <p v-else-if="!keys.length" class="mt-4 text-body text-ink-muted">No placeholders yet. Select text in the editor and press <span v-pre class="font-mono">{{x}}</span>, or add a key below.</p>
 
     <ul class="mt-3 space-y-3">
       <li v-for="k in keys" :key="k">
@@ -123,22 +103,39 @@ const onSelect = (v) => {
             <span class="min-w-0 truncate font-mono text-small text-ink">{{ chip(k) }}</span>
             <span class="flex items-center gap-1 text-ink-faint">
               <span class="text-small">{{ usage[k] ?? 0 }}×</span>
+              <button v-if="!readonly" type="button" class="p-1 hover:text-ink" title="Insert at the cursor" :aria-label="`Insert ${k}`" @mousedown.prevent @click="emit('insert', k)"><OpIcon name="plus" :size="13" /></button>
               <button v-if="!readonly" type="button" class="p-1 hover:text-ink" title="Rename" aria-label="Rename key" @click="startRename(k)"><OpIcon name="pencil" :size="13" /></button>
-              <button v-if="!readonly" type="button" class="p-1 hover:text-down" title="Remove" aria-label="Remove key" @click="emit('remove', k)"><OpIcon name="trash" :size="13" /></button>
+              <button v-if="!readonly && !usage[k]" type="button" class="p-1 hover:text-down" title="Remove" aria-label="Remove key" @click="emit('remove', k)"><OpIcon name="trash" :size="13" /></button>
             </span>
           </template>
         </div>
-        <input
-          v-if="values"
-          v-model="values[k]"
-          :readonly="readonly"
-          :aria-label="`Value for ${k}`"
-          placeholder="Value"
-          class="mt-1 h-9 w-full rounded-control border border-line bg-surface-1 px-3 text-body text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none"
-        />
+        <p v-if="values" class="mt-1 truncate rounded-control bg-sunken px-3 py-1.5 text-body" :class="values[k] ? 'text-ink' : 'italic text-ink-faint'" :title="values[k] || ''">{{ values[k] || 'Not in this data source' }}</p>
       </li>
     </ul>
-    <p v-if="keys.length && !values && sets" class="mt-2 text-small text-ink-faint">Pick a value set above to give these keys values.</p>
+    <p v-if="keys.length && !values && sets" class="mt-2 text-small text-ink-faint">Pick a data source above to give these keys values.</p>
+
+    <!-- The data source's other keys: insert one to start using it -->
+    <div v-if="available.length" class="mt-4 border-t border-line pt-3">
+      <p class="text-small font-medium text-ink-muted">More in {{ setName || 'this data source' }}</p>
+      <p class="mt-0.5 text-small text-ink-faint">{{ readonly ? 'Keys this template could use.' : 'Click in the text, then pick a key to insert it there.' }}</p>
+      <ul class="mt-2 space-y-1.5">
+        <li v-for="k in available" :key="k">
+          <button
+            type="button"
+            :disabled="readonly"
+            class="flex w-full items-center gap-2 rounded-control border border-line bg-surface-1 px-2.5 py-1.5 text-left hover:border-primary disabled:cursor-default disabled:hover:border-line"
+            :title="readonly ? '' : `Insert ${chip(k)} at the cursor`"
+            @mousedown.prevent
+            @click="emit('insert', k)"
+          >
+            <span class="shrink-0 font-mono text-small text-ink">{{ chip(k) }}</span>
+            <span class="min-w-0 flex-1 truncate text-small" :class="values[k] ? 'text-ink-muted' : 'italic text-ink-faint'">{{ values[k] || 'no value' }}</span>
+            <OpIcon v-if="!readonly" name="plus" :size="13" class="shrink-0 text-ink-faint" />
+          </button>
+        </li>
+      </ul>
+    </div>
+    <p v-if="insertError" role="alert" class="mt-2 text-small text-down">{{ insertError }}</p>
 
     <div v-if="others.length" class="mt-4 border-t border-line pt-3">
       <p class="text-small font-medium text-ink-muted">Filled in automatically</p>

@@ -59,7 +59,7 @@ defineExpose({ open });
       <div class="min-w-48 flex-1">
         <label for="chk-from" class="text-small font-medium text-ink-muted">Add all questions from a checklist field</label>
         <select id="chk-from" v-model="addFrom" :disabled="!fields.length" :class="selectCls">
-          <option v-if="!fields.length" value="">The form has no checklist field (choose a data source)</option>
+          <option v-if="!fields.length" value="">The form has no checklist field (choose a form)</option>
           <option v-for="f in fields" :key="f.key" :value="f.key">{{ f.label }} ({{ f.options.length }} questions)</option>
         </select>
       </div>

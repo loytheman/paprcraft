@@ -1,5 +1,5 @@
 import httpStatus from "http-status";
-import valueSetModel, { MAX_VALUE_SETS } from "../models/model.valueSet.js";
+import valueSetModel, { MAX_VALUE_SETS, RESERVED_KEYS } from "../models/model.valueSet.js";
 import { ApiError, errorType, errorMessage } from "../middlewares/error.js";
 
 // An account's value sets (model.valueSet.js). Exports fill a template's {{KEY}} chips from the
@@ -15,18 +15,28 @@ export const getValueSetFor = async (id, accountId) => {
   return s;
 };
 
+const isReserved = (key) => RESERVED_KEYS.includes(String(key).trim().toLowerCase());
+
+// A set may not define a reserved placeholder ({{generated_date}}...): the document fills those itself.
+const assertNoReserved = (values) => {
+  const hit = Object.keys(values ?? {}).filter(isReserved);
+  if (hit.length) throw badRequest(`${hit.join(", ")} ${hit.length === 1 ? "is" : "are"} reserved: the document fills ${hit.length === 1 ? "it" : "them"} in itself. Use another key.`);
+};
+
 // The values an export should use: the set's, then the request's own (which win). A set that has
-// been deleted since it was picked is refused, so the document never quietly comes out blank.
+// been deleted since it was picked is refused, so the document never quietly comes out blank. A
+// reserved key a set holds from before the check is left out, so it can't replace the real value.
 export const exportValues = async (valueSetId, accountId, values = {}) => {
   if (!valueSetId) return values ?? {};
   const s = await valueSetModel.getById(valueSetId);
-  if (!s || s.accountId !== accountId) throw badRequest("The selected value set no longer exists. Pick another one.");
-  return { ...(s.values ?? {}), ...(values ?? {}) };
+  if (!s || s.accountId !== accountId) throw badRequest("The selected data source no longer exists. Pick another one.");
+  const own = Object.fromEntries(Object.entries(s.values ?? {}).filter(([k]) => !isReserved(k)));
+  return { ...own, ...(values ?? {}) };
 };
 
 // Names are unique per account, ignoring case, so the pickers never show two "Acme" sets.
 const assertNameFree = (sets, name, exceptId = null) => {
-  if (sets.some((s) => s.id !== exceptId && s.name.toLowerCase() === name.toLowerCase())) throw badRequest(`You already have a value set called "${name}".`);
+  if (sets.some((s) => s.id !== exceptId && s.name.toLowerCase() === name.toLowerCase())) throw badRequest(`You already have a data source called "${name}".`);
 };
 
 // Alphabetical, so the pickers read the same everywhere.
@@ -37,14 +47,16 @@ export const listValueSets = async (accountId) => {
 
 export const createValueSet = async ({ name, values }, accountId, blameable) => {
   const sets = await valueSetModel.getAllForAccount(accountId);
-  if (sets.length >= MAX_VALUE_SETS) throw badRequest(`An account keeps up to ${MAX_VALUE_SETS} value sets. Delete one first.`);
+  if (sets.length >= MAX_VALUE_SETS) throw badRequest(`An account keeps up to ${MAX_VALUE_SETS} data sources. Delete one first.`);
   assertNameFree(sets, name);
+  assertNoReserved(values);
   const created = await valueSetModel.create({ accountId, name, values: values ?? {} }, blameable);
   return created;
 };
 
 export const updateValueSet = async ({ id, name, values }, accountId, blameable) => {
   await getValueSetFor(id, accountId);
+  assertNoReserved(values);
   if (name !== undefined) {
     const sets = await valueSetModel.getAllForAccount(accountId);
     assertNameFree(sets, name, id);

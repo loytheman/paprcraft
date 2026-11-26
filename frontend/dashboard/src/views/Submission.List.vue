@@ -4,6 +4,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import OpButton from '@ds/components/OpButton.vue';
+import { ROW_CLICKABLE, onRow } from '@/helpers/rowClick';
 import OpInput from '@ds/components/OpInput.vue';
 import OpSelect from '@ds/components/OpSelect.vue';
 import OpStatusBadge from '@ds/components/OpStatusBadge.vue';
@@ -87,7 +88,7 @@ const create = async () => {
     </div>
 
     <PageSkeleton v-if="!loaded" kind="list" class="mt-8" />
-    <section v-else class="mt-4 overflow-hidden rounded-sheet border border-line bg-surface-2">
+    <section v-else class="mt-4 rounded-sheet border border-line bg-surface-2">
       <div v-if="!rows.length && !hasFilters" class="px-6 py-10 text-center">
         <p class="text-body text-ink-muted">No submissions yet.</p>
         <p v-if="canEdit && !published.length" class="mt-1 text-small text-ink-faint">Publish a form first, then start a submission from it.</p>
@@ -95,7 +96,7 @@ const create = async () => {
       </div>
       <p v-else-if="!shown.length" class="px-6 py-8 text-center text-body text-ink-muted">Nothing matches these filters.</p>
       <ul v-else>
-        <li v-for="s in shown" :key="s.id" class="flex flex-wrap items-center justify-between gap-3 border-b border-line-faint px-5 py-3 last:border-b-0">
+        <li v-for="s in shown" :key="s.id" :class="['flex flex-wrap items-center justify-between gap-3 border-b border-line-faint px-5 py-3 last:border-b-0', ROW_CLICKABLE]" @click="onRow($event, () => router.push({ name: 'submission', params: { id: s.id } }))">
           <div class="min-w-0">
             <RouterLink :to="{ name: 'submission', params: { id: s.id } }" class="text-body font-medium text-ink hover:text-primary-active">{{ submissionTitle(s) }}</RouterLink>
             <p class="text-small text-ink-faint">

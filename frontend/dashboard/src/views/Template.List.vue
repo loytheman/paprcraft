@@ -4,6 +4,8 @@
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import OpButton from '@ds/components/OpButton.vue';
+import RowMenu from '@/components/RowMenu.vue';
+import { ROW_CLICKABLE, onRow } from '@/helpers/rowClick';
 import OpInput from '@ds/components/OpInput.vue';
 import PageSkeleton from '@/components/PageSkeleton.vue';
 import TplDialog from '@/components/template/TplDialog.vue';
@@ -123,19 +125,18 @@ const useMaster = async (m) => {
 
     <section v-else class="mt-6">
       <OpInput v-if="templates.length > 4" v-model="search" class="mb-3 max-w-xs" label="Search" placeholder="Template name" />
-      <div class="overflow-hidden rounded-sheet border border-line bg-surface-2">
+      <div class="rounded-sheet border border-line bg-surface-2">
         <p v-if="!templates.length" class="px-6 py-10 text-center text-body text-ink-muted">No templates yet. Create one, or start from a master template.</p>
         <p v-else-if="!shown.length" class="px-6 py-8 text-center text-body text-ink-muted">Nothing matches "{{ search }}".</p>
         <ul v-else>
-          <li v-for="t in shown" :key="t.id" class="flex flex-wrap items-center justify-between gap-3 border-b border-line-faint px-5 py-3 last:border-b-0">
+          <li v-for="t in shown" :key="t.id" :class="['flex flex-wrap items-center justify-between gap-3 border-b border-line-faint px-5 py-3 last:border-b-0', ROW_CLICKABLE]" @click="onRow($event, () => router.push({ name: 'template', params: { id: t.id } }))">
             <div class="min-w-0">
               <RouterLink :to="{ name: 'template', params: { id: t.id } }" class="text-body font-medium text-ink hover:text-primary-active">{{ t.name }}</RouterLink>
               <p class="text-small text-ink-faint">Edited {{ formatDateTime(t.updatedAt) }}<template v-if="who(t)"> by {{ who(t) }}</template></p>
             </div>
-            <div class="flex gap-2">
+            <div class="flex items-center gap-1">
               <RouterLink :to="{ name: 'template', params: { id: t.id } }"><OpButton size="sm" variant="secondary">{{ canEdit ? 'Open' : 'View' }}</OpButton></RouterLink>
-              <OpButton v-if="canEdit" size="sm" variant="secondary" icon="copy" @click="duplicate(t)">Duplicate</OpButton>
-              <OpButton v-if="canEdit" size="sm" variant="destructive" icon="trash" @click="remove(t)">Delete</OpButton>
+              <RowMenu v-if="canEdit" :label="`More actions for ${t.name}`" :items="[{ label: 'Duplicate', icon: 'copy', action: () => duplicate(t) }, { label: 'Delete', icon: 'trash', danger: true, action: () => remove(t) }]" />
             </div>
           </li>
         </ul>

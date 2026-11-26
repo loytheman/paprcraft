@@ -5,6 +5,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import OpButton from '@ds/components/OpButton.vue';
+import RowMenu from '@/components/RowMenu.vue';
 import OpIcon from '@ds/components/OpIcon.vue';
 import OpInput from '@ds/components/OpInput.vue';
 import OpStatusBadge from '@ds/components/OpStatusBadge.vue';
@@ -173,10 +174,15 @@ const leave = async () => {
               </select>
               <OpStatusBadge v-else status="info">{{ ROLE_LABEL[m.role] }}</OpStatusBadge>
               <OpStatusBadge v-if="m.status === 'invited'" status="warn">Invited</OpStatusBadge>
-              <template v-if="isOwner">
-                <OpButton v-if="m.status === 'invited'" variant="secondary" size="sm" icon="send" :disabled="!!busy" @click="resend(m)">{{ busy === `resend-${m.id}` ? 'Sending…' : 'Resend' }}</OpButton>
-                <OpButton variant="destructive" size="sm" icon="trash" :disabled="!!busy" @click="remove(m)">{{ m.status === 'invited' ? 'Cancel' : 'Remove' }}</OpButton>
-              </template>
+              <span v-if="busy === `resend-${m.id}`" class="text-small text-ink-faint">Sending…</span>
+              <RowMenu
+                v-if="isOwner"
+                :label="`More actions for ${m.email}`"
+                :items="[
+                  ...(m.status === 'invited' ? [{ label: 'Resend invite', icon: 'send', disabled: !!busy, action: () => resend(m) }] : []),
+                  { label: m.status === 'invited' ? 'Cancel invite' : 'Remove from team', icon: 'trash', danger: true, disabled: !!busy, action: () => remove(m) },
+                ]"
+              />
             </div>
           </li>
         </ul>

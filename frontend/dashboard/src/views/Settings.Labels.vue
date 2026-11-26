@@ -3,6 +3,8 @@
 // types' usage counts here when records start using labelIds.
 import { computed, onMounted, ref } from 'vue';
 import OpButton from '@ds/components/OpButton.vue';
+import RowMenu from '@/components/RowMenu.vue';
+import { ROW_CLICKABLE, onRow } from '@/helpers/rowClick';
 import OpInput from '@ds/components/OpInput.vue';
 import OpLabel from '@ds/components/OpLabel.vue';
 import LabelColorPicker from '@/components/LabelColorPicker.vue';
@@ -110,10 +112,10 @@ const remove = async (l) => {
         </div>
       </form>
 
-      <section class="mt-6 overflow-hidden rounded-sheet border border-line bg-surface-2">
+      <section class="mt-6 rounded-sheet border border-line bg-surface-2">
         <p v-if="!labels.length" class="px-6 py-8 text-center text-body text-ink-muted">No labels yet. Add one above.</p>
         <ul v-else>
-          <li v-for="l in labels" :key="l.id" class="border-b border-line-faint px-5 py-3 last:border-b-0">
+          <li v-for="l in labels" :key="l.id" :class="['border-b border-line-faint px-5 py-3 last:border-b-0', canEdit && editing !== l.id && ROW_CLICKABLE]" @click="canEdit && editing !== l.id && onRow($event, () => startEdit(l))">
             <div v-if="editing === l.id" class="space-y-3">
               <div class="flex flex-wrap items-end gap-4">
                 <OpInput v-model="edit.name" class="w-56" label="Name" :error="rowError" />
@@ -131,9 +133,9 @@ const remove = async (l) => {
               <div class="flex min-w-0 items-center gap-3">
                 <OpLabel :name="l.name" :color="l.color" />
               </div>
-              <div class="flex gap-2">
+              <div class="flex items-center gap-1">
                 <OpButton v-if="canEdit" size="sm" variant="secondary" @click="startEdit(l)">Edit</OpButton>
-                <OpButton v-if="canEdit" size="sm" variant="destructive" icon="trash" @click="remove(l)">Delete</OpButton>
+                <RowMenu v-if="canEdit" :label="`More actions for ${l.name}`" :items="[{ label: 'Delete', icon: 'trash', danger: true, action: () => remove(l) }]" />
               </div>
             </div>
           </li>

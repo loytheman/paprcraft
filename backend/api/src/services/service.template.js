@@ -87,7 +87,7 @@ export const createTemplate = async ({ name, section, placeholders, formId, styl
 
 export const updateTemplate = async ({ id, ...fields }, ownerId, blameable) => {
   const current = await getTemplateFor(id, ownerId);
-  if (fields.valueSetId && ownerId === MASTER_ACCOUNT_ID) throw badRequest("Master templates don't use value sets.");
+  if (fields.valueSetId && ownerId === MASTER_ACCOUNT_ID) throw badRequest("Master templates don't use data sources.");
   if (fields.valueSetId) await getValueSetFor(fields.valueSetId, ownerId); // 404 for another account's set
   await templateModel.update({ id, ...fields, keywordSearch: keywordsOf({ name: fields.name ?? current.name }) }, blameable);
   return getTemplate(id, ownerId);

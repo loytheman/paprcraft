@@ -84,7 +84,7 @@ defineExpose({ open });
         <option v-if="repeatGroup && !groups.some((g) => g.key === repeatGroup)" :value="repeatGroup">{{ repeatGroup }} (not in the form)</option>
         <option v-for="g in groups" :key="g.key" :value="g.key">{{ g.label || g.key }}</option>
       </select>
-      <p class="mt-1 text-small text-ink-faint">{{ groups.length ? 'Put chips like owners.name in that first row. The other rows stay as they are.' : 'Pick a data source with a repeating group first.' }}</p>
+      <p class="mt-1 text-small text-ink-faint">{{ groups.length ? 'Put chips like owners.name in that first row. The other rows stay as they are.' : 'Pick a form with a repeating group first.' }}</p>
     </div>
 
     <div v-if="type !== 'table-02'" class="mt-5">

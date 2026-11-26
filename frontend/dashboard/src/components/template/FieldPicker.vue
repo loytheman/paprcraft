@@ -1,5 +1,5 @@
 <script setup>
-// "Insert field": the fields of the template's form (the data source), grouped by section, with the
+// "Insert field": the fields of the template's form (see the Form picker), grouped by section, with the
 // formatter ("pipe") to write the value with. Opens from the toolbar; inserting adds a chip at the
 // caret, like the {{x}} picker does for manual placeholders. Fields of a repeating group are listed
 // only where that group repeats (inside a Repeat block, or a table that repeats its first row).
@@ -32,7 +32,7 @@ const NAMES = { yesno: 'yes / no', date: 'date', upper: 'UPPER', lower: 'lower',
       <p class="text-small font-medium text-ink-muted">Insert a field from the form</p>
       <OpButton size="sm" variant="ghost" @click="emit('close')">Close</OpButton>
     </div>
-    <p v-if="!schema" class="mt-2 text-small text-ink-faint">Choose a data source above to insert the form's fields. The document info values below always work.</p>
+    <p v-if="!schema" class="mt-2 text-small text-ink-faint">Choose a form above to insert the form's fields. The document info values below always work.</p>
     <p v-else-if="entries.length <= 1" class="mt-2 text-small text-ink-faint">This form has no fields you can insert here.</p>
     <div v-for="s in entries" :key="s.section" class="mt-3">
       <p class="text-label uppercase text-ink-faint">{{ s.section }}</p>

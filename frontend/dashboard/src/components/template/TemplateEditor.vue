@@ -22,7 +22,7 @@ import {
   blankSection, cloneBlock, countPlaceholders, ensureIds, ensureTableCols, forEachBlock, indexAfterMove, insertAfterFocus,
   moveItem, newBlock, newContainer, normalizeKey, placeholderUsage, placeholdersForSave, renamePlaceholderKey, saveSignature, sectionsForSave, TABLE_TYPES,
   defaultCond, formGroups, formFields, formKeySet, insideRepeat, parseChip, repeatGroupAt,
-  frameForSave, renameTokensIn,
+  frameForSave, renameTokensIn, templateKeys,
 } from '@/helpers/template/blocks';
 import BlockList from './BlockList.vue';
 import TplMenu from './TplMenu.vue';
@@ -67,31 +67,31 @@ const pickerError = ref('');
 const pickerText = ref('');
 const showFields = ref(false);
 const fieldError = ref('');
-const forms = ref([]); // the data sources to choose from
+const forms = ref([]); // the forms to choose from
 const formSchema = ref(null); // the selected form's schema (null = none, or it could not be loaded)
 const formError = ref('');
 const rootEl = ref(null);
 const dialogs = { sign: ref(null), table: ref(null), layout: ref(null), formTable: ref(null), checklist: ref(null), declaration: ref(null) };
 const pageSetup = ref(null);
 
-// Value sets: the placeholder values live in the account's sets (Settings > Value sets), not on the
-// template. setDraft is an editable copy of the selected set's values, saved with the template.
-const valueSets = ref(isMaster ? null : []); // null = masters have no sets
+// Data sources (value sets in the API): the placeholder values live in the account's data sources,
+// managed on the Data sources page. Here the template only picks one (template.valueSetId); its
+// values are shown read-only.
+const valueSets = ref(isMaster ? null : []); // null = masters have no data sources
 const setsError = ref('');
-const setDraft = ref(null); // { KEY: value } of the selected set, or null when none is chosen (or it was deleted)
-const setSavedJson = ref('null');
-const setDirty = computed(() => JSON.stringify(setDraft.value) !== setSavedJson.value);
+const setValues = computed(() => (template.value?.valueSetId ? valueSets.value?.find((s) => s.id === template.value.valueSetId)?.values ?? null : null));
 
 const readonly = computed(() => !isMaster && !canEdit.value);
-const dirty = computed(() => !readonly.value && (savedSig.value !== liveSig.value || setDirty.value));
+const dirty = computed(() => !readonly.value && savedSig.value !== liveSig.value);
 const section = computed(() => template.value?.section[current.value] ?? null);
-const keys = computed(() => Object.keys(template.value?.placeholders ?? {}));
 const formKeys = computed(() => formKeySet(formSchema.value));
+// The template's manual keys: its map's, plus any a chip in the text uses (templateKeys).
+const keys = computed(() => (template.value ? templateKeys(template.value.placeholders, template.value.section, template.value.frame, formKeys.value) : []));
 // What the chips show: the set's values, then any value still saved on the template itself (older
 // templates; the docx Lambda falls back to those the same way).
 const effectiveValues = computed(() => {
   const out = { ...(template.value?.placeholders ?? {}) };
-  for (const [k, v] of Object.entries(setDraft.value ?? {})) if (v) out[k] = v;
+  for (const [k, v] of Object.entries(setValues.value ?? {})) if (v) out[k] = v;
   return out;
 });
 const legacyCount = computed(() => Object.values(template.value?.placeholders ?? {}).filter((v) => String(v ?? '').trim()).length);
@@ -110,7 +110,7 @@ const ctx = reactive({
   readonly,
   focusId: '',
   dragState: null,
-  formSchema: null, // the template's data source (read by repeat / if blocks and the table dialog)
+  formSchema: null, // the template's form schema (read by repeat / if blocks and the table dialog)
   groupAt: (id) => (section.value ? repeatGroupAt(section.value.list, id) : ''),
   setFocus: (id) => { ctx.focusId = id; },
   registerEditor: (editorId, blockId, quill) => { editors.set(editorId, { quill, blockId }); },
@@ -159,62 +159,38 @@ const renameKey = (from, to) => {
   if (fr) for (const k of ['headerLeft', 'headerRight', 'footerLeft']) fr[k] = renameTokensIn(fr[k] ?? '', from, to);
   delete map[from];
   map[to] = value ?? '';
-  // The set's value follows the key (the old key stays in the set for other templates that use it).
-  if (setDraft.value && setDraft.value[from] !== undefined && setDraft.value[to] === undefined) setDraft.value[to] = setDraft.value[from];
   editKey.value++; // editors reload their text, now with the new key
 };
 
-// ---- value sets ------------------------------------------------------------------------------
-const setDraftFrom = (id) => {
-  const s = id ? valueSets.value?.find((x) => x.id === id) : null;
-  setDraft.value = s ? { ...(s.values ?? {}) } : null;
-  setSavedJson.value = JSON.stringify(setDraft.value);
-};
+// ---- data sources ----------------------------------------------------------------------------
 const loadSets = async () => {
   if (isMaster) return;
   setsError.value = '';
   try {
     valueSets.value = await ValueSetService.listValueSets();
   } catch (e) {
-    setsError.value = e.message || 'Could not load your value sets.';
+    setsError.value = e.message || 'Could not load your data sources.';
   }
-  setDraftFrom(template.value?.valueSetId);
 };
-const selectSet = async (id) => {
-  if (setDirty.value) {
-    const ok = await askConfirm({ title: 'Discard value changes?', message: 'Your unsaved edits to the current value set are dropped.', confirmLabel: 'Discard and switch' });
-    if (!ok) return;
-  }
-  template.value.valueSetId = id;
-  setDraftFrom(id);
-};
-const createSet = async (name, values = {}) => {
+const selectSet = (id) => { template.value.valueSetId = id; };
+// Older templates kept their values on the template itself. A one-off migration: copy them into a
+// new data source, pick it, and clear them here. (New data sources are otherwise made on the Data sources page.)
+const moveLegacy = async () => {
+  const map = template.value.placeholders;
+  const values = Object.fromEntries(Object.entries(map).filter(([, v]) => String(v ?? '').trim()));
+  const taken = new Set((valueSets.value ?? []).map((s) => s.name.toLowerCase()));
+  const base = template.value.name.trim() || 'Template values';
+  let name = base;
+  for (let i = 2; taken.has(name.toLowerCase()); i++) name = `${base} (${i})`;
   setsError.value = '';
   try {
     const s = await ValueSetService.createValueSet({ name, values });
     valueSets.value = [...valueSets.value, s].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
     template.value.valueSetId = s.id;
-    setDraftFrom(s.id);
-    return true;
+    for (const k of Object.keys(map)) map[k] = '';
   } catch (e) {
-    setsError.value = e.fieldErrors?.[0]?.message || e.message || 'Could not create the value set.';
-    return false;
+    setsError.value = e.fieldErrors?.[0]?.message || e.message || 'Could not create the data source.';
   }
-};
-// Older templates kept their values on the template: put them in a new set and clear them here.
-const moveLegacy = async () => {
-  if (setDirty.value) {
-    const ok = await askConfirm({ title: 'Discard value changes?', message: 'Your unsaved edits to the current value set are dropped.', confirmLabel: 'Discard and continue' });
-    if (!ok) return;
-  }
-  const map = template.value.placeholders;
-  const values = Object.fromEntries(Object.entries(map).filter(([, v]) => String(v ?? '').trim()));
-  const taken = new Set((valueSets.value ?? []).map((s) => s.name.toLowerCase()));
-  let name = template.value.name.trim() || 'Template values';
-  for (let i = 2; taken.has(name.toLowerCase()); i++) name = `${template.value.name.trim() || 'Template values'} (${i})`;
-  const ok = await createSet(name, values);
-  if (!ok) return;
-  for (const k of Object.keys(map)) map[k] = '';
 };
 const removeKey = async (key) => {
   const used = placeholderUsage(template.value.section, template.value.frame)[key] ?? 0;
@@ -266,12 +242,12 @@ const togglePicker = () => {
   if (s?.range.length) pickerText.value = s.quill.getText(s.range.index, s.range.length);
   showPicker.value = !showPicker.value;
 };
-const insertPlaceholder = (raw) => {
+// Puts a {{KEY}} chip at the caret (adding the key to the template). Returns an error message, or ''.
+const placeChip = (raw) => {
   const key = normalizeKey(raw);
   const s = selected.value;
-  if (!key) return;
-  if (!s) { pickerError.value = 'Click in the text where the placeholder should go first.'; return; }
-  pickerError.value = '';
+  if (!key) return '';
+  if (!s) return 'Click in the text where the placeholder should go first.';
   if (!(key in template.value.placeholders)) template.value.placeholders[key] = '';
   const { quill, range } = s;
   quill.focus();
@@ -279,7 +255,21 @@ const insertPlaceholder = (raw) => {
   quill.insertEmbed(range.index, 'placeholder', { text: key, value: '' }, 'user');
   quill.setSelection(range.index + 1, 0, 'silent');
   selected.value = { ...s, range: { index: range.index + 1, length: 0 } };
-  showPicker.value = false;
+  return '';
+};
+// From the Placeholders panel: a key of the selected data source.
+const panelError = ref('');
+const insertFromPanel = (key) => {
+  const err = placeChip(key);
+  panelError.value = err;
+};
+// The {{x}} picker offers the template's keys and the selected data source's.
+const pickerKeys = computed(() => [...new Set([...keys.value, ...Object.keys(setValues.value ?? {})])]);
+const insertPlaceholder = (raw) => {
+  if (!normalizeKey(raw)) return;
+  const err = placeChip(raw);
+  pickerError.value = err;
+  if (!err) showPicker.value = false;
 };
 
 // ---- blocks ---------------------------------------------------------------------------------
@@ -301,10 +291,10 @@ const containerItems = () => {
   const inRepeat = !!section.value && !!ctx.focusId && insideRepeat(section.value.list, ctx.focusId);
   return [
     noForm || !groups.value.length || inRepeat
-      ? { label: noForm ? 'Repeat for each row (choose a data source first)' : inRepeat ? 'Repeat for each row (not inside another repeat)' : 'Repeat for each row (the form has no repeating group)', disabled: true }
+      ? { label: noForm ? 'Repeat for each row (choose a form first)' : inRepeat ? 'Repeat for each row (not inside another repeat)' : 'Repeat for each row (the form has no repeating group)', disabled: true }
       : { label: 'Repeat for each row of a group', icon: 'refresh', action: () => addContainer('repeat') },
     !hasFields.value
-      ? { label: 'Only if... (choose a data source first)', disabled: true }
+      ? { label: 'Only if... (choose a form first)', disabled: true }
       : { label: 'Only if a condition holds', icon: 'layout', action: () => addContainer('if') },
   ];
 };
@@ -438,7 +428,7 @@ const normalize = (t) => {
   return t;
 };
 
-// The data source: the forms to choose from, and the schema of the selected one.
+// The form: the forms to choose from, and the schema of the selected one.
 const loadForms = async () => {
   try { forms.value = await listSourceForms(isMaster); } catch { forms.value = []; }
 };
@@ -449,7 +439,7 @@ const loadSchema = async (id) => {
   try {
     formSchema.value = (await getSourceForm(isMaster, id))?.schema ?? null;
   } catch (e) {
-    formError.value = e.httpStatus === 404 ? 'The selected form no longer exists. Choose another data source or none.' : 'Could not load the form.';
+    formError.value = e.httpStatus === 404 ? 'The selected form no longer exists. Choose another form or none.' : 'Could not load the form.';
   }
 };
 const onSource = async (id) => {
@@ -486,13 +476,6 @@ const save = async () => {
   saveError.value = '';
   const sig = saveSignature(t);
   try {
-    // The set first: the template's export reads it.
-    if (setDirty.value && setDraft.value && t.valueSetId) {
-      const setJson = JSON.stringify(setDraft.value);
-      const s = await ValueSetService.updateValueSet(t.valueSetId, { values: placeholdersForSave(setDraft.value) });
-      valueSets.value = valueSets.value.map((x) => (x.id === s.id ? s : x));
-      setSavedJson.value = setJson;
-    }
     const body = { name: t.name.trim(), section: sectionsForSave(t.section), placeholders: placeholdersForSave(t.placeholders), formId: t.formId || null, ...(t.style && { style: t.style }), frame: frameForSave(t.frame), ...(!isMaster && { valueSetId: t.valueSetId || null }) };
     const res = await api.update(props.id, body);
     if (res?.exportHistory) exportHistory.value = res.exportHistory;
@@ -560,9 +543,9 @@ onBeforeRouteLeave(async () => {
     </div>
     <p v-if="saveError" role="alert" class="status-down mt-3 rounded-control border px-3 py-2 text-small">{{ saveError }}</p>
 
-    <!-- Data source: the form whose fields this template can use -->
+    <!-- Form: the form whose fields this template can use -->
     <div class="mt-3 flex flex-wrap items-center gap-2 text-small text-ink-muted">
-      <label for="tpl-source" class="font-medium">Data source</label>
+      <label for="tpl-source" class="font-medium">Form</label>
       <select id="tpl-source" :value="template.formId" :disabled="readonly" class="h-9 max-w-64 rounded-control border border-line bg-surface-1 px-2 text-body text-ink focus:border-primary focus:outline-none disabled:opacity-60" @change="onSource($event.target.value)">
         <option value="">None: type placeholders by hand</option>
         <option v-if="template.formId && !forms.some((f) => f.id === template.formId)" :value="template.formId">Selected form (not in your list)</option>
@@ -606,7 +589,7 @@ onBeforeRouteLeave(async () => {
         <FieldPicker :open="showFields" :schema="formSchema" :repeat-group="caretGroup" :error="fieldError" @insert="insertField" @close="showFields = false" />
       </div>
       <div v-if="showPicker && !readonly" class="mt-2 max-w-xl">
-        <PlaceholderPicker :open="showPicker" :keys="keys" :selected-text="pickerText" :error="pickerError" @insert="insertPlaceholder" @close="showPicker = false" />
+        <PlaceholderPicker :open="showPicker" :keys="pickerKeys" :selected-text="pickerText" :error="pickerError" @insert="insertPlaceholder" @close="showPicker = false" />
       </div>
     </div>
 
@@ -618,11 +601,12 @@ onBeforeRouteLeave(async () => {
       <PlaceholderPanel
         v-if="showPlaceholders"
         :placeholders="template.placeholders"
-        :values="setDraft"
+        :values="setValues"
         :sets="valueSets"
         :set-id="template.valueSetId"
         :sets-error="setsError"
         :legacy-count="legacyCount"
+        :insert-error="panelError"
         :sections="template.section"
         :frame="template.frame"
         :form-keys="formKeys"
@@ -631,8 +615,8 @@ onBeforeRouteLeave(async () => {
         @rename="renameKey"
         @remove="removeKey"
         @select-set="selectSet"
-        @new-set="(name) => createSet(name)"
         @move-legacy="moveLegacy"
+        @insert="insertFromPanel"
       />
     </div>
 
@@ -656,7 +640,7 @@ onBeforeRouteLeave(async () => {
       @delete="deleteSection"
       @move="moveSection"
     />
-    <PlaceholderChipPopover :placeholders="template.placeholders" :values="setDraft" :readonly="readonly" :find-editor="findEditor" />
+    <PlaceholderChipPopover :placeholders="template.placeholders" :values="setValues" :readonly="readonly" :find-editor="findEditor" />
     <ExportPanel
       v-if="!isMaster"
       :open="showExport"

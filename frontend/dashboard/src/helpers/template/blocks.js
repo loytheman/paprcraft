@@ -271,6 +271,17 @@ export const placeholderUsage = (sections, frame = null) => {
   return out;
 };
 
+// A manual placeholder key (COMPANY_NAME), as opposed to a form field ("full_name", "dob|date",
+// "owners.name", "risk.q1") or a built-in document value ({{generated_date}}).
+export const isManualKey = (key, formKeys = null) => !!key && !/[a-z|.#]/.test(key) && !BUILTIN_KEYS.has(key) && !formKeys?.has(key);
+// The template's manual keys: those saved in its placeholder map, plus any a chip in the text (or the
+// page frame) uses, so a template whose chips were never added to the map still lists them all.
+export const templateKeys = (placeholders, sections, frame = null, formKeys = null) => {
+  const out = new Set(Object.keys(placeholders ?? {}));
+  for (const k of Object.keys(placeholderUsage(sections, frame))) if (isManualKey(k, formKeys)) out.add(k);
+  return [...out];
+};
+
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const escapeAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 
@@ -399,14 +410,18 @@ export const frameForSave = (frame) => {
 };
 export const PAGE_STYLES = [{ value: 'letter', label: 'Letter (Arial, wide margins)' }, { value: 'form', label: 'Form (Calibri, narrow margins, grey table headers)' }];
 
-// Values the document itself provides, usable anywhere a field is ({{submission_ref}}).
+// Values the document itself provides, usable anywhere a field is ({{submission_ref}}). Keep in step
+// with backend/lambda (docxRender.js generated_date, docxTemplate.js builtins) and RESERVED_KEYS in
+// backend/api model.valueSet.js. `submission`: only filled when a submission is exported.
 export const BUILTIN_VALUES = [
-  { key: 'submission_ref', label: 'Submission reference' },
-  { key: 'submission_title', label: 'Submission title' },
-  { key: 'generated_date', label: 'Date generated' },
-  { key: 'form_name', label: 'Form name' },
+  { key: 'submission_ref', label: 'Submission reference', help: 'The last 8 characters of the submission id, in capitals.', example: '01HX7K2Q', submission: true },
+  { key: 'submission_title', label: 'Submission title', help: "The submission's title, or the form's name when it has none.", example: 'Acme Pte Ltd onboarding', submission: true },
+  { key: 'generated_date', label: 'Date generated', help: 'The date the document is generated.', example: '26 NOV 2026', submission: false },
+  { key: 'form_name', label: 'Form name', help: 'The name of the form the submission belongs to.', example: 'CDD: Company', submission: true },
 ];
 export const BUILTIN_KEYS = new Set(BUILTIN_VALUES.map((b) => b.key));
+// A reserved key, ignoring case ("GENERATED_DATE" is generated_date): a data source can't define one.
+export const isReservedKey = (key) => BUILTIN_KEYS.has(String(key ?? '').trim().toLowerCase());
 export const builtinEntries = () => [{ section: 'Document info', items: BUILTIN_VALUES.map((b) => ({ text: b.key, label: b.label, type: 'text', pipe: b.key === 'generated_date' ? 'date' : '' })) }];
 
 // ---- {{tokens}} in the strings of form blocks and the frame

@@ -6,6 +6,10 @@ import { customJoi as Joi } from "./customJoi.js";
 
 export const MAX_VALUE_SETS = 100;
 export const MAX_VALUES_PER_SET = 200;
+// Placeholders the document fills itself (backend/lambda docxRender.js / docxTemplate.js; the dashboard
+// lists them as BUILTIN_VALUES). Lower case; keys match ignoring case. A set can't define one, as its
+// value would quietly replace the real one.
+export const RESERVED_KEYS = ["submission_ref", "submission_title", "generated_date", "form_name"];
 
 let valueSetModel;
 (async () => {

@@ -20,6 +20,6 @@ export class ValueSetController {
 
   remove = catchAsync(async (req, res) => {
     await valueSetService.deleteValueSet(req.joiData.id, req.accountId, req.blameable);
-    res.json({ message: "Value set deleted." });
+    res.json({ message: "Data source deleted." });
   });
 }
