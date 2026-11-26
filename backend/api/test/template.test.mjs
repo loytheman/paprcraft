@@ -41,6 +41,16 @@ mock.module(u('services/service.plan.js'), { namedExports: {
   assertNotSuspended: () => {},
 } });
 mock.module(u('services/service.attachment.js'), { namedExports: { deleteFolder: async (p) => deleted.push(p) } });
+// Value sets: SET1 belongs to A1; the export merges its values under the request's own.
+const sets = { SET1: { id: 'SET1', accountId: 'A1', values: { COMPANY: 'Set Co', CITY: 'Singapore' } } };
+mock.module(u('services/service.valueSet.js'), { namedExports: {
+  getValueSetFor: async (id, accountId) => { if (sets[id]?.accountId !== accountId) throw new Error('not found'); return sets[id]; },
+  exportValues: async (id, accountId, values = {}) => {
+    if (!id) return values ?? {};
+    if (sets[id]?.accountId !== accountId) throw new Error('The selected value set no longer exists.');
+    return { ...sets[id].values, ...(values ?? {}) };
+  },
+} });
 mock.module(u('middlewares/error.js'), { namedExports: {
   errorType: {}, errorMessage: { NOT_FOUND: 'not found' },
   ApiError: class extends Error { constructor(s, c, m) { super(m); this.statusCode = s; } },
@@ -93,6 +103,21 @@ test('generate: adds a processing entry and invokes the Lambda with ids and valu
   assert.equal(out.exportHistory[0].processStatus, 'processing');
   assert.equal(out.exportHistory[0].createdBy.name, 'Alice');
   assert.deepEqual(invokes, [{ templateId: t.id, cbId: out.exportHistory[0].cbId, values: { COMPANY: 'Acme' }, pdf: false }]);
+});
+
+test('generate: values come from the template\'s value set, or the one asked for; request values win; another account\'s set is refused', async () => {
+  reset();
+  const t = await svc.createTemplate({ name: 'Doc' }, 'A1');
+  await svc.updateTemplate({ id: t.id, valueSetId: 'SET1' }, 'A1');
+  await svc.generateExport({ id: t.id }, 'A1');
+  assert.deepEqual(invokes[0].values, { COMPANY: 'Set Co', CITY: 'Singapore' });
+  await svc.generateExport({ id: t.id, values: { COMPANY: 'Override' } }, 'A1');
+  assert.deepEqual(invokes[1].values, { COMPANY: 'Override', CITY: 'Singapore' });
+  await svc.generateExport({ id: t.id, valueSetId: '' }, 'A1'); // '' = no set, even though the template has one
+  assert.deepEqual(invokes[2].values, {});
+  await assert.rejects(svc.updateTemplate({ id: t.id, valueSetId: 'NOPE' }, 'A1'), /not found/);
+  const t2 = await svc.createTemplate({ name: 'Doc' }, 'A2');
+  await assert.rejects(svc.generateExport({ id: t2.id, valueSetId: 'SET1' }, 'A2'), /no longer exists/);
 });
 
 test('generate: pdf true is remembered on the entry and passed to the Lambda', async () => {

@@ -43,7 +43,11 @@ mock.module(u('models/model.submission.js'), {
     addExport: async (id, entry) => { subs[id] = { ...subs[id], exportHistory: [...(subs[id].exportHistory ?? []), entry] }; return subs[id]; },
   },
 });
-mock.module(u('models/model.template.js'), { namedExports: { MASTER_ACCOUNT_ID: 'MASTER' } });
+// Every form's template uses A1's value set SET1 (the submission export fills the placeholders from it).
+mock.module(u('models/model.template.js'), { namedExports: { MASTER_ACCOUNT_ID: 'MASTER' }, defaultExport: { getById: async (id) => ({ id, accountId: 'A1', valueSetId: 'SET1' }) } });
+mock.module(u('services/service.valueSet.js'), { namedExports: {
+  exportValues: async (id, accountId, values = {}) => (id === 'SET1' && accountId === 'A1' ? { COMPANY: 'Set Co', ...values } : values),
+} });
 mock.module(u('services/service.template.js'), { namedExports: { cloneTemplate: async (id, from, to) => { cloned.push({ id, from, to }); return { id: `T-${to}` }; }, updateTemplate: async (d) => { cloned.push({ bind: d }); return d; } } });
 mock.module(u('services/service.plan.js'), { namedExports: {
   getAccountPlan: async () => ({ ...limits, name: 'Free', key: 'free' }),
@@ -259,7 +263,7 @@ const withTemplate = async (settings = { publicEnabled: true }) => {
   return f;
 };
 
-test('generate: adds a processing entry and invokes the Lambda with just the submission and export ids', async () => {
+test('generate: adds a processing entry and invokes the Lambda with the submission, export ids and the template\'s set values', async () => {
   reset();
   const f = await withTemplate();
   const s = await subm.createSubmission({ formId: f.id, title: 'Acme' }, 'A1', bl);
@@ -267,8 +271,10 @@ test('generate: adds a processing entry and invokes the Lambda with just the sub
   assert.equal(out.exportHistory.length, 1);
   assert.equal(out.exportHistory[0].processStatus, 'processing');
   assert.equal(out.exportHistory[0].createdBy.name, 'Alice');
-  assert.deepEqual(invokes, [{ submissionId: s.id, cbId: out.exportHistory[0].cbId, pdf: false }]);
+  assert.deepEqual(invokes, [{ submissionId: s.id, cbId: out.exportHistory[0].cbId, values: { COMPANY: 'Set Co' }, pdf: false }]);
   assert.equal(out.exportHistory[0].url, undefined); // nothing to download yet
+  await subm.generateExport({ id: s.id, valueSetId: '' }, 'A1', bl); // '' = no set
+  assert.deepEqual(invokes[1].values, {});
 });
 
 test('generate: a form without a template, a form needing approval, a missing Lambda and a full history are all refused', async () => {

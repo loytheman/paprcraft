@@ -9,6 +9,7 @@ import { apiKeySchema } from "./model.apiKey.js";
 import { templateSchema } from "./model.template.js";
 import { formSchema } from "./model.form.js";
 import { submissionSchema } from "./model.submission.js";
+import { valueSetSchema } from "./model.valueSet.js";
 
 // export const statusTypes = ["enabled", "disabled"];
 
@@ -34,6 +35,7 @@ export const OneTableSchema = {
     Template: templateSchema,
     Form: formSchema,
     Submission: submissionSchema,
+    ValueSet: valueSetSchema,
   },
   params: {
     partial: true,

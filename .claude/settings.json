@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --test --experimental-test-module-mocks --no-warnings 'test/**/*.test.js')",
+      "Bash(node --test --experimental-test-module-mocks --no-warnings 'test/**/*.test.mjs')",
+      "Bash(node --test --experimental-test-module-mocks --no-warnings test/template.test.mjs)",
+      "Bash(yarn dev *)",
+      "Bash(lsof -nP -iTCP:3006 -iTCP:6100 -sTCP:LISTEN)"
+    ]
+  }
+}

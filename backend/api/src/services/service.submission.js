@@ -15,7 +15,8 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ApiError, errorType, errorMessage } from "../middlewares/error.js";
 import config from "../config/config.js";
 import submissionModel, { submissionStatus } from "../models/model.submission.js";
-import { MASTER_ACCOUNT_ID } from "../models/model.template.js";
+import templateModel, { MASTER_ACCOUNT_ID } from "../models/model.template.js";
+import { exportValues } from "./service.valueSet.js";
 import Utils from "../helpers/utils.js";
 import { getLambdaClient, getS3Client } from "./index.js";
 import { getAccountModel } from "./service.accountLookup.js";
@@ -297,12 +298,16 @@ const markExportFailed = async (id, cbId, error) => {
 // Starts a .docx export of the submission through its form's document template. Returns the
 // submission with the new "processing" entry; the docx Lambda (backend/lambda/docxTemplate.js)
 // completes it. A draft can be exported too (to review the layout) unless the form requires approval.
-export const generateExport = async ({ id, pdf }, accountId, blameable) => {
+// The template's {{KEY}} chips are filled from the value set named here, or else the template's own.
+export const generateExport = async ({ id, valueSetId, pdf }, accountId, blameable) => {
   const sub = await getSubmissionFor(id, accountId);
   const form = await formModel.getById(sub.formId);
   if (!form?.templateId) throw badRequest("This form has no document template yet.");
   if (!exportsAllowed(sub, form)) throw badRequest("Approve the submission before exporting.");
   assertNotSuspended(await getAccountPlan(accountId));
+  const template = await templateModel.getById(form.templateId);
+  const setId = valueSetId ?? (template?.accountId === accountId ? template.valueSetId : null);
+  const values = await exportValues(setId, accountId);
   if (!config.docx?.lambdaName) throw new ApiError(httpStatus.SERVICE_UNAVAILABLE, errorType.BAD_REQUEST, "Document export isn't set up yet.");
   if ((sub.exportHistory?.length ?? 0) >= MAX_EXPORT_HISTORY) throw badRequest(`A submission keeps up to ${MAX_EXPORT_HISTORY} exports. Delete some old ones first.`);
 
@@ -314,7 +319,7 @@ export const generateExport = async ({ id, pdf }, accountId, blameable) => {
       new InvokeCommand({
         FunctionName: config.docx.lambdaName,
         InvocationType: "Event", // async: the Lambda updates exportHistory when done
-        Payload: Buffer.from(JSON.stringify({ submissionId: id, cbId, pdf: !!pdf })),
+        Payload: Buffer.from(JSON.stringify({ submissionId: id, cbId, values, pdf: !!pdf })),
       })
     );
   } catch (err) {

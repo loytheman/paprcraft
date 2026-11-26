@@ -19,6 +19,7 @@ import templateModel, { MASTER_ACCOUNT_ID, exportStatus } from "../models/model.
 import { getAccountPlan, planLimitError, isTopPlan, includesText, assertNotSuspended } from "./service.plan.js";
 import { deleteFolder } from "./service.attachment.js";
 import { pdfUrls } from "./service.exportUrls.js";
+import { getValueSetFor, exportValues } from "./service.valueSet.js";
 
 const DOWNLOAD_URL_SECONDS = 900;
 const MAX_EXPORT_HISTORY = 50;
@@ -78,14 +79,16 @@ const assertUnderLimit = async (accountId) => {
   }
 };
 
-export const createTemplate = async ({ name, section, placeholders, formId, style, frame }, ownerId, blameable) => {
+export const createTemplate = async ({ name, section, placeholders, formId, style, frame, valueSetId }, ownerId, blameable) => {
   if (ownerId !== MASTER_ACCOUNT_ID) await assertUnderLimit(ownerId);
-  const data = { accountId: ownerId, name, section: section ?? blankSections(), placeholders: placeholders ?? {}, exportHistory: [], ...(formId && { formId }), ...(style && { style }), ...(frame && { frame }) };
+  const data = { accountId: ownerId, name, section: section ?? blankSections(), placeholders: placeholders ?? {}, exportHistory: [], ...(formId && { formId }), ...(style && { style }), ...(frame && { frame }), ...(valueSetId && ownerId !== MASTER_ACCOUNT_ID && { valueSetId }) };
   return templateModel.create({ ...data, keywordSearch: keywordsOf(data) }, blameable);
 };
 
 export const updateTemplate = async ({ id, ...fields }, ownerId, blameable) => {
   const current = await getTemplateFor(id, ownerId);
+  if (fields.valueSetId && ownerId === MASTER_ACCOUNT_ID) throw badRequest("Master templates don't use value sets.");
+  if (fields.valueSetId) await getValueSetFor(fields.valueSetId, ownerId); // 404 for another account's set
   await templateModel.update({ id, ...fields, keywordSearch: keywordsOf({ name: fields.name ?? current.name }) }, blameable);
   return getTemplate(id, ownerId);
 };
@@ -101,14 +104,19 @@ export const deleteTemplate = async (id, ownerId, blameable) => {
 export const cloneTemplate = async (id, sourceOwnerId, ownerId, blameable) => {
   const src = await getTemplateFor(id, sourceOwnerId);
   const name = sourceOwnerId === ownerId ? `${src.name} (copy)` : src.name;
-  return createTemplate({ name, section: src.section, placeholders: src.placeholders, style: src.style, frame: src.frame, formId: sourceOwnerId === ownerId ? src.formId : undefined }, ownerId, blameable); // a clone from a master is rebound by service.form.js cloneForm
+  const sameOwner = sourceOwnerId === ownerId;
+  const copy = await createTemplate({ name, section: src.section, placeholders: src.placeholders, style: src.style, frame: src.frame, formId: sameOwner ? src.formId : undefined, valueSetId: sameOwner ? src.valueSetId : undefined }, ownerId, blameable); // a clone from a master is rebound by service.form.js cloneForm
+  return copy;
 };
 
 // Starts a .docx export. Returns the template with the new "processing" entry.
-export const generateExport = async ({ id, values, pdf }, accountId, blameable) => {
+// The placeholder values come from the value set named here, or else the one saved on the template;
+// `values` override single keys.
+export const generateExport = async ({ id, values, valueSetId, pdf }, accountId, blameable) => {
   if (accountId === MASTER_ACCOUNT_ID) throw badRequest("Master templates can't be exported. Clone one first.");
   const t = await getTemplateFor(id, accountId);
   assertNotSuspended(await getAccountPlan(accountId));
+  const merged = await exportValues(valueSetId ?? t.valueSetId, accountId, values);
   if (!config.docx.lambdaName) throw new ApiError(httpStatus.SERVICE_UNAVAILABLE, errorType.BAD_REQUEST, "Document export isn't set up yet.");
   if ((t.exportHistory?.length ?? 0) >= MAX_EXPORT_HISTORY) throw badRequest(`A template keeps up to ${MAX_EXPORT_HISTORY} exports. Delete the template's old ones first.`);
 
@@ -120,7 +128,7 @@ export const generateExport = async ({ id, values, pdf }, accountId, blameable) 
       new InvokeCommand({
         FunctionName: config.docx.lambdaName,
         InvocationType: "Event", // async: the Lambda updates exportHistory when done
-        Payload: Buffer.from(JSON.stringify({ templateId: id, cbId, values: values ?? {}, pdf: !!pdf })),
+        Payload: Buffer.from(JSON.stringify({ templateId: id, cbId, values: merged, pdf: !!pdf })),
       })
     );
   } catch (err) {

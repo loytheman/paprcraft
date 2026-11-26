@@ -40,6 +40,7 @@ export const templateSchema = {
   // {{submission_ref}}, {{submission_title}}, {{generated_date}}): { headerLeft, headerRight, footerLeft }. Footer right is always "Page N/M".
   frame: { type: Object },
   formId: { type: String }, // the form whose fields this template renders (the editor offers its keys); see service.form.js
+  valueSetId: { type: String }, // the value set (model.valueSet.js) that fills the {{KEY}} chips by default; exports may pick another
 
   createdBy: { type: Object },
   updatedBy: { type: Object },
@@ -56,6 +57,7 @@ const fields = () => ({
   section: Joi.array().items(sectionSchema).min(1).max(30).label("Sections"),
   placeholders: Joi.object().pattern(Joi.string().max(100), Joi.string().allow("").max(2000)).label("Placeholders"),
   formId: Joi.string().allow(null, ""),
+  valueSetId: Joi.string().allow(null, ""),
   style: Joi.valid("letter", "form"),
   frame: Joi.object({ headerLeft: Joi.string().allow("").max(200), headerRight: Joi.string().allow("").max(200), footerLeft: Joi.string().allow("").max(200) }).allow(null),
 });
@@ -81,10 +83,12 @@ export class TemplateJoiSchema {
     return { keyword: Joi.string().trim().lowercase().allow("").max(100) };
   }
 
-  // values: this export's placeholder values (they override the saved ones).
+  // valueSetId: the value set to fill the placeholders from (default: the template's own valueSetId);
+  // values: single keys that override the set's.
   get generate() {
     return {
       id: Joi.string().required(),
+      valueSetId: Joi.string().allow(null, ""),
       values: Joi.object().pattern(Joi.string().max(100), Joi.string().allow("").max(2000)),
       pdf: Joi.boolean(), // also make a PDF from the finished Word file
     };

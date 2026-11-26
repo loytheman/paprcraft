@@ -11,6 +11,7 @@ const AUDITED = {
   Submission: { label: (r) => r.title || r.formName, accountId: (r) => r.accountId },
   Template: { label: (r) => r.name, accountId: (r) => (r.accountId === 'MASTER' ? null : r.accountId) }, // masters (staff-managed) have no customer trail
   AccountMember: { label: (r) => r.invitedEmail, accountId: (r) => r.accountId }, // team (service.team.js)
+  ValueSet: { label: (r) => r.name, accountId: (r) => r.accountId }, // placeholder values (service.valueSet.js)
 };
 const AUDITED_TYPES = Object.keys(AUDITED);
 

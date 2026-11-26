@@ -69,7 +69,7 @@ test('delete: credited to the deleter only if the stamp was just applied', () =>
 });
 
 test('unaudited record types are ignored', () => {
-  assert.deepEqual(AUDITED_TYPES, ['Account', 'Label', 'Form', 'Submission', 'Template', 'AccountMember']);
+  assert.deepEqual(AUDITED_TYPES, ['Account', 'Label', 'Form', 'Submission', 'Template', 'AccountMember', 'ValueSet']);
   assert.equal(toAuditRow(ev('INSERT', null, { _type: 'Token', pk: '#TOKEN:1' }), NOW), null);
 });
 

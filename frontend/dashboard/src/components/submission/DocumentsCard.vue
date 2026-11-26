@@ -2,13 +2,14 @@
 // "Documents": render this submission into a .docx with the form's template, and list the exports.
 // The API starts the export and the docx Lambda finishes it; while any entry is processing this
 // card re-reads the submission every 4 seconds.
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import OpButton from '@ds/components/OpButton.vue';
 import OpIcon from '@ds/components/OpIcon.vue';
 import DocPreview from '@/components/DocPreview.vue';
 import ExportActions from '@/components/ExportActions.vue';
 import * as SubmissionService from '@/services/service.submission';
+import * as ValueSetService from '@/services/service.valueSet';
 import { generateBlock } from '@/helpers/forms/submission';
 import { formatDateTime } from '@/helpers/Format';
 
@@ -24,6 +25,13 @@ const router = useRouter();
 
 const preview = ref({ url: '', pdf: false });
 const wantPdf = ref(true);
+// Which value set fills the template's {{KEY}} chips (the template's own unless another is picked).
+const valueSets = ref([]);
+const valueSetId = ref('__template');
+onMounted(async () => {
+  if (props.role === 'viewer') return;
+  try { valueSets.value = await ValueSetService.listValueSets(); } catch { valueSets.value = []; }
+});
 const busy = ref(false);
 const error = ref('');
 const entries = computed(() => (props.submission.exportHistory ?? []).slice().reverse());
@@ -54,7 +62,8 @@ const generate = async () => {
   busy.value = true;
   try {
     if (props.flush) await props.flush(); // the document is made from the saved answers
-    const s = await SubmissionService.generateDocument(props.submission.id, wantPdf.value);
+    const setId = valueSetId.value === '__template' ? undefined : valueSetId.value; // undefined = the template's own set, '' = none
+    const s = await SubmissionService.generateDocument(props.submission.id, wantPdf.value, setId);
     emit('history', s.exportHistory ?? []);
   } catch (e) {
     error.value = e.fieldErrors?.[0]?.message || e.message || 'Could not start the document.';
@@ -80,6 +89,14 @@ const STATUS = { processing: 'Processing…', completed: 'Ready', failed: 'Faile
     <p v-else-if="blocked" class="mt-3 text-small text-ink-faint">{{ blocked }}</p>
 
     <div class="mt-4">
+      <div v-if="role !== 'viewer' && !noTemplate && valueSets.length" class="mb-3">
+        <label for="doc-value-set" class="text-small font-medium text-ink-muted">Placeholder values</label>
+        <select id="doc-value-set" v-model="valueSetId" class="mt-1 h-9 w-full max-w-xs rounded-control border border-line bg-surface-1 px-2 text-body text-ink focus:border-primary focus:outline-none">
+          <option value="__template">The template's value set</option>
+          <option value="">None</option>
+          <option v-for="s in valueSets" :key="s.id" :value="s.id">{{ s.name }}</option>
+        </select>
+      </div>
       <label v-if="role !== 'viewer'" class="mb-3 flex items-center gap-2 text-body text-ink"><input v-model="wantPdf" type="checkbox" class="size-4 accent-primary" /> Also create a PDF</label>
       <OpButton v-if="role !== 'viewer'" icon="send" :disabled="busy || !!blocked" @click="generate">{{ busy ? 'Starting…' : 'Generate document' }}</OpButton>
       <p v-if="dirty && !blocked" class="mt-2 text-small text-ink-faint">Your latest answers are saved first.</p>

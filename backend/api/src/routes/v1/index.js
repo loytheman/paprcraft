@@ -12,6 +12,8 @@ import { ActivityJoiSchema } from "../../models/model.activity.trail.js";
 import { apiKeyAuth } from "../../middlewares/apiKeyAuth.js";
 import { LabelController } from "../../controllers/controller.label.js";
 import { LabelJoiSchema } from "../../models/model.label.js";
+import { ValueSetController } from "../../controllers/controller.valueSet.js";
+import { ValueSetJoiSchema } from "../../models/model.valueSet.js";
 import { customJoi as Joi } from "../../models/customJoi.js";
 import { TemplateController, MasterTemplateController } from "../../controllers/controller.template.js";
 import { TemplateJoiSchema } from "../../models/model.template.js";
@@ -43,6 +45,16 @@ const r = router;
   r.post("/label", auth(), joi(sl.createLabel), blameableBehaviour, cl.createLabel)
   r.put("/label/:id", auth(), joi(sl.updateLabel), blameableBehaviour, cl.updateLabel)
   r.delete("/label/:id", auth(), joi(sl.byId), blameableBehaviour, cl.deleteLabel)
+}
+
+{
+  // Value sets (placeholder values for templates), scoped to the caller's own account (controller.valueSet.js).
+  const s = new ValueSetJoiSchema();
+  const c = new ValueSetController();
+  r.get("/value-sets", auth(), c.list)
+  r.post("/value-set", auth(), joi(s.create), blameableBehaviour, c.create)
+  r.put("/value-set/:id", auth(), joi(s.update), blameableBehaviour, c.update)
+  r.delete("/value-set/:id", auth(), joi(s.byId), blameableBehaviour, c.remove)
 }
 
 {

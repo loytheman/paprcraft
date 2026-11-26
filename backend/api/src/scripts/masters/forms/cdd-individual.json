@@ -456,7 +456,7 @@
       "footerLeft": "{{firm_name}}"
     },
     "placeholders": {
-      "firm_name": "Your firm name"
+      "firm_name": ""
     },
     "section": [
       {

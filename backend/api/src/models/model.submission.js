@@ -90,7 +90,7 @@ export class SubmissionJoiSchema {
   }
 
   get generate() {
-    return { id: Joi.string().required(), pdf: Joi.boolean() };
+    return { id: Joi.string().required(), valueSetId: Joi.string().allow(null, ""), pdf: Joi.boolean() };
   }
 
   get exportById() {

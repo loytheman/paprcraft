@@ -211,7 +211,7 @@ const reviewBlocks = () => [
   ftable('Screening', [row(c('Screening results and notes', '{{screening_notes}}'))]),
 ];
 
-const individualTemplate = () => ({ name: 'CDD: Individual', style: 'form', frame: FRAME, placeholders: { firm_name: 'Your firm name' }, section: [
+const individualTemplate = () => ({ name: 'CDD: Individual', style: 'form', frame: FRAME, placeholders: { firm_name: '' }, section: [
   { name: 'Customer information', list: [
     ...preamble('for Individual'),
     ftable('Customer Information', [
@@ -225,7 +225,7 @@ const individualTemplate = () => ({ name: 'CDD: Individual', style: 'form', fram
   { name: 'Risk assessment', list: [checklistBlock('Risk Assessment Checklist', 'Customer Risk Assessment', 'risk_customer', C.riskCustomer), blank(), ...reviewBlocks()] },
 ] });
 
-const companyTemplate = () => ({ name: 'CDD: Company', style: 'form', frame: FRAME, placeholders: { firm_name: 'Your firm name' }, section: [
+const companyTemplate = () => ({ name: 'CDD: Company', style: 'form', frame: FRAME, placeholders: { firm_name: '' }, section: [
   { name: 'Customer information', list: [
     ...preamble('for Company'),
     ftable('Customer Information', [

@@ -15,6 +15,7 @@ import StaffCustomer from '@/views/Staff.Customer.vue';
 import Home from '@/views/Home.vue';
 import SettingsApiKey from '@/views/Settings.ApiKey.vue';
 import SettingsLabels from '@/views/Settings.Labels.vue';
+import SettingsValueSets from '@/views/Settings.ValueSets.vue';
 import Converter from '@/views/Converter.vue';import TemplateList from '@/views/Template.List.vue';
 import TemplateEdit from '@/views/Template.Edit.vue';
 import StaffTemplates from '@/views/Staff.Templates.vue';
@@ -66,6 +67,7 @@ const router = createRouter({
         { path: 'submissions', name: 'submissions', component: SubmissionList },
         { path: 'submissions/:id', name: 'submission', component: SubmissionDetail },
         { path: 'settings/labels', name: 'labels', component: SettingsLabels },
+        { path: 'settings/value-sets', name: 'value-sets', component: SettingsValueSets },
         { path: 'settings/team', name: 'team', component: SettingsTeam },
         { path: 'settings/activity', name: 'activity', component: SettingsActivity },
         { path: 'settings/api-key', name: 'api-key', component: SettingsApiKey, meta: { ownerOnly: true } },

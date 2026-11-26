@@ -37,6 +37,7 @@ const navMore = [
   { name: 'activity', label: 'Activity', icon: 'activity' },
   { name: 'team', label: 'Team', icon: 'users' },
   { name: 'labels', label: 'Labels', icon: 'tag' },
+  { name: 'value-sets', label: 'Value sets', icon: 'braces' },
 ];
 const isActive = (n) => (n.exact ? route.name === n.name : String(route.name ?? '').startsWith(n.name.replace(/s$/, '')) || route.name === n.name);
 
@@ -137,6 +138,9 @@ const onSignOut = async () => {
               </RouterLink>
               <RouterLink :to="{ name: 'labels' }" role="menuitem" class="flex items-center gap-2.5 px-4 py-2.5 text-body text-ink-muted hover:bg-ink/4 hover:text-ink">
                 <OpIcon name="tag" :size="16" /> Labels
+              </RouterLink>
+              <RouterLink :to="{ name: 'value-sets' }" role="menuitem" class="flex items-center gap-2.5 px-4 py-2.5 text-body text-ink-muted hover:bg-ink/4 hover:text-ink">
+                <OpIcon name="braces" :size="16" /> Value sets
               </RouterLink>
               <RouterLink :to="{ name: 'activity' }" role="menuitem" class="flex items-center gap-2.5 px-4 py-2.5 text-body text-ink-muted hover:bg-ink/4 hover:text-ink">
                 <OpIcon name="activity" :size="16" /> Activity

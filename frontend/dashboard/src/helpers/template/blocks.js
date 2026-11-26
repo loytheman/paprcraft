@@ -544,6 +544,6 @@ export const validateFormBlock = (block, schema = null) => {
 export const sectionsForSave = (sections) => sections.map((s) => ({ name: String(s.name ?? '').trim() || 'section', list: JSON.parse(JSON.stringify(s.list ?? [])) }));
 export const placeholdersForSave = (map) => Object.fromEntries(Object.entries(map ?? {}).filter(([k]) => k).map(([k, v]) => [k, String(v ?? '')]));
 // One comparable string of what would be saved (the dirty check).
-export const saveSignature = ({ name, section, placeholders, formId, style, frame }) => JSON.stringify([name ?? '', sectionsForSave(section ?? []), placeholdersForSave(placeholders), formId ?? '', style ?? '', frameForSave(frame)]);
+export const saveSignature = ({ name, section, placeholders, formId, style, frame, valueSetId }) => JSON.stringify([name ?? '', sectionsForSave(section ?? []), placeholdersForSave(placeholders), formId ?? '', style ?? '', frameForSave(frame), valueSetId ?? '']);
 
 export const blankSection = (name = 'section 1') => ({ name, list: [] });

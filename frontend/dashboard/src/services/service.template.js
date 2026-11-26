@@ -9,7 +9,8 @@ export const updateTemplate = (id, body) => callApi('PUT', `template/${id}`, bod
 export const deleteTemplate = (id) => callApi('DELETE', `template/${id}`).then((r) => r.data);
 export const duplicateTemplate = (id) => callApi('POST', `template/${id}/duplicate`).then((r) => r.data);
 // Starts a .docx export; resolves with the template, including the new "processing" entry.
-export const generateDocument = (id, values, pdf = false) => callApi('POST', 'template/generate', { id, values, pdf }).then((r) => r.data);
+// valueSetId: the value set that fills the placeholders (null = none); values: single keys that override it.
+export const generateDocument = (id, { valueSetId = null, values, pdf = false } = {}) => callApi('POST', 'template/generate', { id, valueSetId, ...(values && { values }), pdf }).then((r) => r.data);
 export const deleteExport = (id, cbId) => callApi('DELETE', `template/${id}/export/${cbId}`).then((r) => r.data);
 
 // Staff-published masters: any account lists them and clones one.

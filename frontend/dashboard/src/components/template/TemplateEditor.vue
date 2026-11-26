@@ -15,6 +15,7 @@ import { askConfirm } from '@/helpers/Confirm';
 import { canEdit } from '@/team';
 import { ownApi, masterApi } from '@/services/service.template';
 import { listSourceForms, getSourceForm } from '@/services/service.templateForm';
+import * as ValueSetService from '@/services/service.valueSet';
 import { TPL_KEY } from '@/helpers/template/context';
 import { SIZES, refreshChips, setPlaceholderResolver } from '@/helpers/template/quill';
 import {
@@ -73,12 +74,28 @@ const rootEl = ref(null);
 const dialogs = { sign: ref(null), table: ref(null), layout: ref(null), formTable: ref(null), checklist: ref(null), declaration: ref(null) };
 const pageSetup = ref(null);
 
+// Value sets: the placeholder values live in the account's sets (Settings > Value sets), not on the
+// template. setDraft is an editable copy of the selected set's values, saved with the template.
+const valueSets = ref(isMaster ? null : []); // null = masters have no sets
+const setsError = ref('');
+const setDraft = ref(null); // { KEY: value } of the selected set, or null when none is chosen (or it was deleted)
+const setSavedJson = ref('null');
+const setDirty = computed(() => JSON.stringify(setDraft.value) !== setSavedJson.value);
+
 const readonly = computed(() => !isMaster && !canEdit.value);
-const dirty = computed(() => !readonly.value && savedSig.value !== liveSig.value);
+const dirty = computed(() => !readonly.value && (savedSig.value !== liveSig.value || setDirty.value));
 const section = computed(() => template.value?.section[current.value] ?? null);
 const keys = computed(() => Object.keys(template.value?.placeholders ?? {}));
 const formKeys = computed(() => formKeySet(formSchema.value));
-const counts = computed(() => (section.value ? countPlaceholders(section.value.list, template.value.placeholders, formKeys.value) : { total: 0, replaced: 0 }));
+// What the chips show: the set's values, then any value still saved on the template itself (older
+// templates; the docx Lambda falls back to those the same way).
+const effectiveValues = computed(() => {
+  const out = { ...(template.value?.placeholders ?? {}) };
+  for (const [k, v] of Object.entries(setDraft.value ?? {})) if (v) out[k] = v;
+  return out;
+});
+const legacyCount = computed(() => Object.values(template.value?.placeholders ?? {}).filter((v) => String(v ?? '').trim()).length);
+const counts = computed(() => (section.value ? countPlaceholders(section.value.list, effectiveValues.value, formKeys.value) : { total: 0, replaced: 0 }));
 const groups = computed(() => formGroups(formSchema.value));
 const hasFields = computed(() => formFields(formSchema.value).length > 0);
 // The repeating group at the caret (inside a Repeat block, or a table that repeats a row).
@@ -122,8 +139,7 @@ const findEditor = (root) => {
 
 // ---- placeholders: chips show the map's value live ---------------------------------------------
 const lookupValue = (key) => {
-  const map = template.value?.placeholders;
-  if (!map) return '';
+  const map = effectiveValues.value;
   if (map[key]) return map[key];
   key = parseChip(key).base; // "dob|date" looks up "dob"
   if (map[key]) return map[key];
@@ -132,7 +148,7 @@ const lookupValue = (key) => {
   return '';
 };
 setPlaceholderResolver(lookupValue);
-watch(() => template.value?.placeholders, () => { for (const { quill } of editors.values()) refreshChips(quill); }, { deep: true, flush: 'post' });
+watch(effectiveValues, () => { for (const { quill } of editors.values()) refreshChips(quill); }, { flush: 'post' });
 
 const addKey = (key) => { template.value.placeholders[key] = ''; };
 const renameKey = (from, to) => {
@@ -143,7 +159,62 @@ const renameKey = (from, to) => {
   if (fr) for (const k of ['headerLeft', 'headerRight', 'footerLeft']) fr[k] = renameTokensIn(fr[k] ?? '', from, to);
   delete map[from];
   map[to] = value ?? '';
+  // The set's value follows the key (the old key stays in the set for other templates that use it).
+  if (setDraft.value && setDraft.value[from] !== undefined && setDraft.value[to] === undefined) setDraft.value[to] = setDraft.value[from];
   editKey.value++; // editors reload their text, now with the new key
+};
+
+// ---- value sets ------------------------------------------------------------------------------
+const setDraftFrom = (id) => {
+  const s = id ? valueSets.value?.find((x) => x.id === id) : null;
+  setDraft.value = s ? { ...(s.values ?? {}) } : null;
+  setSavedJson.value = JSON.stringify(setDraft.value);
+};
+const loadSets = async () => {
+  if (isMaster) return;
+  setsError.value = '';
+  try {
+    valueSets.value = await ValueSetService.listValueSets();
+  } catch (e) {
+    setsError.value = e.message || 'Could not load your value sets.';
+  }
+  setDraftFrom(template.value?.valueSetId);
+};
+const selectSet = async (id) => {
+  if (setDirty.value) {
+    const ok = await askConfirm({ title: 'Discard value changes?', message: 'Your unsaved edits to the current value set are dropped.', confirmLabel: 'Discard and switch' });
+    if (!ok) return;
+  }
+  template.value.valueSetId = id;
+  setDraftFrom(id);
+};
+const createSet = async (name, values = {}) => {
+  setsError.value = '';
+  try {
+    const s = await ValueSetService.createValueSet({ name, values });
+    valueSets.value = [...valueSets.value, s].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
+    template.value.valueSetId = s.id;
+    setDraftFrom(s.id);
+    return true;
+  } catch (e) {
+    setsError.value = e.fieldErrors?.[0]?.message || e.message || 'Could not create the value set.';
+    return false;
+  }
+};
+// Older templates kept their values on the template: put them in a new set and clear them here.
+const moveLegacy = async () => {
+  if (setDirty.value) {
+    const ok = await askConfirm({ title: 'Discard value changes?', message: 'Your unsaved edits to the current value set are dropped.', confirmLabel: 'Discard and continue' });
+    if (!ok) return;
+  }
+  const map = template.value.placeholders;
+  const values = Object.fromEntries(Object.entries(map).filter(([, v]) => String(v ?? '').trim()));
+  const taken = new Set((valueSets.value ?? []).map((s) => s.name.toLowerCase()));
+  let name = template.value.name.trim() || 'Template values';
+  for (let i = 2; taken.has(name.toLowerCase()); i++) name = `${template.value.name.trim() || 'Template values'} (${i})`;
+  const ok = await createSet(name, values);
+  if (!ok) return;
+  for (const k of Object.keys(map)) map[k] = '';
 };
 const removeKey = async (key) => {
   const used = placeholderUsage(template.value.section, template.value.frame)[key] ?? 0;
@@ -357,6 +428,7 @@ const onKeydown = (e) => {
 const normalize = (t) => {
   if (!Array.isArray(t.section) || !t.section.length) t.section = [blankSection()];
   t.placeholders = t.placeholders ?? {};
+  t.valueSetId = t.valueSetId ?? '';
   t.style = t.style ?? ''; // '' = letter (older templates)
   t.frame = t.frame ?? null;
   for (const s of t.section) {
@@ -399,7 +471,7 @@ const load = async () => {
     ctx.focusId = '';
     editKey.value++;
     loadForms();
-    await loadSchema(template.value.formId);
+    await Promise.all([loadSchema(template.value.formId), loadSets()]);
   } catch (e) {
     loadError.value = e.httpStatus === 404 ? 'This template does not exist.' : e.message || 'Could not load the template.';
   }
@@ -414,7 +486,15 @@ const save = async () => {
   saveError.value = '';
   const sig = saveSignature(t);
   try {
-    const res = await api.update(props.id, { name: t.name.trim(), section: sectionsForSave(t.section), placeholders: placeholdersForSave(t.placeholders), formId: t.formId || null, ...(t.style && { style: t.style }), frame: frameForSave(t.frame) });
+    // The set first: the template's export reads it.
+    if (setDirty.value && setDraft.value && t.valueSetId) {
+      const setJson = JSON.stringify(setDraft.value);
+      const s = await ValueSetService.updateValueSet(t.valueSetId, { values: placeholdersForSave(setDraft.value) });
+      valueSets.value = valueSets.value.map((x) => (x.id === s.id ? s : x));
+      setSavedJson.value = setJson;
+    }
+    const body = { name: t.name.trim(), section: sectionsForSave(t.section), placeholders: placeholdersForSave(t.placeholders), formId: t.formId || null, ...(t.style && { style: t.style }), frame: frameForSave(t.frame), ...(!isMaster && { valueSetId: t.valueSetId || null }) };
+    const res = await api.update(props.id, body);
     if (res?.exportHistory) exportHistory.value = res.exportHistory;
     savedSig.value = sig;
     saving.value = false;
@@ -535,7 +615,25 @@ onBeforeRouteLeave(async () => {
         <BlockList :key="`${current}:${editKey}`" :model-value="section.list" />
         <p v-if="!section.list.length" class="py-8 text-center text-body text-ink-muted">This section is empty. Use <strong class="font-medium text-ink">Add item</strong> to add a paragraph, list, table or layout block.</p>
       </div>
-      <PlaceholderPanel v-if="showPlaceholders" :placeholders="template.placeholders" :sections="template.section" :frame="template.frame" :form-keys="formKeys" :readonly="readonly" @add="addKey" @rename="renameKey" @remove="removeKey" />
+      <PlaceholderPanel
+        v-if="showPlaceholders"
+        :placeholders="template.placeholders"
+        :values="setDraft"
+        :sets="valueSets"
+        :set-id="template.valueSetId"
+        :sets-error="setsError"
+        :legacy-count="legacyCount"
+        :sections="template.section"
+        :frame="template.frame"
+        :form-keys="formKeys"
+        :readonly="readonly"
+        @add="addKey"
+        @rename="renameKey"
+        @remove="removeKey"
+        @select-set="selectSet"
+        @new-set="(name) => createSet(name)"
+        @move-legacy="moveLegacy"
+      />
     </div>
 
     <DialogSign :ref="dialogs.sign" />
@@ -549,7 +647,7 @@ onBeforeRouteLeave(async () => {
       :open="showSections"
       :sections="template.section"
       :current="current"
-      :placeholders="template.placeholders"
+      :placeholders="effectiveValues"
       :readonly="readonly"
       @close="showSections = false"
       @select="selectSection"
@@ -558,7 +656,7 @@ onBeforeRouteLeave(async () => {
       @delete="deleteSection"
       @move="moveSection"
     />
-    <PlaceholderChipPopover :placeholders="template.placeholders" :readonly="readonly" :find-editor="findEditor" />
+    <PlaceholderChipPopover :placeholders="template.placeholders" :values="setDraft" :readonly="readonly" :find-editor="findEditor" />
     <ExportPanel
       v-if="!isMaster"
       :open="showExport"
@@ -568,7 +666,8 @@ onBeforeRouteLeave(async () => {
       :dirty="dirty"
       :readonly="readonly"
       :save="saveOrThrow"
-      :values="() => placeholdersForSave(template.placeholders)"
+      :value-set-id="template.valueSetId"
+      :value-set-name="valueSets?.find((s) => s.id === template.valueSetId)?.name ?? ''"
       @close="showExport = false"
       @history="(h) => (exportHistory = h)"
     />

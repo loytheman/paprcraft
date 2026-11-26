@@ -1,11 +1,12 @@
 <script setup>
-// Click a chip in the text: edit that key's value, or turn the chip back into plain text. Opens
-// where the chip is (the editor dispatches `placeholder-clicked` on window).
+// Click a chip in the text: edit that key's value in the selected value set, or turn the chip back
+// into plain text. Opens where the chip is (the editor dispatches `placeholder-clicked` on window).
 import { nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import OpButton from '@ds/components/OpButton.vue';
 
 const props = defineProps({
-  placeholders: { type: Object, required: true },
+  placeholders: { type: Object, required: true }, // the template's keys
+  values: { type: Object, default: null }, // the selected value set's values (null = no set chosen)
   readonly: { type: Boolean, default: false },
   findEditor: { type: Function, required: true }, // (rootElement) -> Quill | null
 });
@@ -48,10 +49,11 @@ const toText = () => {
   <div v-if="state" data-chip-popover class="fixed z-50 w-64 rounded-card border border-line bg-surface-3 p-3 shadow-rim" :style="{ left: `${state.x}px`, top: `${state.y}px` }" role="dialog" aria-label="Placeholder value">
     <p class="font-mono text-small text-ink">{{ chip(state.key) }}</p>
     <p v-if="state.bound" class="mt-2 text-small text-ink-muted">A field of the form: it is filled in from a submission when the document is generated.</p>
+    <p v-else-if="!values" class="mt-2 text-small text-ink-muted">Choose a value set in the Placeholders panel to give it a value.</p>
     <input
       v-else
       ref="input"
-      v-model="placeholders[state.key]"
+      v-model="values[state.key]"
       :readonly="readonly"
       placeholder="Value"
       aria-label="Value"
