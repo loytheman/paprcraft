@@ -16,6 +16,7 @@ import { canEdit } from '@/team';
 import { ownApi, masterApi } from '@/services/service.template';
 import { listSourceForms, getSourceForm } from '@/services/service.templateForm';
 import * as ValueSetService from '@/services/service.valueSet';
+import { TEMPLATE_FORMS } from '@/helpers/template/features';
 import { TPL_KEY } from '@/helpers/template/context';
 import { SIZES, refreshChips, setPlaceholderResolver } from '@/helpers/template/quill';
 import {
@@ -312,11 +313,14 @@ const addItems = computed(() => [
   { label: 'Act heading', action: () => addBlock('layout-company-act') },
   { label: 'Form 45B heading', action: () => addBlock('layout-form-45b') },
   { label: 'Signature area', action: () => addBlock('sign-area-01') },
-  { label: 'Form data', heading: true },
-  ...containerItems(),
-  { label: 'Section table', icon: 'layout', action: () => addBlock('form-table') },
-  { label: 'Checklist table', icon: 'check', action: () => addBlock('form-checklist') },
-  { label: 'Declaration', icon: 'pencil', action: () => addBlock('form-declaration') },
+  // Form blocks only while templates can use forms (helpers/template/features.js).
+  ...(TEMPLATE_FORMS ? [
+    { label: 'Form data', heading: true },
+    ...containerItems(),
+    { label: 'Section table', icon: 'layout', action: () => addBlock('form-table') },
+    { label: 'Checklist table', icon: 'check', action: () => addBlock('form-checklist') },
+    { label: 'Declaration', icon: 'pencil', action: () => addBlock('form-declaration') },
+  ] : []),
 ]);
 
 // ---- sections ------------------------------------------------------------------------------
@@ -460,7 +464,7 @@ const load = async () => {
     selected.value = null;
     ctx.focusId = '';
     editKey.value++;
-    loadForms();
+    if (TEMPLATE_FORMS) loadForms();
     await Promise.all([loadSchema(template.value.formId), loadSets()]);
   } catch (e) {
     loadError.value = e.httpStatus === 404 ? 'This template does not exist.' : e.message || 'Could not load the template.';
@@ -543,8 +547,8 @@ onBeforeRouteLeave(async () => {
     </div>
     <p v-if="saveError" role="alert" class="status-down mt-3 rounded-control border px-3 py-2 text-small">{{ saveError }}</p>
 
-    <!-- Form: the form whose fields this template can use -->
-    <div class="mt-3 flex flex-wrap items-center gap-2 text-small text-ink-muted">
+    <!-- Form: the form whose fields this template can use (hidden while TEMPLATE_FORMS is off) -->
+    <div v-if="TEMPLATE_FORMS" class="mt-3 flex flex-wrap items-center gap-2 text-small text-ink-muted">
       <label for="tpl-source" class="font-medium">Form</label>
       <select id="tpl-source" :value="template.formId" :disabled="readonly" class="h-9 max-w-64 rounded-control border border-line bg-surface-1 px-2 text-body text-ink focus:border-primary focus:outline-none disabled:opacity-60" @change="onSource($event.target.value)">
         <option value="">None: type placeholders by hand</option>
@@ -575,7 +579,7 @@ onBeforeRouteLeave(async () => {
         <button type="button" title="Italic" :class="['size-8 rounded-control text-body italic hover:bg-ink/4', rangeFormat.italic ? 'bg-ink/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('italic')">I</button>
         <button type="button" title="Underline" :class="['size-8 rounded-control text-body underline hover:bg-ink/4', rangeFormat.underline ? 'bg-ink/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('underline')">U</button>
         <button type="button" title="Strikethrough" :class="['size-8 rounded-control text-body line-through hover:bg-ink/4', rangeFormat.strike ? 'bg-ink/8 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFormat('strike')">S</button>
-        <button type="button" title="Insert a field of the form, or a document value" :class="['h-8 rounded-control px-2 text-small hover:bg-ink/4', showFields ? 'bg-warn/15 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFields">Insert field</button>
+        <button type="button" :title="TEMPLATE_FORMS ? 'Insert a field of the form, or a document value' : 'Insert a document value, e.g. the date generated'" :class="['h-8 rounded-control px-2 text-small hover:bg-ink/4', showFields ? 'bg-warn/15 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="toggleFields">{{ TEMPLATE_FORMS ? 'Insert field' : 'Insert document info' }}</button>
         <button type="button" title="Insert a placeholder" :class="['h-8 rounded-control px-2 font-mono text-small hover:bg-ink/4', showPicker ? 'bg-warn/15 text-ink' : 'text-ink-muted']" @mousedown.prevent @click="togglePicker"><span v-pre>{{x}}</span></button>
         <span class="mx-1 h-5 w-px bg-line" aria-hidden="true" />
         <button type="button" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo" class="size-8 rounded-control text-ink-muted hover:bg-ink/4 disabled:opacity-30" :disabled="!canUndo" @mousedown.prevent @click="undo"><OpIcon name="arrow-left" :size="15" class="mx-auto" /></button>
@@ -586,7 +590,7 @@ onBeforeRouteLeave(async () => {
         <button type="button" :class="['h-8 rounded-control px-2 text-small hover:bg-ink/4', showPlaceholders ? 'text-ink' : 'text-ink-muted']" @click="showPlaceholders = !showPlaceholders">Placeholders</button>
       </div>
       <div v-if="showFields && !readonly" class="mt-2 max-w-xl">
-        <FieldPicker :open="showFields" :schema="formSchema" :repeat-group="caretGroup" :error="fieldError" @insert="insertField" @close="showFields = false" />
+        <FieldPicker :open="showFields" :schema="TEMPLATE_FORMS ? formSchema : null" :forms="TEMPLATE_FORMS" :repeat-group="caretGroup" :error="fieldError" @insert="insertField" @close="showFields = false" />
       </div>
       <div v-if="showPicker && !readonly" class="mt-2 max-w-xl">
         <PlaceholderPicker :open="showPicker" :keys="pickerKeys" :selected-text="pickerText" :error="pickerError" @insert="insertPlaceholder" @close="showPicker = false" />

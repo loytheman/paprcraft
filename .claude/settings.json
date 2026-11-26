@@ -5,7 +5,10 @@
       "Bash(node --test --experimental-test-module-mocks --no-warnings 'test/**/*.test.mjs')",
       "Bash(node --test --experimental-test-module-mocks --no-warnings test/template.test.mjs)",
       "Bash(yarn dev *)",
-      "Bash(lsof -nP -iTCP:3006 -iTCP:6100 -sTCP:LISTEN)"
+      "Bash(lsof -nP -iTCP:3006 -iTCP:6100 -sTCP:LISTEN)",
+      "Bash(ps -eo pid,lstart,command)",
+      "Bash(ps eww *)",
+      "Bash(STAGE_ENV=local node -e \"import\\('./src/config/config.js'\\).then\\(m=>console.log\\('config docx.lambdaName =', JSON.stringify\\(m.default.docx.lambdaName\\)\\)\\)\")"
     ]
   }
 }

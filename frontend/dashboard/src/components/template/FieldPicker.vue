@@ -12,6 +12,7 @@ const props = defineProps({
   schema: { type: Object, default: null },
   repeatGroup: { type: String, default: '' },
   error: { type: String, default: '' },
+  forms: { type: Boolean, default: true }, // false: templates don't use forms (features.js), so only document info is offered
 });
 const emit = defineEmits(['insert', 'close']);
 
@@ -29,10 +30,11 @@ const NAMES = { yesno: 'yes / no', date: 'date', upper: 'UPPER', lower: 'lower',
 <template>
   <div v-if="open" class="max-h-96 overflow-auto rounded-card border border-line bg-surface-3 p-3 shadow-rim" role="dialog" aria-label="Insert a field">
     <div class="flex items-center justify-between gap-2">
-      <p class="text-small font-medium text-ink-muted">Insert a field from the form</p>
+      <p class="text-small font-medium text-ink-muted">{{ forms ? 'Insert a field from the form' : 'Insert document info' }}</p>
       <OpButton size="sm" variant="ghost" @click="emit('close')">Close</OpButton>
     </div>
-    <p v-if="!schema" class="mt-2 text-small text-ink-faint">Choose a form above to insert the form's fields. The document info values below always work.</p>
+    <p v-if="!forms" class="mt-2 text-small text-ink-faint">Filled in when the document is generated. Pick a format to change how it is written.</p>
+    <p v-else-if="!schema" class="mt-2 text-small text-ink-faint">Choose a form above to insert the form's fields. The document info values below always work.</p>
     <p v-else-if="entries.length <= 1" class="mt-2 text-small text-ink-faint">This form has no fields you can insert here.</p>
     <div v-for="s in entries" :key="s.section" class="mt-3">
       <p class="text-label uppercase text-ink-faint">{{ s.section }}</p>
@@ -53,7 +55,7 @@ const NAMES = { yesno: 'yes / no', date: 'date', upper: 'UPPER', lower: 'lower',
         </li>
       </ul>
     </div>
-    <p v-if="hasGroups && !repeatGroup" class="mt-3 text-small text-ink-faint">Fields of a repeating group appear when the caret is inside a Repeat block for that group.</p>
+    <p v-if="forms && hasGroups && !repeatGroup" class="mt-3 text-small text-ink-faint">Fields of a repeating group appear when the caret is inside a Repeat block for that group.</p>
     <p v-if="error" role="alert" class="mt-2 text-small text-down">{{ error }}</p>
   </div>
 </template>
